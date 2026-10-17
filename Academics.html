@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Beyond Tomorrow</title>
+    <title>APS Calculator</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -34,16 +34,36 @@
 
     <main>
 
-
+        
 <!--write your centre code here--> 
 
+ <h1>APS Calculator</h1>
 
+    <div id="rows"></div>
+    <div id="err"></div>
+    <button id="add" type="button">+ Add subject</button>
+    <button id="reset" type="button">Clear all</button>
+
+    <h2><span id="total">0</span> <small id="meta"></small></h2>
+    <table>
+      <thead><tr><th>Subject</th><th>Mark</th><th>APS</th><th>Level</th></tr></thead>
+      <tbody id="out"></tbody>
+    </table>
         
     </main>
 
+    <datalist id="subs">
+    <option value="Home Language"><option value="First Additional Language">
+    <option value="Mathematics"><option value="Mathematical Literacy">
+    <option value="Life Orientation"><option value="Physical Sciences">
+    <option value="Life Sciences"><option value="Accounting">
+    <option value="Business Studies"><option value="Economics">
+    <option value="Geography"><option value="History">
+    <option value="Information Technology">
+  </datalist>
 
 
-
+  <script type="module" src="dist/ApsCalculator.js"></script>
  <footer>
         <p>&copy; Beyond Tomorrow. All rights reserved.</p>
     </footer>
