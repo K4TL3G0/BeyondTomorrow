@@ -87,7 +87,7 @@ export default function Login() {
                 </button>
               </div>
             </label>
-            <button type="submit" className="login-submit-btn" style={{ width: '100%', marginTop: '0.5rem', padding: '0.75rem' }}>
+            <button type="submit" style={{ width: '100%', marginTop: '0.5rem', padding: '0.75rem' }}>
               {mode === 'signin' ? 'Sign in' : 'Sign up'}
             </button>
           </form>

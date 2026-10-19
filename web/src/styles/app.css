@@ -146,44 +146,6 @@ button:active {
   transform: translateY(1px);
 }
 
-.login-submit-btn {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover, #1d4ed8) 100%);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-}
-
-.login-submit-btn:hover {
-  background: linear-gradient(135deg, var(--primary-hover, #1d4ed8) 0%, #1e40af 100%);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.login-submit-btn::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    135deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.5) 50%,
-    transparent 60%
-  );
-  transform: translateX(-100%) rotate(25deg);
-  pointer-events: none;
-}
-
-.login-submit-btn:hover::after {
-  transform: translateX(100%) rotate(25deg);
-  transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 button.link {
   background: none;
   color: var(--primary);
