@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beyond Tomorrow – SSDLC Plan</title>
+<style>
+:root{--navy:#133a66;--teal:#0aa6a6;--bg:#f3f6fb;--card:#fff;--soft:#eef3fa;--text:#1b2733;--muted:#5b6b7c;--line:#d5dde8;--ok:#0b8a5f;--warn:#b86e00;--bad:#c0392b;--onnavy:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--navy:#0e2a4d;--bg:#0b1522;--card:#122136;--soft:#18304d;--text:#e6edf5;--muted:#9fb0c3;--line:#2a3f5a;--ok:#3ddc97;--warn:#f0b04a;--bad:#ff7b6b}}
+:root[data-theme="dark"]{--navy:#0e2a4d;--bg:#0b1522;--card:#122136;--soft:#18304d;--text:#e6edf5;--muted:#9fb0c3;--line:#2a3f5a;--ok:#3ddc97;--warn:#f0b04a;--bad:#ff7b6b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:1.25rem}
+.hero{background:var(--navy);color:var(--onnavy);border-radius:20px;padding:2rem 2rem 1.6rem}
+.hero h1{margin:0;font-size:clamp(2rem,6vw,3.2rem);line-height:1.05;font-weight:800;letter-spacing:-.02em}
+.bar{width:110px;height:6px;border-radius:3px;background:var(--teal);margin:1.2rem 0}
+.hero p{margin:.2rem 0;opacity:.9}
+.count{display:flex;gap:.6rem;margin:1.2rem 0 .4rem;flex-wrap:wrap}
+.count div{background:rgba(255,255,255,.12);border-radius:12px;padding:.5rem .9rem;min-width:64px;text-align:center}
+.count b{display:block;font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.count span{font-size:.8rem;opacity:.8}
+.prog{margin-top:1rem}
+.track{height:10px;border-radius:5px;background:rgba(255,255,255,.18);overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+section{margin-top:1.5rem;background:var(--card);border-radius:16px;padding:1.4rem;border:1px solid var(--line)}
+.sh{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem}
+.num{width:2.2rem;height:2.2rem;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+h2{margin:0;font-size:1.4rem;font-weight:800;color:var(--navy);flex:1;min-width:12rem}
+:root[data-theme="dark"] h2{color:var(--text)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) h2{color:var(--text)}}
+.chip{display:inline-block;font-size:.8rem;font-weight:600;padding:.15rem .6rem;border-radius:999px;background:var(--soft);color:var(--muted);white-space:nowrap}
+.chip.warn{background:rgba(240,176,74,.2);color:var(--warn)}
+.chip.bad{background:rgba(220,70,50,.16);color:var(--bad)}
+.chip.ok{background:rgba(11,138,95,.16);color:var(--ok)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+th{background:var(--navy);color:#fff;text-align:left;padding:.65rem .8rem;font-weight:600}
+th:first-child{border-radius:10px 0 0 0}th:last-child{border-radius:0 10px 0 0}
+td{padding:.65rem .8rem;border-bottom:1px solid var(--line);vertical-align:top}
+.tasks{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+.tasks li{display:flex;align-items:center;gap:.7rem;background:var(--soft);border-radius:12px;padding:.7rem .9rem;justify-content:space-between}
+label{display:flex;align-items:center;gap:.7rem;cursor:pointer;flex:1}
+input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--teal);flex:none}
+.done label .tx{text-decoration:line-through;color:var(--muted)}
+input[type=text]{width:100%;min-width:9rem;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:.35rem .5rem;background:var(--card);color:var(--text);font:inherit;font-size:.88rem}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.owners{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.owner{background:var(--soft);border-radius:14px;padding:1.2rem}
+.owner.lead{background:var(--navy);color:#fff}
+.owner h3{margin:0 0 .4rem;font-size:1.1rem}.owner p{margin:0}
+.note{color:var(--muted);font-size:.85rem;margin-top:1rem}
+.who{color:var(--muted);font-size:.82rem;line-height:1.45}.who b{color:var(--text);font-weight:600}.tasks .who{display:block;margin-top:.2rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>Beyond Tomorrow:<br>Secure Development Plan</h1>
+  <div class="bar"></div>
+  <p>FNB AOTY 2026 Hackathon</p>
+  <p>Modules: APS, Bursaries, Resources</p>
+  <p>Kickoff Fri 23 Oct, 10:00. Hackathon ends Sun 25 Oct. Submit by Mon 26 Oct, 23:59.</p>
+  <div class="count" id="main" aria-live="off"><div><b id="cd">0</b><span>days</span></div><div><b id="ch">0</b><span>hours</span></div><div><b id="cm">0</b><span>minutes</span></div><div><b id="cs">0</b><span>seconds</span></div></div>
+  <p id="state">until final submission</p>
+  <div class="prog"><div class="track"><i id="pbar"></i></div><p id="ptxt"></p></div>
+</header>
+
+<section data-due="2026-10-23T12:00:00+02:00"><div class="sh"><span class="num">1</span><h2>Security requirements (risk assessment)</h2><span class="chip due"></span></div>
+<p><strong>Data we hold:</strong> account details, matric marks, income bracket, province, interests. We deliberately do not collect ID numbers, payslips or SASSA documents.</p>
+<div class="scroll"><table id="risks"><thead><tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th><th>Who's accountable</th></tr></thead><tbody></tbody></table></div></section>
+
+<section data-due="2026-10-23T18:00:00+02:00"><div class="sh"><span class="num">2</span><h2>Threat modelling and design review</h2><span class="chip due"></span></div>
+<p><strong>Data flow:</strong> User → React app → Node/TypeScript API → Supabase (PostgreSQL). Trust boundaries sit between each hop.</p>
+<div class="scroll"><table id="stride"><thead><tr><th>STRIDE</th><th>Question</th><th>Control</th><th>Who's accountable</th></tr></thead><tbody></tbody></table></div></section>
+
+<section data-due="2026-10-25T12:00:00+02:00"><div class="sh"><span class="num">3</span><h2>Development (secure coding practices)</h2><span class="chip due"></span></div>
+<ul class="tasks" id="dev"></ul></section>
+
+<section data-due="2026-10-25T18:00:00+02:00"><div class="sh"><span class="num">4</span><h2>Security testing</h2><span class="chip due"></span></div>
+<div class="scroll"><table id="tests"><thead><tr><th>Done</th><th>Test</th><th>Expected result</th><th>Who's accountable for the expected result</th><th>Result / evidence</th><th>Time left</th></tr></thead><tbody></tbody></table></div></section>
+
+<section data-due="2026-10-26T12:00:00+02:00"><div class="sh"><span class="num">5</span><h2>Assessment and secure integration</h2><span class="chip due"></span></div>
+<ul class="tasks" id="p5"></ul></section>
+
+<section><div class="sh"><h2>Every control has an owner</h2></div><div class="owners" id="owners"></div>
+<p class="note">Ticks and notes are saved in this browser only. Deadlines are South African time (SAST).</p></section>
+</div>
+<script>
+const FINAL=new Date("2026-10-26T23:59:00+02:00");
+const risks=[["One student reads another's marks or income","Medium","High","Row Level Security on every table; two-account test"],["Leaked service key or secrets in Git","Medium","High","Environment variables only; secret scanning; .gitignore first"],["Fake bursary or NSFAS links and scams","High","High","Verified official domains only; curated data; scam notice"],["Outdated deadlines or thresholds","High","Medium","last_verified dates; admin-only edits; check-official-site notice"],["Injection or XSS via text fields","Medium","Medium","Zod validation; parameterised queries; sanitised output"],["Account takeover or brute force","Medium","Medium","Supabase Auth; email verification; rate limiting"],["Over-collection of minors' data","Medium","High","Marks and income bracket only; POPIA-aware data minimisation"]];
+const stride=[["Spoofing","Can someone act as another user?","Supabase Auth, email verification"],["Tampering","Can a student edit bursary data or another user's record?","RLS; admin-only writes"],["Repudiation","Are admin changes logged?","Audit columns (updated_by, updated_at)"],["Information disclosure","Do responses expose extra fields?","Return only fields the screen needs"],["Denial of service","Are APS and login endpoints throttled?","Rate limiting"],["Elevation of privilege","Can a normal user reach admin routes?","Role in app_metadata; server-side checks"]];
+const dev=["No secrets in code; service key stays server-side","All inputs validated with Zod (APS marks integers 0–100)","RLS enabled on every new table before data is added","No dangerouslySetInnerHTML without sanitising","Error messages do not leak stack traces or SQL","Every pull request reviewed by a second team member"];
+const tests=[["User A reads or updates user B's rows","Blocked"],["Normal user calls admin endpoint","403"],["Script and SQL-like strings in text fields","Nothing executes"],["Marks of -5, 150, \"abc\"","Rejected"],["Repeated login and APS requests","Rate limit triggers"],["npm audit","No high-severity findings"],["Search bundle and Git history for keys","None found"]];
+const p5=["Tests re-run against the hosted production app","HTTPS and security headers confirmed","Environment variables set on hosting platform","Judges' demo account seeded with fake data, normal privileges, deleted after judging","Findings and fixes documented"];
+const owners=[["Daniel (Database)","Owns the Supabase schema, RLS policies, Auth settings, curated bursary data with last_verified dates, audit columns and the judges' demo seed data."],["Jeremie and Andile (Backend)","Share ownership of the Node/TypeScript API: Zod validation, APS logic, rate limiting, admin-only writes, server-side role checks, error handling and backend tests."],["Blessing and Katlego (Frontend)","Own React and HTML/CSS: XSS prevention, sanitised output, login and form screens, scam and deadline notices, security headers, the bundle check and frontend feedback on test results."],["Security lead (to be assigned)","Keeps this checklist and the evidence screenshots, runs the final production re-test, writes up findings and deletes the demo account after judging."]];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S={c:{},n:{}};
+try{S=JSON.parse(localStorage.getItem("bt-ssdlc-v1"))||S}catch(e){}
+const save=()=>{try{localStorage.setItem("bt-ssdlc-v1",JSON.stringify(S))}catch(e){}};
+const rows=(id,a)=>document.querySelector("#"+id+" tbody").innerHTML=a.map(r=>"<tr>"+r.map(c=>"<td>"+(c&&c.h!==undefined?c.h:esc(c))+"</td>").join("")+"</tr>").join("");
+const who=s=>s.split(";").map(x=>{x=x.trim();const m=x.match(/^(.*?) \((.*)\)$/);return m?`<b>${esc(m[1])}</b> (${esc(m[2])})`:`<b>${esc(x)}</b>`}).join("<br>");
+const wd=s=>`<div class="who">${who(s)}</div>`;
+const rOwn=["Daniel (RLS on every table); Jeremie and Andile (ownership checks in the API)","Jeremie and Andile (server secrets and env vars); Daniel (Supabase keys)","Daniel (curated data and source links); Blessing and Katlego (scam notice in the UI)","Daniel (last_verified and admin-only edits); Blessing and Katlego (show the notice)","Jeremie and Andile (Zod and parameterised queries); Blessing and Katlego (sanitised output)","Daniel (Auth settings); Jeremie and Andile (rate limiting); Blessing and Katlego (login screens)","Daniel (schema holds only what we need); Blessing and Katlego (forms ask only for that)"];
+const sOwn=["Daniel (Auth settings); Blessing and Katlego (login flow)","Daniel (RLS); Jeremie and Andile (admin-only API writes)","Daniel (audit columns); Jeremie and Andile (set updated_by on writes)","Jeremie and Andile (API response fields); Daniel (column-level access)","Jeremie and Andile (rate limiting)","Jeremie and Andile (server-side role checks); Daniel (roles in app_metadata)"];
+const dOwn=["Everyone (never commit keys); Jeremie and Andile (server-side check)","Jeremie and Andile (server validation); Blessing and Katlego (form checks)","Daniel (policies and testing)","Blessing and Katlego (front-end rendering)","Jeremie and Andile (API error handling)","Everyone (review each other); Security lead, TBC (confirms it happens)"];
+const tOwn=["Daniel (Database); Blessing and Katlego (Frontend feedback)","Jeremie and Andile (Backend 403 check); Blessing and Katlego (hide admin screens)","Blessing and Katlego (XSS in the UI); Jeremie and Andile (input validation)","Jeremie and Andile (APS validation); Blessing and Katlego (clear error messages)","Jeremie and Andile (rate limiting)","Jeremie and Andile (backend packages); Blessing and Katlego (frontend packages)","Security lead, TBC (runs the search); Daniel (Supabase keys); Blessing and Katlego (bundle)"];
+const fOwn=["Security lead, TBC (runs the tests); Everyone (fixes own area)","Blessing and Katlego (security headers); Jeremie and Andile (API over HTTPS)","Jeremie and Andile (API settings); Blessing and Katlego (front-end settings)","Daniel (seed data and account); Security lead, TBC (deletes it after judging)","Security lead, TBC (writes it up); Everyone (supply details)"];
+rows("risks",risks.map((r,i)=>[...r,{h:wd(rOwn[i])}]));rows("stride",stride.map((r,i)=>[...r,{h:wd(sOwn[i])}]));
+const list=(id,a,pre,o)=>document.getElementById(id).innerHTML=a.map((t,i)=>`<li class="task" data-k="${pre}${i}"><label><input type="checkbox"><div><span class="tx">${esc(t)}</span><span class="who">${who(o[i])}</span></div></label><span class="chip tl"></span></li>`).join("");
+list("dev",dev,"d",dOwn);list("p5",p5,"f",fOwn);
+document.querySelector("#tests tbody").innerHTML=tests.map((t,i)=>`<tr class="task" data-k="t${i}"><td><input type="checkbox" aria-label="Done"></td><td>${esc(t[0])}</td><td>${esc(t[1])}</td><td>${wd(tOwn[i])}</td><td><input type="text" placeholder="Add result or screenshot note" aria-label="Evidence"></td><td><span class="chip tl"></span></td></tr>`).join("");
+document.getElementById("owners").innerHTML=owners.map((o,i)=>`<div class="owner${i==3?" lead":""}"><h3>${esc(o[0])}</h3><p>${esc(o[1])}</p></div>`).join("");
+const tasks=[...document.querySelectorAll(".task")];
+tasks.forEach(t=>{const k=t.dataset.k,cb=t.querySelector("input[type=checkbox]"),tx=t.querySelector("input[type=text]");cb.checked=!!S.c[k];if(tx){tx.value=S.n[k]||"";tx.addEventListener("input",()=>{S.n[k]=tx.value;save()})}
+cb.addEventListener("change",()=>{S.c[k]=cb.checked;save();tick()})});
+const fmt=ms=>{const m=Math.floor(ms/6e4),d=Math.floor(m/1440),h=Math.floor(m%1440/60);return d?d+"d "+h+"h left":h?h+"h "+(m%60)+"m left":(m%60)+"m left"};
+const setChip=(el,due,done)=>{const ms=due-Date.now();el.className=el.className.replace(/ (warn|bad|ok)/g,"");
+if(done){el.textContent="Done";el.classList.add("ok")}else if(ms<=0){el.textContent="Overdue";el.classList.add("bad")}else{el.textContent=fmt(ms);if(ms<864e5)el.classList.add("warn")}};
+const dueFmt=d=>d.toLocaleString("en-ZA",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Africa/Johannesburg"});
+function tick(){const now=Date.now(),ms=Math.max(0,FINAL-now),s=Math.floor(ms/1e3);
+cd.textContent=Math.floor(s/86400);ch.textContent=Math.floor(s%86400/3600);cm.textContent=Math.floor(s%3600/60);cs.textContent=s%60;
+state.textContent=ms?"until final submission, Mon 26 Oct 23:59":"Submission window closed";
+let n=0;tasks.forEach(t=>{const cb=t.querySelector("input[type=checkbox]"),due=new Date(t.closest("section").dataset.due);t.classList.toggle("done",cb.checked);if(cb.checked)n++;setChip(t.querySelector(".tl"),due,cb.checked)});
+document.querySelectorAll("section[data-due]").forEach(s=>{const own=[...s.querySelectorAll(".task")],all=own.length&&own.every(t=>t.querySelector("input[type=checkbox]").checked),due=new Date(s.dataset.due),c=s.querySelector(".chip.due");setChip(c,due,all);if(!all)c.textContent="Due "+dueFmt(due)+", "+c.textContent});
+pbar.style.width=(n/tasks.length*100)+"%";ptxt.textContent=n+" of "+tasks.length+" checklist tasks done"}
+tick();setInterval(tick,1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beyond Tomorrow – ERD and UML</title>
+<style>
+:root{--navy:#133a66;--teal:#0aa6a6;--bg:#f3f6fb;--line:#d5dde8;--muted:#5b6b7c}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--bg);color:#1b2733;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:1.25rem}
+.hero{background:var(--navy);color:#fff;border-radius:20px;padding:1.6rem 2rem}
+.hero h1{margin:0;font-size:clamp(1.7rem,5vw,2.6rem);line-height:1.1;font-weight:800;letter-spacing:-.02em}
+.bar{width:100px;height:6px;border-radius:3px;background:var(--teal);margin:1rem 0}
+.hero p{margin:.2rem 0;opacity:.9}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1.2rem;margin-top:1.5rem}
+.top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-bottom:.8rem}
+h2{margin:0;flex:1;min-width:12rem;font-size:1.35rem;font-weight:800;color:var(--navy)}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:.5rem 1rem;cursor:pointer;background:var(--navy);color:#fff}
+button.alt{background:#eef3fa;color:var(--navy)}
+button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.sv{overflow:auto;border:1px solid var(--line);border-radius:12px}
+svg{display:block;width:100%;min-width:1100px;height:auto;background:#fff}
+.note{color:var(--muted);font-size:.87rem;margin:.7rem 0 0}
+@page{size:landscape;margin:8mm}
+@media print{
+body{background:#fff}.wrap{padding:0;max-width:none}.hero,.no-print{display:none!important}
+body[data-p=erd] #c-uml,body[data-p=uml] #c-erd{display:none}
+#c-uml{break-before:page}
+.card{border:0;margin:0;padding:0;border-radius:0}.sv{border:0;overflow:visible}
+svg{min-width:0;max-height:182mm}h2{font-size:14pt}.note{font-size:8.5pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>Beyond Tomorrow:<br>ERD and UML</h1>
+  <div class="bar"></div>
+  <p>FNB AOTY 2026 Hackathon. Modules: APS, Bursaries, Resources.</p>
+  <p>Each diagram has its own Print button. Both are vector graphics, so they stay sharp at any paper size. In the print dialog choose Landscape.</p>
+</header>
+
+<section class="card" id="c-erd">
+  <div class="top"><h2>Entity relationship diagram (Supabase / PostgreSQL)</h2>
+  <span class="no-print"><button onclick="pr('erd')">Print ERD</button> <button class="alt" onclick="dl('erd','beyond-tomorrow-erd.svg')">Download SVG</button></span></div>
+  <div class="sv"><svg id="erd" role="img" aria-label="Entity relationship diagram"></svg></div>
+  <p class="note">PK primary key, FK foreign key. Crow's foot marks the many side, double bar marks exactly one. student_profiles.id is the Supabase Auth user id. funding_sources and scoring_weights are reference tables matched by rules in the engine, not by foreign keys. Subjects use fixed codes so Maths and Maths Literacy stay distinct. aps_bands holds each institution's mark-to-points conversion.</p>
+</section>
+
+<section class="card" id="c-uml">
+  <div class="top"><h2>UML class diagram (recommendation engine, TypeScript)</h2>
+  <span class="no-print"><button onclick="pr('uml')">Print UML</button> <button class="alt" onclick="dl('uml','beyond-tomorrow-uml.svg')">Download SVG</button></span></div>
+  <div class="sv"><svg id="uml" role="img" aria-label="UML class diagram"></svg></div>
+  <p class="note">Hollow diamond: the engine holds the component. Dashed arrow: depends on or produces. Dashed hollow triangle: implements. BestSixExcludingLO and BestSevenCappedLO are example strategies, one per APS method code, and each must be checked against the institution's published method. Mark, SubjectGap, Eligibility and RiskLevel types are omitted for readability. Every scoring component takes StudentProfile as its input.</p>
+</section>
+</div>
+<script>
+const NS="http://www.w3.org/2000/svg",NAVY="#133a66",TEAL="#0aa6a6",LC="#3b4b5e",W=320;
+const e=(n,a,p,t)=>{const x=document.createElementNS(NS,n);for(const k in a)if(a[k]!=null)x.setAttribute(k,a[k]);if(t!=null)x.textContent=t;p.appendChild(x);return x};
+function mkSvg(id,w,h){const s=document.getElementById(id);s.setAttribute("viewBox","0 0 "+w+" "+h);s.setAttribute("xmlns",NS);
+s.setAttribute("font-family","system-ui,-apple-system,'Segoe UI',Roboto,sans-serif");e("rect",{width:w,height:h,fill:"#fff"},s);
+const df=e("defs",{},s);const m=(k,vb,rx,d,f,mw)=>{const x=e("marker",{id:id+k,viewBox:vb,refX:rx,refY:6,markerWidth:mw,markerHeight:12,markerUnits:"userSpaceOnUse",orient:"auto-start-reverse"},df);e("path",{d,fill:f,stroke:LC,"stroke-width":1.6},x)};
+m("-a","0 0 12 12",12,"M1 1L12 6L1 11","none",12);m("-t","0 0 14 12",14,"M1 1L14 6L1 11Z","#fff",14);m("-d","0 0 18 12",0,"M1 6L9 1L17 6L9 11Z","#fff",18);return s}
+function box(s,o){const rh=20,hh=o.st?46:34,secs=o.secs.filter(a=>a.length);
+const h=hh+secs.reduce((n,a)=>n+a.length*rh+10,0),g=e("g",{},s),x=o.x,y=o.y;
+e("rect",{x,y,width:W,height:h,rx:9,fill:"#fff",stroke:NAVY,"stroke-width":1.6},g);
+e("path",{d:`M${x},${y+hh}V${y+9}a9 9 0 0 1 9-9H${x+W-9}a9 9 0 0 1 9 9V${y+hh}Z`,fill:NAVY},g);
+if(o.st)e("text",{x:x+W/2,y:y+17,"text-anchor":"middle",fill:"#9fe3e3","font-size":11,"font-style":"italic"},g,"\u00ab"+o.st+"\u00bb");
+e("text",{x:x+W/2,y:y+(o.st?36:23),"text-anchor":"middle",fill:"#fff","font-size":15,"font-weight":700},g,o.t);
+let cy=y+hh;secs.forEach((a,i)=>{if(i)e("line",{x1:x,x2:x+W,y1:cy,y2:cy,stroke:NAVY,"stroke-width":1},g);
+a.forEach((r,j)=>{const ty=cy+5+j*rh+15;
+if(o.erd){const p=r.split(":");if(p[2])e("text",{x:x+12,y:ty,"font-size":11,"font-weight":700,fill:p[2]=="PK"?NAVY:TEAL},g,p[2]);
+e("text",{x:x+(p[2]?44:12),y:ty,"font-size":12.5,fill:"#1b2733","font-family":"ui-monospace,Menlo,Consolas,monospace"},g,p[0]);
+e("text",{x:x+W-12,y:ty,"font-size":11.5,"text-anchor":"end",fill:"#5b6b7c"},g,p[1])}
+else e("text",{x:x+12,y:ty,"font-size":12,fill:"#1b2733","font-family":"ui-monospace,Menlo,Consolas,monospace"},g,r)});
+cy+=a.length*rh+10});return{x,y,w:W,h}}
+function route(a,b,o){const d1=o.dy1||0,d2=o.dy2||0;
+if(a.x<b.x+b.w&&b.x<a.x+a.w){const cx=a.x+a.w/2,dn=a.y<b.y;return{pts:[[cx,dn?a.y+a.h:a.y],[cx,dn?b.y:b.y+b.h]],o1:[0,dn?1:-1],o2:[0,dn?-1:1]}}
+const r=b.x>a.x,x1=r?a.x+a.w:a.x,x2=r?b.x:b.x+b.w,y1=a.y+a.h/2+d1,y2=b.y+b.h/2+d2,mx=o.mx||(x1+x2)/2;
+return{pts:[[x1,y1],[mx,y1],[mx,y2],[x2,y2]],o1:[r?1:-1,0],o2:[r?-1:1,0]}}
+const L=(g,x1,y1,x2,y2)=>e("line",{x1,y1,x2,y2,stroke:LC,"stroke-width":1.6},g);
+const one=(g,P,o)=>[10,16].forEach(d=>{const cx=P[0]+o[0]*d,cy=P[1]+o[1]*d;L(g,cx-o[1]*7,cy+o[0]*7,cx+o[1]*7,cy-o[0]*7)});
+const many=(g,P,o)=>{const bx=P[0]+o[0]*16,by=P[1]+o[1]*16;[-8,0,8].forEach(k=>L(g,bx-o[1]*k,by+o[0]*k,P[0],P[1]));
+const cx=P[0]+o[0]*21,cy=P[1]+o[1]*21;L(g,cx-o[1]*8,cy+o[0]*8,cx+o[1]*8,cy-o[0]*8)};
+const pl=(g,r,a)=>e("polyline",Object.assign({points:r.pts.map(p=>p.join(",")).join(" "),fill:"none",stroke:LC,"stroke-width":1.6},a),g);
+
+const E=[
+["institutions",40,30,["id:uuid:PK","name:text","aps_method_code:text","source_url:text","last_verified:date"]],
+["aps_bands",40,230,["id:uuid:PK","institution_id:uuid:FK","min_mark:int","max_mark:int","points:int"]],
+["funding_sources",40,430,["id:uuid:PK","name:text","type:text","income_ceiling:numeric","disability_income_ceiling:numeric","eligible_fields:text[]","eligible_provinces:text[]","min_average:int","deadline:date","source_url:text","last_verified:date"]],
+["scoring_weights",40,770,["key:text:PK","value:numeric"]],
+["courses",490,30,["id:uuid:PK","institution_id:uuid:FK","name:text","field_tags:text[]","min_aps:int","province:text","application_deadline:date","application_url:text","source_url:text","last_verified:date"]],
+["student_profiles",490,430,["id:uuid:PK","province:text","income_bracket:text","interests:text[]","created_at:timestamptz"]],
+["events",490,640,["id:uuid:PK","student_id:uuid:FK","event_type:text","ref_id:uuid","created_at:timestamptz"]],
+["course_requirements",940,30,["id:uuid:PK","course_id:uuid:FK","subject_id:uuid:FK","min_mark:int"]],
+["student_marks",940,430,["id:uuid:PK","student_id:uuid:FK","subject_id:uuid:FK","mark:int"]],
+["checklist_progress",940,640,["id:uuid:PK","student_id:uuid:FK","task_id:uuid:FK","completed_at:timestamptz"]],
+["recommendation_runs",940,810,["id:uuid:PK","student_id:uuid:FK","weights_snapshot:jsonb","results:jsonb","created_at:timestamptz"]],
+["subjects",1390,30,["id:uuid:PK","code:text","name:text"]],
+["checklist_tasks",1390,640,["id:uuid:PK","title:text","est_days:int","sort_order:int"]]];
+const R=[["institutions","aps_bands"],["institutions","courses"],["courses","course_requirements"],["subjects","course_requirements"],
+["student_profiles","student_marks",{dy1:-20,mx:840}],["subjects","student_marks",{dy1:25,mx:1345}],["student_profiles","checklist_progress",{mx:875}],
+["checklist_tasks","checklist_progress"],["student_profiles","events"],["student_profiles","recommendation_runs",{dy1:20,mx:855}]];
+(function(){const s=mkSvg("erd",1750,1000),pos={};E.forEach(([t,x,y,f])=>pos[t]=box(s,{t,x,y,secs:[f],erd:1}));
+R.forEach(([p,c,o])=>{const r=route(pos[p],pos[c],o||{}),g=e("g",{},s);pl(g,r,{});one(g,r.pts[0],r.o1);many(g,r.pts[r.pts.length-1],r.o2)})})();
+
+const U=[
+["ScoringConfig",40,40,"",["+closeApsMargin: number","+closeSubjectMargin: number","+wFit: number","+wMargin: number","+wFunding: number"],["+load(): ScoringConfig"]],
+["RecommendationEngine",490,40,"",["-evaluator: EligibilityEvaluator","-fit: FitScorer","-funding: FundingMatcher","-config: ScoringConfig"],["+recommend(student, data): CourseResult[]","+whatIf(student, changes): WhatIfDiff","-rank(results): CourseResult[]"]],
+["CourseResult",940,40,"",["+courseId: string","+verdict: Verdict","+apsGap: number","+subjectGaps: SubjectGap[]","+fit: number","+funding: FundingResult","+verifiedOn: string","+stale: boolean"],[]],
+["Verdict",1390,40,"enumeration",["qualifies","close","not_yet"],[]],
+["FitScorer",40,330,"",[],["+score(student, course): number"]],
+["EligibilityEvaluator",490,330,"",["-aps: ApsStrategy","-config: ScoringConfig"],["+evaluate(student, course): Eligibility"]],
+["FundingMatcher",940,330,"",[],["+match(student, sources): FundingResult"]],
+["FundingResult",1390,330,"",["+nsfas: likely | loan_only | no","+bursaryIds: string[]"],[]],
+["StudentProfile",40,560,"input",["+province: string","+incomeBracket: string","+interests: string[]","+marks: Mark[]"],[]],
+["ApsStrategy",490,560,"interface",[],["+calculate(marks, bands): number"]],
+["WhatIfDiff",940,560,"",["+baseline: CourseResult[]","+modified: CourseResult[]","+unlocked: CourseResult[]"],[]],
+["StatementBuilder",1390,560,"",[],["+build(result, student, progress): string"]],
+["DeadlineRiskEvaluator",40,780,"",[],["+assess(tasks, progress, deadline, now): RiskLevel"]],
+["BestSixExcludingLO",490,780,"example strategy",[],["+calculate(marks, bands): number"]],
+["BestSevenCappedLO",940,780,"example strategy",[],["+calculate(marks, bands): number"]]];
+const Q=[["RecommendationEngine","ScoringConfig","agg",{dy1:-30,dy2:-20}],["RecommendationEngine","FitScorer","agg",{dy1:30,mx:425}],
+["RecommendationEngine","EligibilityEvaluator","agg"],["RecommendationEngine","FundingMatcher","agg",{dy1:10,mx:885}],
+["RecommendationEngine","CourseResult","dep",{dy1:-45,dy2:-50,mx:910}],["RecommendationEngine","WhatIfDiff","dep",{dy1:45,mx:870}],
+["EligibilityEvaluator","ApsStrategy","assoc"],["BestSixExcludingLO","ApsStrategy","real"],["BestSevenCappedLO","ApsStrategy","real",{mx:840}],
+["CourseResult","Verdict","assoc",{dy1:-66}],["FundingMatcher","FundingResult","dep",{dy2:-10}],["StatementBuilder","CourseResult","dep",{mx:1325,dy2:60}]];
+(function(){const s=mkSvg("uml",1750,900),pos={};U.forEach(([t,x,y,st,a,m])=>pos[t]=box(s,{t,x,y,st,secs:[a,m]}));
+Q.forEach(([a,b,k,o])=>{const r=route(pos[a],pos[b],o||{}),g=e("g",{},s),d=k=="dep"||k=="real"?"7 5":null;
+pl(g,r,{"stroke-dasharray":d,"marker-end":"url(#uml"+(k=="real"?"-t":"-a")+")","marker-start":k=="agg"?"url(#uml-d)":null})})})();
+
+function pr(id){document.body.dataset.p=id;const d=()=>{delete document.body.dataset.p;removeEventListener("afterprint",d)};addEventListener("afterprint",d);window.print()}
+function dl(id,n){const b=new Blob([new XMLSerializer().serializeToString(document.getElementById(id))],{type:"image/svg+xml"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+</script>
+</body>
+</html>
