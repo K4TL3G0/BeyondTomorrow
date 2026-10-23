@@ -173,7 +173,7 @@ button.link:hover {
 .login-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  height: calc(100vh - 65px);
+  height: calc(100dvh - 65px);
   width: 100%;
   overflow: hidden;
   background-color: var(--navy);
@@ -183,10 +183,28 @@ button.link:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2rem 3rem;
+  padding: 1.25rem 3rem;
   background: var(--card);
-  overflow-y: auto;
+  overflow: hidden;
   height: 100%;
+}
+
+.google-sign-in {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #1f2937;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+.google-sign-in:hover {
+  background: #f9fafb;
 }
 
 .login-image-pane {
@@ -229,18 +247,23 @@ button.link:hover {
 @media (max-width: 900px) {
   .login-container {
     grid-template-columns: 1fr;
-    height: auto;
-    overflow: visible;
+    height: calc(100dvh - 65px);
   }
   .login-form-pane {
-    padding: 2.5rem 1.5rem;
+    padding: 1rem 1.5rem;
   }
   .login-image-pane {
-    min-height: 320px;
-    padding: 2rem 1.5rem;
+    display: none;
   }
   .login-image-content h2 {
     font-size: 1.5rem;
+  }
+}
+
+@media (max-height: 650px) {
+  .login-form-pane {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 }
 
