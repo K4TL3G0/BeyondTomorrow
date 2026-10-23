@@ -4,13 +4,12 @@ import { useAuth } from '../lib/auth';
 import { Footer } from './Footer';
 
 const links = [
-  ['/aps-calculator', 'APS Calculator'],
   ['/pathways', 'Pathways'],
   ['/applications', 'Applications'],
   ['/funding', 'Funding'],
   ['/checklist', 'Checklist'],
   ['/resources', 'Resources'],
-  ['/aps', 'APS Calculator'],
+  ['/aps-calculator', 'APS Calculator'],
 ] as const;
 
 export function Layout() {
