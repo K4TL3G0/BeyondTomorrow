@@ -8,6 +8,7 @@ const links = [
   ['/funding', 'Funding'],
   ['/checklist', 'Checklist'],
   ['/resources', 'Resources'],
+  ['/aps', 'APS Calculator'],
 ] as const;
 
 export function Layout() {
