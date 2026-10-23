@@ -394,9 +394,22 @@ export function Funding() {
         )}
 
         <p className="disclaimer">
-          <strong>Important:</strong> These cards link to external websites. Funding availability
-          and application dates may change. Always verify details and apply through the official
-          provider where possible.
+          <span className="disclaimer-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 18h6m-5 3h4m-6.2-6.8A7 7 0 1 1 16.2 14c-.9.7-1.4 1.5-1.4 2.5h-5.6c0-1-.5-1.8-1.4-2.5Z"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.7"
+              />
+            </svg>
+          </span>
+          <span>
+            <strong>Important:</strong> These cards link to external websites. Funding availability
+            and application dates may change. Always verify details and apply through the official
+            provider where possible.
+          </span>
         </p>
       </section>
     </div>

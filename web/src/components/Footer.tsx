@@ -50,7 +50,7 @@ export function Footer() {
 
       <div className="footer-bottom">
         <div className="footer-bottom-content">
-          <p>© {currentYear} Beyond Tomorrow. Built with care for South African students.</p>
+          <p>© {currentYear} Beyond Tomorrow. Advancing informed education choices and access to opportunity for South African students.</p>
           <div className="footer-bottom-links">
             <span className="muted">Last verified data: 2026</span>
           </div>
