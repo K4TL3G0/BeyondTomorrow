@@ -1,0 +1,163 @@
+/* APS Calculator page. Every class is prefixed "aps-" (or nested under .aps) so it can't clash with other pages. */
+
+.aps {
+  max-width: 880px;
+}
+
+.aps-rows {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.aps-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6rem auto auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.aps-count {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.aps-remove {
+  padding: 0.35rem 0.6rem;
+}
+
+.aps input[aria-invalid='true'] {
+  border-color: #ef4444;
+  outline-color: #ef4444;
+}
+
+.aps-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.aps-err {
+  color: #ef4444;
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+}
+
+.aps-note {
+  color: var(--muted, #64748b);
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
+}
+
+.aps-caveat {
+  border-left: 3px solid var(--primary, #2563eb);
+  padding-left: 0.6rem;
+}
+
+.aps h2 small {
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--muted, #64748b);
+}
+
+.aps-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.aps-table th,
+.aps-table td {
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+.aps-dim {
+  opacity: 0.55;
+}
+
+.aps-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.aps-inst-opt {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.aps-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.aps-card {
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.aps-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.aps-card ul {
+  margin: 0.5rem 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+}
+
+.aps-score {
+  font-size: 1rem;
+}
+
+.aps-score-n {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary, #2563eb);
+}
+
+@media (max-width: 520px) {
+  .aps-row {
+    grid-template-columns: minmax(0, 1fr) 5rem;
+  }
+  .aps-count,
+  .aps-remove {
+    justify-self: start;
+  }
+}
+
+.aps-explainer {
+  margin-bottom: 2rem;
+}
+
+.aps-explainer h3 {
+  margin: 1.25rem 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+.aps-explainer p,
+.aps-explainer li {
+  max-width: 70ch;
+}
+
+.aps-explainer ul {
+  padding-left: 1.2rem;
+}
+
+.aps-explainer li {
+  margin-bottom: 0.4rem;
+}
+
+.aps-levels {
+  max-width: 480px;
+  margin: 0.75rem 0;
+}
