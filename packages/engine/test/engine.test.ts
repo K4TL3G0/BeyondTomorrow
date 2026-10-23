@@ -9,11 +9,8 @@ import {
   calculateAps,
   calculateForInstitution,
   convertMark,
-  DEFAULT_CONFIG,
-  configFromRows,
   INSTITUTIONS,
   isValidMark,
-  pointsForMark,
 } from '../src';
 
 describe('configFromRows', () => {
