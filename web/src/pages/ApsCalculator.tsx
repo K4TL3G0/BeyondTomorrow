@@ -1,7 +1,5 @@
-import { useState } from 'react';
+import { Hero } from '../components/Hero';
 import { ApsExplainer } from '../components/aps/ApsExplainer';
-import { InstitutionPicker } from '../components/aps/InstitutionPicker';
-import { InstitutionResults } from '../components/aps/InstitutionResults';
 import { ResultsTable } from '../components/aps/ResultsTable';
 import { SubjectRow } from '../components/aps/SubjectRow';
 import { SUBJECT_SUGGESTIONS } from '../lib/subjects';
@@ -12,71 +10,75 @@ const DATALIST_ID = 'aps-subjects';
 
 export default function ApsCalculator() {
   const calc = useApsCalculator();
-  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
-
-  function toggleInstitution(id: string, checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  }
-
-  const n = calc.result.countedSubjects;
+  const { countedSubjects } = calc.result;
 
   return (
-    <section className="aps">
-      <h1>APS Calculator</h1>
+    <div className="page-wrapper">
+      <Hero
+        eyebrow="Calculate Your APS Score"
+        title={
+          <h1>
+            Admission Point <span>Calculator.</span>
+          </h1>
+        }
+        description="Calculate your Admission Point Score (APS) for South African universities and TVET colleges. Enter your subjects and marks below to see your total score and qualification eligibility."
+        feature={{
+          symbol: '∑',
+          title: 'Know Your Score.',
+          description: 'Your APS score unlocks the degree and diploma options available to you across South Africa.',
+        }}
+      />
 
-      <ApsExplainer />
+      <div className="page-content">
+        <section className="aps">
+          <ApsExplainer />
 
-      <datalist id={DATALIST_ID}>
-        {SUBJECT_SUGGESTIONS.map((s) => (
-          <option key={s} value={s} />
-        ))}
-      </datalist>
+          <datalist id={DATALIST_ID}>
+            {SUBJECT_SUGGESTIONS.map((subject) => (
+              <option key={subject} value={subject} />
+            ))}
+          </datalist>
 
-      <div className="aps-rows">
-        {calc.rows.map((row) => (
-          <SubjectRow
-            key={row.id}
-            row={row}
-            invalid={calc.invalidIds.has(row.id)}
-            autoFocus={row.id === calc.focusId}
-            datalistId={DATALIST_ID}
-            onName={calc.setName}
-            onMark={calc.setMark}
-            onCounted={calc.setCounted}
-            onRemove={calc.removeRow}
-          />
-        ))}
+          <div className="aps-rows">
+            {calc.rows.map((row) => (
+              <SubjectRow
+                key={row.id}
+                row={row}
+                invalid={calc.invalidIds.has(row.id)}
+                autoFocus={row.id === calc.focusId}
+                datalistId={DATALIST_ID}
+                onName={calc.setName}
+                onMark={calc.setMark}
+                onCounted={calc.setCounted}
+                onRemove={calc.removeRow}
+              />
+            ))}
+          </div>
+
+          {calc.invalidIds.size > 0 && (
+            <p className="aps-err" role="alert">
+              Marks must be whole numbers between 0 and 100.
+            </p>
+          )}
+
+          <div className="aps-actions">
+            <button type="button" onClick={calc.addRow}>
+              + Add subject
+            </button>
+            <button type="button" onClick={calc.reset}>
+              Clear all
+            </button>
+          </div>
+
+          <h2>
+            {calc.result.total}{' '}
+            <small>
+              APS points from {countedSubjects} subject{countedSubjects === 1 ? '' : 's'}
+            </small>
+          </h2>
+          <ResultsTable breakdown={calc.result.breakdown} />
+        </section>
       </div>
-
-      {calc.invalidIds.size > 0 && (
-        <p className="aps-err" role="alert">
-          Marks must be between 0 and 100.
-        </p>
-      )}
-
-      <div className="aps-actions">
-        <button type="button" onClick={calc.addRow}>
-          + Add subject
-        </button>
-        <button type="button" onClick={calc.reset}>
-          Clear all
-        </button>
-      </div>
-
-      <h2>
-        {calc.result.total} <small>APS points from {n} subject{n === 1 ? '' : 's'}</small>
-      </h2>
-      <ResultsTable breakdown={calc.result.breakdown} />
-
-      <h2>Compare institutions</h2>
-      <p>Tick the institutions you want to see your score for.</p>
-      <InstitutionPicker selected={selected} onToggle={toggleInstitution} />
-      <InstitutionResults selected={selected} entries={calc.entries} />
-    </section>
+    </div>
   );
 }

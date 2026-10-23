@@ -93,7 +93,6 @@ function FundingSources() {
             before applying.
           </p>
         </div>
-        <span className="database-source-label">Live database</span>
       </div>
 
       <div className="source-filters" role="group" aria-label="Filter database funding">
@@ -271,6 +270,36 @@ function StudentLoanGuide() {
   );
 }
 
+function OpportunityLogo({ item }: { item: Opportunity }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const initials = item.title
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+
+  return (
+    <span className="opportunity-logo">
+      {imageFailed ? (
+        <span className="opportunity-logo-fallback" aria-hidden="true">{initials}</span>
+      ) : (
+        <img
+          className="opportunity-logo-image"
+          src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(item.logoDomain)}&sz=128`}
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={() => setImageFailed(true)}
+        />
+      )}
+    </span>
+  );
+}
+
 function OpportunityCard({ item }: { item: Opportunity }) {
   const isExternal = !item.url.startsWith('mailto:');
 
@@ -281,7 +310,7 @@ function OpportunityCard({ item }: { item: Opportunity }) {
       aria-label={item.ariaLabel}
       {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
-      <span className="card-icon">{item.icon}</span>
+      <OpportunityLogo item={item} />
       <span className="card-tag">{item.tag}</span>
       <h3>{item.title}</h3>
       <p className="card-description">{item.description}</p>
@@ -315,14 +344,6 @@ export function Funding() {
               Explore scholarships, bursaries and study opportunities in South Africa and abroad.
               Compare the options below, then select a card to visit the provider’s website.
             </p>
-            <div className="hero-actions">
-              <a className="hero-button" href="#opportunities">
-                Explore Resources
-              </a>
-              <a className="hero-button hero-button-secondary" href="#opportunities">
-                Get Funding
-              </a>
-            </div>
           </div>
           <aside className="hero-feature" aria-label="Funding opportunities feature">
             <span className="feature-symbol" aria-hidden="true">

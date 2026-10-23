@@ -12,7 +12,7 @@
 .funding-page .hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(3.5rem, 8vw, 7rem) max(1.5rem, calc((100vw - 1120px) / 2));
+  padding: clamp(3.5rem, 8vw, 7rem) max(1.5rem, calc((100vw - 1180px) / 2));
   color: #f8fafc;
   background:
     radial-gradient(ellipse at 85% 15%, rgb(56 189 248 / 18%), transparent 35%),
@@ -30,7 +30,7 @@
   grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 0.6fr);
   align-items: center;
   gap: clamp(2rem, 7vw, 6rem);
-  max-width: 1120px;
+  max-width: 1180px;
   margin: 0 auto;
 }
 
@@ -193,6 +193,34 @@
 
 .funding-page .loan-guide-source a {
   color: var(--primary);
+}
+
+.funding-page .opportunity-logo,
+.funding-page .opportunity-logo-fallback {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  flex: 0 0 4rem;
+  place-items: center;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.funding-page .opportunity-logo {
+  overflow: hidden;
+}
+
+.funding-page .opportunity-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.funding-page .opportunity-logo-fallback {
+  border: 1px solid var(--line);
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-weight: 800;
 }
 
 .funding-page .database-funding {
@@ -451,16 +479,6 @@
   transform: translateY(-3px);
   border-color: rgb(31 83 195 / 45%);
   box-shadow: var(--shadow-lg);
-}
-
-.funding-page .card-icon {
-  display: grid;
-  width: 2.8rem;
-  height: 2.8rem;
-  place-items: center;
-  border-radius: 0.8rem;
-  background: color-mix(in srgb, var(--primary) 9%, var(--card));
-  font-size: 1.4rem;
 }
 
 .funding-page .card-tag {

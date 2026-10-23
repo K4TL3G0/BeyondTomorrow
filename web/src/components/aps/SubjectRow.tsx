@@ -21,7 +21,7 @@ export function SubjectRow({ row, invalid, autoFocus, datalistId, onName, onMark
         value={row.name}
         autoFocus={autoFocus}
         aria-label="Subject name"
-        onChange={(e) => onName(row.id, e.target.value)}
+        onChange={(event) => onName(row.id, event.target.value)}
       />
       <input
         type="number"
@@ -33,14 +33,14 @@ export function SubjectRow({ row, invalid, autoFocus, datalistId, onName, onMark
         value={row.mark}
         aria-label="Mark percentage"
         aria-invalid={invalid || undefined}
-        onChange={(e) => onMark(row.id, e.target.value)}
+        onChange={(event) => onMark(row.id, event.target.value)}
       />
       <label className="aps-count">
-        <input type="checkbox" checked={row.counted} onChange={(e) => onCounted(row.id, e.target.checked)} />
+        <input type="checkbox" checked={row.counted} onChange={(event) => onCounted(row.id, event.target.checked)} />
         Count
       </label>
       <button type="button" className="aps-remove" aria-label="Remove subject" onClick={() => onRemove(row.id)}>
-        ✕
+        Remove
       </button>
     </div>
   );

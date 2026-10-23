@@ -1,10 +1,11 @@
 .bt-app { --blue:#1261d6; --navy:#071225; --light:#f3f7ff; --ink:#111827; --muted:#526079; --border:#dce4f1; margin:0; background:var(--light); color:var(--ink); font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+.page:has(.bt-app) { max-width:none; margin:0; padding:0; }
 .bt-app *, .bt-app *::before, .bt-app *::after { box-sizing:border-box; }
 .bt-app a { color:var(--blue); text-underline-offset:3px; }
 .bt-app button,.bt-app input,.bt-app select { font:inherit; }
 .bt-app button,.bt-app select,.bt-app input[type=checkbox] { cursor:pointer; }
 .bt-app :focus-visible { outline:3px solid #1261d6; outline-offset:4px; }
-.bt-app .bt-wrap { width:min(1200px,calc(100% - 40px)); margin-inline:auto; }
+.bt-app .bt-wrap { width:min(1180px,calc(100% - 3rem)); margin-inline:auto; }
 .bt-app .bt-skip { position:absolute; left:12px; top:-100px; z-index:10; background:white; padding:12px; }
 .bt-app .bt-skip:focus { top:12px; }
 .bt-app .bt-hero { position:relative; isolation:isolate; overflow:hidden; background:var(--navy); color:white; padding:50px 0 44px; }
@@ -17,7 +18,7 @@
 .bt-app .bt-btn:hover { background:#0b4cb0; color:white; }
 .bt-app .bt-btn-secondary { background:white; color:var(--blue); border-color:var(--border); }
 .bt-app .bt-btn-secondary:hover { background:#eaf2ff; color:var(--blue); }
-.bt-app main { padding-block:28px 50px; }
+.bt-app .bt-main-content { padding-block:28px 50px; }
 .bt-app .bt-notice { background:#fff8e7; border:1px solid #edcf86; border-radius:12px; padding:16px 20px; font-size:.9rem; color:#664709; margin-bottom:24px; }
 .bt-app .bt-layout { display:grid; grid-template-columns:minmax(0,1fr) 310px; gap:24px; align-items:start; }
 .bt-app h2 { font-size:1.45rem; line-height:1.3; margin:0 0 8px; color:var(--navy); }
@@ -65,7 +66,7 @@
 .bt-app .bt-empty { background:white; border:1px dashed #aebbd0; padding:32px 20px; text-align:center; border-radius:14px; }
 .bt-app .bt-directory-notes { padding-block:0 24px; color:var(--muted); font-size:.83rem; }
 .bt-app .bt-directory-notes p { margin:5px 0; }
-@media(min-width:1450px) { .bt-app .bt-wrap { width:min(1360px,calc(100% - 60px)); } }
+@media(min-width:1450px) { .bt-app .bt-wrap { width:min(1180px,calc(100% - 3rem)); } }
 @media(max-width:1050px) { .bt-app .bt-layout { grid-template-columns:minmax(0,1fr); } .bt-app .bt-checklist { position:static; } .bt-app .bt-checkitems { grid-template-columns:1fr 1fr; column-gap:24px; } }
-@media(max-width:600px) { .bt-app .bt-wrap { width:calc(100% - 28px); } .bt-app .bt-grid,.bt-app .bt-filters,.bt-app .bt-checkitems { grid-template-columns:1fr; } .bt-app .bt-hero { padding-block:35px; } .bt-app .bt-card { padding:18px; } }
+@media(max-width:640px) { .bt-app .bt-wrap { width:calc(100% - 2.5rem); } .bt-app .bt-grid,.bt-app .bt-filters,.bt-app .bt-checkitems { grid-template-columns:1fr; } .bt-app .bt-hero { padding-block:35px; } .bt-app .bt-card { padding:18px; } }
 @media(prefers-reduced-motion:no-preference) { .bt-app .bt-btn { transition:background .15s; } }

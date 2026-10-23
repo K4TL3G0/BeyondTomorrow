@@ -4,7 +4,7 @@ export type FundingFilter = 'all' | FundingCategory;
 export interface Opportunity {
   id: string;
   categories: FundingCategory[];
-  icon: string;
+  logoDomain: string;
   tag: string;
   title: string;
   description: string;
@@ -25,7 +25,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'juniortukkie',
     categories: ['school'],
-    icon: '📚',
+    logoDomain: 'juniortukkie.online',
     tag: 'Grades 8–12',
     title: 'Grade 8–12 Study Platforms',
     description:
@@ -37,7 +37,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'erasmus-mundus',
     categories: ['international', 'postgraduate'],
-    icon: '🌍',
+    logoDomain: 'erasmus-plus.ec.europa.eu',
     tag: 'International · Master’s',
     title: 'Erasmus Mundus Joint Masters',
     description:
@@ -49,7 +49,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'fulbright',
     categories: ['international', 'postgraduate'],
-    icon: '✈️',
+    logoDomain: 'fulbrightscholars.org',
     tag: 'International exchange',
     title: 'Fulbright Scholars Program',
     description:
@@ -61,7 +61,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'rhodes',
     categories: ['international', 'postgraduate'],
-    icon: '🏛️',
+    logoDomain: 'rhodeshouse.ox.ac.uk',
     tag: 'Postgraduate · Oxford',
     title: 'Rhodes Scholarship',
     description:
@@ -73,7 +73,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'dhet-international',
     categories: ['international', 'south-africa'],
-    icon: '🗺️',
+    logoDomain: 'internationalscholarships.dhet.gov.za',
     tag: 'Government · International',
     title: 'DHET International Scholarships',
     description:
@@ -85,7 +85,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'nrf-connect',
     categories: ['postgraduate', 'south-africa'],
-    icon: '🔬',
+    logoDomain: 'nrfconnect.nrf.ac.za',
     tag: 'Research funding',
     title: 'NRF Connect',
     description:
@@ -97,7 +97,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'unisa-postgrad',
     categories: ['postgraduate', 'south-africa'],
-    icon: '📖',
+    logoDomain: 'unisa.ac.za',
     tag: 'Postgraduate',
     title: 'UNISA Postgraduate Bursaries',
     description:
@@ -109,7 +109,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'firstrand',
     categories: ['south-africa'],
-    icon: '💼',
+    logoDomain: 'firstrand.co.za',
     tag: 'Undergraduate',
     title: 'FirstRand Empowerment Foundation Bursary',
     description:
@@ -121,7 +121,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'ephraim-mogale',
     categories: ['south-africa'],
-    icon: '🏢',
+    logoDomain: 'ephraimmogalelm.gov.za',
     tag: 'Municipal bursary',
     title: 'Ephraim Mogale Local Municipality Bursary',
     description:
@@ -133,7 +133,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'nsfas',
     categories: ['south-africa'],
-    icon: '🇿🇦',
+    logoDomain: 'my.nsfas.org.za',
     tag: 'Government funding',
     title: 'NSFAS Student Funding',
     description:
@@ -145,7 +145,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'private-colleges',
     categories: ['south-africa'],
-    icon: '🏫',
+    logoDomain: 'example.com',
     tag: 'Study options',
     title: 'Private Colleges',
     description:

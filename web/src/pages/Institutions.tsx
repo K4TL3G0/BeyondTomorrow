@@ -42,15 +42,35 @@ const INSTITUTION_GROUPS: readonly InstitutionGroup[] = [
   },
 ];
 
+const CARD_DIRECTIONS = ['from-left', 'from-bottom', 'from-right'];
+const CARD_DELAYS = ['delay-1', 'delay-2', 'delay-3'];
+
 export default function Institutions() {
   useEffect(() => {
     document.title = 'Find Your Institution | Beyond Tomorrow';
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+    );
+
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div className="inst-page">
       <section className="inst-hero" id="home">
-        <div className="inst-hero-content">
+        <div className="inst-hero-content fade-in from-left">
           <p className="inst-small-heading">Your future starts now</p>
 
           <h1>
@@ -74,7 +94,7 @@ export default function Institutions() {
           </div>
         </div>
 
-        <div className="inst-hero-card">
+        <div className="inst-hero-card fade-in from-right delay-2">
           <div className="inst-hero-icon" aria-hidden="true">
             {'</>'}
           </div>
@@ -83,7 +103,7 @@ export default function Institutions() {
         </div>
       </section>
 
-      <section className="inst-about" id="about">
+      <section className="inst-about fade-in from-bottom" id="about">
         <p className="inst-section-label">About us</p>
         <h2>Building Knowledge for a Successful Future</h2>
         <p>
@@ -96,14 +116,19 @@ export default function Institutions() {
       </section>
 
       <section className="inst-programmes" id="programmes">
-        <p className="inst-section-label">Higher institutions</p>
-        <h2>
-          Find the best tertiary institution for <strong>you</strong>
-        </h2>
+        <div className="fade-in from-top">
+          <p className="inst-section-label">Higher institutions</p>
+          <h2>
+            Find the best tertiary institution for <strong>you</strong>
+          </h2>
+        </div>
 
         <div className="inst-cards">
-          {INSTITUTION_GROUPS.map((group) => (
-            <article className="inst-card" key={group.id}>
+          {INSTITUTION_GROUPS.map((group, index) => (
+            <article
+              className={`inst-card fade-in ${CARD_DIRECTIONS[index % 3]} ${CARD_DELAYS[index % 3]}`}
+              key={group.id}
+            >
               <h3>{group.title}</h3>
               <ImageSlider images={group.images} label={`${group.title} examples`} />
               <Link to={APPLY_PATH} className="inst-card-link">
@@ -114,7 +139,7 @@ export default function Institutions() {
         </div>
       </section>
 
-      <section className="inst-cta" id="contact">
+      <section className="inst-cta fade-in from-bottom" id="contact">
         <h2>Ready to Start Your Journey?</h2>
         <p>Take your first step towards a future in Tertiary education.</p>
         <a href={`mailto:${CONTACT_EMAIL}`} className="inst-btn inst-btn-primary">

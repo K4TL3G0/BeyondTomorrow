@@ -4,6 +4,7 @@ import { useAuth } from '../lib/auth';
 import { Footer } from './Footer';
 
 const links = [
+  ['/aps-calculator', 'APS Calculator'],
   ['/pathways', 'Pathways'],
   ['/applications', 'Applications'],
   ['/funding', 'Funding'],

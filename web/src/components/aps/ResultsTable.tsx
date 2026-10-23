@@ -1,26 +1,30 @@
-import type { BreakdownRow } from '@beyond-tomorrow/engine';
+import type { ApsBreakdownRow } from '../../lib/useApsCalculator';
 
-export function ResultsTable({ breakdown }: { breakdown: BreakdownRow[] }) {
+export function ResultsTable({ breakdown }: { breakdown: ApsBreakdownRow[] }) {
+  if (breakdown.length === 0) return <p className="muted">Enter a subject and mark to see the breakdown.</p>;
+
   return (
-    <table className="aps-table">
-      <thead>
-        <tr>
-          <th>Subject</th>
-          <th>Mark</th>
-          <th>APS</th>
-          <th>Level</th>
-        </tr>
-      </thead>
-      <tbody>
-        {breakdown.map((r, i) => (
-          <tr key={i} className={r.counted ? undefined : 'aps-dim'}>
-            <td>{r.name + (r.counted ? '' : ' (not counted)')}</td>
-            <td>{r.percent}%</td>
-            <td>{r.aps}</td>
-            <td>{r.level}</td>
+    <div className="aps-table-wrap">
+      <table className="aps-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Mark</th>
+            <th>APS</th>
+            <th>Level</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {breakdown.map((row, index) => (
+            <tr key={`${row.name}-${index}`} className={row.counted ? undefined : 'aps-dim'}>
+              <td>{row.name}{row.reason ? ` (${row.reason})` : ''}</td>
+              <td>{row.percent}%</td>
+              <td>{row.aps}</td>
+              <td>{row.level}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

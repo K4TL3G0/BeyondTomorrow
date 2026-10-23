@@ -1,10 +1,3 @@
-// Subject names offered as autocomplete suggestions in the APS calculator.
-// These are the recognised 20-credit NSC subjects, plus Life Orientation (10 credits) because
-// some institutions use it. Students can still type any name. Names are written so that
-// classifySubject() in the engine recognises English, Mathematics, Mathematical Literacy,
-// Physical Sciences and Life Orientation correctly. Re-check against the current NSC subject
-// list (Department of Basic Education) when a new subject is added.
-
 const OFFICIAL_LANGUAGES = [
   'Afrikaans',
   'English',
@@ -16,15 +9,14 @@ const OFFICIAL_LANGUAGES = [
   'Setswana',
   'siSwati',
   'Tshivenda',
-  'Xitsonga',
+  '\u0058itsonga',
   'South African Sign Language',
 ];
 
-// English is only offered as Home Language or First Additional Language
-const officialLanguageSubjects = OFFICIAL_LANGUAGES.flatMap((lang) =>
-  lang === 'English'
-    ? [`${lang} Home Language`, `${lang} First Additional Language`]
-    : [`${lang} Home Language`, `${lang} First Additional Language`, `${lang} Second Additional Language`],
+const officialLanguageSubjects = OFFICIAL_LANGUAGES.flatMap((language) =>
+  language === 'English'
+    ? [`${language} Home Language`, `${language} First Additional Language`]
+    : [`${language} Home Language`, `${language} First Additional Language`, `${language} Second Additional Language`],
 );
 
 const OTHER_LANGUAGES = [
@@ -46,13 +38,10 @@ const OTHER_LANGUAGES = [
   'Urdu',
 ];
 
-const languageSubjects = [
+const SUBJECTS = [
   ...officialLanguageSubjects,
   'South African Sign Language Home Language',
-  ...OTHER_LANGUAGES.map((l) => `${l} Second Additional Language`),
-];
-
-const nonLanguageSubjects = [
+  ...OTHER_LANGUAGES.map((language) => `${language} Second Additional Language`),
   'Accounting',
   'Agricultural Sciences',
   'Business Studies',
@@ -78,10 +67,7 @@ const nonLanguageSubjects = [
   'Technical Sciences',
   'Tourism',
   'Visual Arts',
+  'Life Orientation',
 ];
 
-export const SUBJECT_SUGGESTIONS: readonly string[] = [
-  ...languageSubjects,
-  ...nonLanguageSubjects,
-  'Life Orientation', // 10 credits, not a 20-credit subject
-].sort((a, b) => a.localeCompare(b));
+export const SUBJECT_SUGGESTIONS: readonly string[] = [...new Set(SUBJECTS)].sort((a, b) => a.localeCompare(b));
