@@ -83,6 +83,13 @@ body {
   padding: 0 1.5rem;
 }
 
+.page--wide {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -404,6 +411,194 @@ button.link:hover {
   margin: 0;
 }
 
+.db-stack {
+  display: grid;
+  gap: 1rem;
+  padding-bottom: 2rem;
+}
+
+.db-stack h1,
+.db-stack h2,
+.db-stack h3,
+.db-stack p {
+  margin-top: 0;
+}
+
+.db-stack h1 {
+  margin-bottom: 0.4rem;
+}
+
+.db-stack h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.db-stack h3 {
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.db-stack label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.db-stack input,
+.db-stack select {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+}
+
+.db-stack input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+}
+
+.db-stack button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.db-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  align-items: end;
+  gap: 1rem;
+}
+
+.db-mark-row {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(7rem, 0.35fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin: 0.75rem 0;
+}
+
+.db-secondary-button {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+  box-shadow: none;
+}
+
+.db-secondary-button:hover {
+  background: var(--bg);
+}
+
+.db-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+}
+
+.db-course-card {
+  min-width: 0;
+}
+
+.db-course-card h2 {
+  overflow-wrap: anywhere;
+}
+
+.db-eyebrow {
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.db-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.db-details div {
+  border-left: 3px solid var(--line);
+  padding-left: 0.6rem;
+}
+
+.db-details dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.db-details dd {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.db-card-links {
+  display: flex;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+}
+
+.db-card-links a {
+  overflow-wrap: anywhere;
+}
+
+.db-task-list {
+  display: grid;
+  gap: 0;
+}
+
+.db-task-row {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem !important;
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.db-task-row:last-child {
+  border-bottom: 0;
+}
+
+.db-task-row .muted {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.db-task-done {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.db-progress {
+  display: block;
+  width: 100%;
+  height: 0.8rem;
+  accent-color: var(--primary);
+  margin-bottom: 0.8rem;
+}
+
+.db-message {
+  padding: 0.8rem 1rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  color: #1e3a8a;
+}
+
+.db-message--error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
 @media (max-width: 900px) {
   .footer-content {
     grid-template-columns: 1fr;
@@ -417,6 +612,15 @@ button.link:hover {
 }
 
 @media (max-width: 600px) {
+  .db-mark-row {
+    grid-template-columns: 1fr;
+  }
+  .db-task-row {
+    grid-template-columns: auto 1fr;
+  }
+  .db-task-row .muted {
+    grid-column: 2;
+  }
   .footer-links-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
