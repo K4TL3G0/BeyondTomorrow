@@ -397,11 +397,17 @@ export function Funding() {
           <span className="disclaimer-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
               <path
-                d="M9 18h6m-5 3h4m-6.2-6.8A7 7 0 1 1 16.2 14c-.9.7-1.4 1.5-1.4 2.5h-5.6c0-1-.5-1.8-1.4-2.5Z"
+                d="M12 3.75 21 20.25H3L12 3.75Z"
                 stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="1.7"
+              />
+              <path
+                d="M12 9v5m0 3h.01"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="1.9"
               />
             </svg>
           </span>
