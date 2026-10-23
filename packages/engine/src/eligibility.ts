@@ -1,5 +1,5 @@
-import type { Course, EligibilityResult, Institution, ScoringConfig, StudentProfile } from './types';
-import { notImplemented } from './util';
+import type { Course, EligibilityResult, Institution, ScoringConfig, StudentProfile, Verdict } from './types';
+import { getApsStrategy } from './aps';
 
 /**
  * Hard gate. Suggested rules:
@@ -9,10 +9,44 @@ import { notImplemented } from './util';
  *  - not_yet: everything else
  */
 export function evaluateEligibility(
-  _student: StudentProfile,
-  _course: Course,
-  _institution: Institution,
-  _cfg: ScoringConfig,
+  student: StudentProfile,
+  course: Course,
+  institution: Institution,
+  cfg: ScoringConfig,
 ): EligibilityResult {
-  return notImplemented('evaluateEligibility');
+  const strategy = getApsStrategy(institution.apsMethodCode);
+  const marksBySubject = new Map(student.marks.map((mark) => [mark.subjectCode, mark.percent]));
+
+  const subjectGaps = course.requirements.map((requirement) => ({
+    subjectCode: requirement.subjectCode,
+    required: requirement.minMark,
+    actual: marksBySubject.get(requirement.subjectCode) ?? null,
+  }));
+
+  const unmetSubjects = subjectGaps.filter((gap) => gap.actual === null || gap.actual < gap.required);
+  const shortBy = subjectGaps
+    .filter((gap): gap is { subjectCode: string; required: number; actual: number } => gap.actual !== null && gap.actual < gap.required)
+    .map((gap) => gap.required - gap.actual);
+
+  const studentAps = strategy.calculate(student.marks, institution.bands);
+  const apsGap = studentAps - course.minAps;
+
+  let verdict: Verdict = 'not_yet';
+
+  if (studentAps >= course.minAps && unmetSubjects.length === 0) {
+    verdict = 'qualifies';
+  } else if (
+    apsGap >= -cfg.closeApsMargin &&
+    shortBy.length <= 1 &&
+    shortBy.every((gap) => gap <= cfg.closeSubjectMargin)
+  ) {
+    verdict = 'close';
+  }
+
+  return {
+    verdict,
+    studentAps,
+    apsGap,
+    subjectGaps,
+  };
 }

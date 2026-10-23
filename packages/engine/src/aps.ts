@@ -271,12 +271,59 @@ export function pointsForMark(percent: number, bands: { minMark: number; maxMark
   return band ? band.points : 0;
 }
 
+function bestSixExcludingLo(marks: Mark[], bands: ApsBand[]): number {
+  const scored = marks
+    .filter((mark) => mark.subjectCode !== 'LO')
+    .map((mark) => ({ mark: mark.percent, points: pointsForMark(mark.percent, bands) }))
+    .sort((a, b) => b.mark - a.mark)
+    .slice(0, 6);
+
+  return scored.reduce((sum, item) => sum + item.points, 0);
+}
+
+function bestSevenCappedLo(marks: Mark[], bands: ApsBand[]): number {
+  const scored = marks
+    .map((mark) => ({ mark: mark.percent, points: pointsForMark(mark.percent, bands) }))
+    .sort((a, b) => b.mark - a.mark)
+    .slice(0, 7);
+
+  const loMark = marks.find((mark) => mark.subjectCode === 'LO');
+  if (loMark && scored.some((item) => item.mark === loMark.percent)) {
+    const capped = scored.map((item) =>
+      item.mark === loMark.percent ? { ...item, points: Math.min(item.points, 2) } : item,
+    );
+    return capped.reduce((sum, item) => sum + item.points, 0);
+  }
+
+  return scored.reduce((sum, item) => sum + item.points, 0);
+}
+
 export interface ApsStrategy {
   readonly code: string;
   calculate(marks: Mark[], bands: ApsBand[]): number;
 }
 
 const registry = new Map<string, ApsStrategy>();
+
+registerApsStrategy({
+  code: 'DEMO_BEST_SIX',
+  calculate: bestSixExcludingLo,
+});
+
+registerApsStrategy({
+  code: 'BEST_SIX_EXCLUDING_LO',
+  calculate: bestSixExcludingLo,
+});
+
+registerApsStrategy({
+  code: 'BEST_SEVEN_CAPPED_LO',
+  calculate: bestSevenCappedLo,
+});
+
+registerApsStrategy({
+  code: 'BEST_SIX',
+  calculate: bestSixExcludingLo,
+});
 
 export function registerApsStrategy(strategy: ApsStrategy): void {
   registry.set(strategy.code, strategy);

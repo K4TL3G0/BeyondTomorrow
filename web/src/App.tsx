@@ -4,7 +4,7 @@ import { RequireAuth } from './components/RequireAuth';
 import ApplicationsPage from './features/applications/ApplicationsPage';
 import Checklist from './pages/Checklist';
 import Funding from './pages/Funding';
-import Home from './pages/Home';
+import Institutions from './pages/Institutions';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Onboarding from './pages/Onboarding';
@@ -16,9 +16,10 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<Home />} />
+        <Route index element={<Institutions />} />
         <Route path="login" element={<Login />} />
         <Route path="resources" element={<Resources />} />
+        <Route path="institutions" element={<Institutions />} />
         <Route path="aps" element={<ApsCalculator />} />
         <Route path="applications" element={<ApplicationsPage />} />
         <Route path="onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
