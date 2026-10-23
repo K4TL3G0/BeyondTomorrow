@@ -296,6 +296,8 @@ function bestSevenCappedLo(marks: Mark[], bands: ApsBand[]): number {
   }
 
   return scored.reduce((sum, item) => sum + item.points, 0);
+}
+
 export interface ApsStrategy {
   readonly code: string;
   calculate(marks: Mark[], bands: ApsBand[]): number;
