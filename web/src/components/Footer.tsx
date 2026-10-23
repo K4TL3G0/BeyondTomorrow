@@ -22,6 +22,7 @@ export function Footer() {
             <ul>
               <li><Link to="/">Home</Link></li>
               <li><Link to="/pathways">Pathways & APS</Link></li>
+              <li><Link to="/applications">Applications</Link></li>
               <li><Link to="/funding">Funding & NSFAS</Link></li>
               <li><Link to="/checklist">Checklist & Deadlines</Link></li>
               <li><Link to="/resources">Resources & Guides</Link></li>

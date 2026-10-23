@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { RequireAuth } from './components/RequireAuth';
+import ApplicationsPage from './features/applications/ApplicationsPage';
 import Checklist from './pages/Checklist';
 import Funding from './pages/Funding';
 import Institutions from './pages/Institutions';
@@ -9,6 +10,7 @@ import NotFound from './pages/NotFound';
 import Onboarding from './pages/Onboarding';
 import Pathways from './pages/Pathways';
 import Resources from './pages/Resources';
+import ApsCalculator from './pages/ApsCalculator';
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="resources" element={<Resources />} />
         <Route path="institutions" element={<Institutions />} />
+        <Route path="aps" element={<ApsCalculator />} />
+        <Route path="applications" element={<ApplicationsPage />} />
         <Route path="onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
         <Route path="pathways" element={<RequireAuth><Pathways /></RequireAuth>} />
         <Route path="funding" element={<RequireAuth><Funding /></RequireAuth>} />
