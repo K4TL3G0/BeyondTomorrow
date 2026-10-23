@@ -5,7 +5,8 @@ Owner: Daniel. Run in the Supabase SQL Editor, in order:
 1. `01_schema_and_rls.sql`: tables, constraints, audit triggers, RLS, grants
 2. `02_seed.sql`: subjects, weights, checklist, NSFAS row, **fictional sample data**
 3. `04_resources.sql`: Resources table
-4. `03_rls_tests.sql`: run one test at a time, screenshot each result (SSDLC evidence)
+4. `05_student_loans.sql`: funding-source descriptions and South African student-loan links
+5. `03_rls_tests.sql`: run one test at a time, screenshot each result (SSDLC evidence)
 
 Rules
 - Never change tables by hand in the dashboard without committing the SQL here.
