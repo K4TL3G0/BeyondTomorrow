@@ -271,31 +271,16 @@ function StudentLoanGuide() {
 }
 
 function OpportunityLogo({ item }: { item: Opportunity }) {
-  const [imageFailed, setImageFailed] = useState(false);
-  const initials = item.title
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase();
-
   return (
     <span className="opportunity-logo">
-      {imageFailed ? (
-        <span className="opportunity-logo-fallback" aria-hidden="true">{initials}</span>
-      ) : (
-        <img
-          className="opportunity-logo-image"
-          src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(item.logoDomain)}&sz=128`}
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-          referrerPolicy="no-referrer"
-          onError={() => setImageFailed(true)}
-        />
-      )}
+      <img
+        className="opportunity-logo-image"
+        src={`/funding/${item.logo}`}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+      />
     </span>
   );
 }
