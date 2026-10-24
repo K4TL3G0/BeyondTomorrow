@@ -7,7 +7,7 @@ export function ApsExplainer() {
         <h2>What is an APS?</h2>
         <p>
           Your Admission Point Score (APS) turns your matric marks into points. This general estimate uses the
-          seven-point achievement scale and adds your best six selected subjects.
+          seven-point achievement scale and adds every selected subject.
         </p>
 
         <div className="aps-table-wrap">
@@ -37,11 +37,12 @@ export function ApsExplainer() {
         <ul>
           <li>
             Institutions can use different scales, count Life Orientation, or require specific subjects and marks.
-            This general estimate is not a substitute for checking the programme&apos;s official requirements.
+            Compare estimates for selected institutions below, and confirm programme requirements with the institution.
           </li>
           <li>
-            You can choose which subjects to include. Life Orientation is excluded by default; the calculator
-            counts at most the best six selected subjects.
+            Life Orientation is a required subject and is excluded from the general estimate by default. English is
+            automatically set as a first additional language unless you choose English Home Language. Institutional
+            estimates apply each institution&apos;s own subject rules.
           </li>
           <li>Meeting an APS minimum does not guarantee admission. Confirm all requirements with the institution.</li>
         </ul>

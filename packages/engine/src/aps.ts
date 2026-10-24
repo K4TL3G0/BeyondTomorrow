@@ -27,7 +27,11 @@ export type InstitutionScheme =
       scale?: Scale;
       required?: string[];
       loBonus?: { minPercent: number; points: number };
+      excludeBelow?: number;
     }
+  | { type: 'nmu' }
+  | { type: 'rhodes'; bestN: number; excludeLO: boolean }
+  | { type: 'stellies' }
   | { type: 'uct'; variant: 'general' | 'science' }
   | { type: 'wits' };
 
@@ -59,7 +63,14 @@ export interface Level {
   points: number;
 }
 
-export type SubjectKind = 'english' | 'mathematics' | 'physical-sciences' | 'life-orientation' | 'other';
+export type SubjectKind =
+  | 'english'
+  | 'afrikaans'
+  | 'mathematics'
+  | 'mathematical-literacy'
+  | 'physical-sciences'
+  | 'life-orientation'
+  | 'other';
 
 export const LEVELS: Level[] = [
   { level: 7, minMark: 80, maxMark: 100, points: 7 },
@@ -103,7 +114,9 @@ export function convertMark(percent: number, scale: Scale = 'seven'): number {
 export function classifySubject(name: string): SubjectKind {
   const normalized = name.toLowerCase();
   if (isLifeOrientation(name)) return 'life-orientation';
-  if (/english|home language|first additional language/.test(normalized)) return 'english';
+  if (/\benglish\b/.test(normalized)) return 'english';
+  if (/\bafrikaans\b/.test(normalized)) return 'afrikaans';
+  if (/mathematical literacy|maths literacy/.test(normalized)) return 'mathematical-literacy';
   if (/mathematics|maths/.test(normalized)) return 'mathematics';
   if (/physical sciences/.test(normalized)) return 'physical-sciences';
   return 'other';
@@ -127,13 +140,19 @@ export function calculateForInstitution(
   entries: SubjectEntry[],
 ): InstitutionResult {
   const { scheme } = institution;
-  const candidates = entries.filter((entry) =>
-    scheme.type === 'standard'
-      ? !(scheme.excludeLO && isLifeOrientation(entry.name))
-      : scheme.type === 'uct'
-        ? !isLifeOrientation(entry.name)
-        : true,
-  );
+  const candidates = entries.filter((entry) => {
+    if (scheme.type === 'standard') {
+      return !(scheme.excludeLO && isLifeOrientation(entry.name)) &&
+        (scheme.excludeBelow === undefined || entry.percent >= scheme.excludeBelow);
+    }
+    if (scheme.type === 'rhodes') return !(scheme.excludeLO && isLifeOrientation(entry.name));
+    if (scheme.type === 'nmu' || scheme.type === 'stellies' || scheme.type === 'uct') {
+      if (isLifeOrientation(entry.name)) return false;
+      return scheme.type !== 'stellies' ||
+        !/advanced mathematics|(?:maths|mathematics) paper\s*3/i.test(entry.name);
+    }
+    return true;
+  });
 
   if (scheme.type === 'uct') {
     const resultRows = candidates.map((entry) => ({
@@ -187,22 +206,109 @@ export function calculateForInstitution(
   }
 
   if (scheme.type === 'wits') {
-    const rows = candidates.map((entry) => {
-      const kind = classifySubject(entry.name);
-      const base = kind === 'life-orientation' ? loPoints(entry.percent) : convertMark(entry.percent);
-      const bonus = (kind === 'english' || kind === 'mathematics') && entry.percent >= 60 ? 2 : 0;
-      return { ...entry, aps: base + bonus, level: getLevel(entry.percent), reason: '' };
-    });
-    const selected = rows
-      .sort((a, b) => b.aps - a.aps)
-      .slice(0, 7);
+    const rows = entries.map((entry) => ({
+      ...entry,
+      aps: witsPoints(entry),
+      level: getLevel(entry.percent),
+      reason: '',
+    }));
+    const english = bestByMark(rows.filter((row) => classifySubject(row.name) === 'english'));
+    const mathematics = bestByMark(rows
+      .filter((row) => classifySubject(row.name) === 'mathematics')
+      .sort((left, right) => right.percent - left.percent));
+    const mathsLiteracy = mathematics
+      ? undefined
+      : bestByMark(rows.filter((row) => classifySubject(row.name) === 'mathematical-literacy'));
+    const maths = mathematics ?? mathsLiteracy;
+    const lifeOrientation = bestByMark(rows.filter((row) => isLifeOrientation(row.name)));
+    const required = [english, maths, lifeOrientation]
+      .filter((row): row is (typeof rows)[number] => row !== undefined);
+    const requiredSet = new Set(required);
+    const additional = rows
+      .filter((row) => !requiredSet.has(row) && !isLifeOrientation(row.name))
+      .sort((left, right) => witsOtherPoints(right.percent) - witsOtherPoints(left.percent))
+      .slice(0, 4);
+    const selected = [...required, ...additional];
+    return {
+      total: required.reduce((sum, row) => sum + row.aps, 0) +
+        additional.reduce((sum, row) => sum + witsOtherPoints(row.percent), 0),
+      maximum: 56,
+      breakdown: rows.map((row) => ({
+        ...row,
+        aps: requiredSet.has(row) ? row.aps : witsOtherPoints(row.percent),
+        counted: selected.includes(row),
+        reason: selected.includes(row) ? 'Included in the Wits score' : 'Not among the selected seven subjects',
+      })),
+    };
+  }
+
+  if (scheme.type === 'nmu') {
+    const rows = candidates.map((entry) => ({
+      ...entry,
+      aps: entry.percent,
+      level: getLevel(entry.percent),
+      reason: '',
+    }));
+    const selected = rows.slice().sort((a, b) => b.percent - a.percent).slice(0, 6);
     return {
       total: selected.reduce((sum, row) => sum + row.aps, 0),
-      maximum: 53,
+      maximum: 600,
       breakdown: rows.map((row) => ({
         ...row,
         counted: selected.includes(row),
-        reason: selected.includes(row) ? 'Included in the Wits score' : 'Not among the selected seven subjects',
+        reason: selected.includes(row) ? 'Included in the NMU Applicant Score' : 'Not among the selected six subjects',
+      })),
+    };
+  }
+
+  if (scheme.type === 'rhodes') {
+    const rows = candidates.map((entry) => ({
+      ...entry,
+      aps: entry.percent / 10,
+      level: getLevel(entry.percent),
+      reason: '',
+    }));
+    const selected = rows.slice().sort((left, right) => right.percent - left.percent).slice(0, scheme.bestN);
+    return {
+      total: selected.reduce((sum, row) => sum + row.aps, 0),
+      maximum: scheme.bestN * 10,
+      breakdown: rows.map((row) => ({
+        ...row,
+        counted: selected.includes(row),
+        reason: selected.includes(row) ? 'Included in the Rhodes score' : 'Not among the selected subjects',
+      })),
+    };
+  }
+
+  if (scheme.type === 'stellies') {
+    const rows = candidates.map((entry) => ({
+      ...entry,
+      aps: entry.percent,
+      level: getLevel(entry.percent),
+      reason: '',
+    }));
+    const language = bestByMark(rows.filter((row) => {
+      const kind = classifySubject(row.name);
+      return kind === 'english' || kind === 'afrikaans';
+    }));
+    const otherSubjects = rows
+      .filter((row) => row !== language)
+      .sort((left, right) => right.percent - left.percent)
+      .slice(0, 5);
+    const selected = [...(language ? [language] : []), ...otherSubjects];
+    return {
+      total: language
+        ? selected.reduce((sum, row) => sum + row.percent, 0) / 6
+        : 0,
+      maximum: 100,
+      breakdown: rows.map((row) => ({
+        ...row,
+        counted: selected.includes(row),
+        reason: selected.includes(row)
+          ? 'Included in the Stellenbosch admission average'
+          : language
+            ? 'Not among the selected subjects'
+            : 'English or Afrikaans is required for this calculation',
       })),
     };
   }
@@ -234,11 +340,34 @@ function getLevel(percent: number): number {
 }
 
 function loPoints(percent: number): number {
-  if (percent >= 80) return 4;
-  if (percent >= 70) return 3;
-  if (percent >= 60) return 2;
-  if (percent >= 50) return 1;
+  if (percent >= 90) return 4;
+  if (percent >= 80) return 3;
+  if (percent >= 70) return 2;
+  if (percent >= 60) return 1;
   return 0;
+}
+
+function witsOtherPoints(percent: number): number {
+  if (percent >= 90) return 8;
+  if (percent >= 80) return 7;
+  if (percent >= 70) return 6;
+  if (percent >= 60) return 5;
+  if (percent >= 50) return 4;
+  if (percent >= 40) return 3;
+  return 0;
+}
+
+function witsPoints(entry: SubjectEntry): number {
+  const kind = classifySubject(entry.name);
+  if (kind === 'life-orientation') return loPoints(entry.percent);
+  const points = witsOtherPoints(entry.percent);
+  return (kind === 'english' || kind === 'mathematics') && entry.percent >= 60
+    ? points + 2
+    : points;
+}
+
+function bestByMark<T extends { percent: number }>(rows: T[]): T | undefined {
+  return rows.slice().sort((left, right) => right.percent - left.percent)[0];
 }
 
 function pickFirst<T extends { name: string }>(rows: T[], kind: SubjectKind): T | undefined {

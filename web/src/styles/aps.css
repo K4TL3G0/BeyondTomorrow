@@ -11,7 +11,7 @@
 
 .aps-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 9rem auto auto;
+  grid-template-columns: minmax(0, 1fr) 9rem 6rem 2.5rem;
   width: 100%;
   gap: 1rem;
   align-items: center;
@@ -20,6 +20,7 @@
 .aps-count {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.5rem;
   white-space: nowrap;
 }
@@ -31,11 +32,13 @@
 }
 
 .aps-remove {
+  width: 2.5rem;
+  height: 2.5rem;
   background: rgba(239, 68, 68, 0.1);
   color: #dc2626;
   border: 1px solid rgba(239, 68, 68, 0.25);
   border-radius: 8px;
-  padding: 0.5rem;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -60,6 +63,27 @@
 }
 
 .aps input[aria-invalid='true'] {
+  border-color: #ef4444;
+  outline-color: #ef4444;
+}
+
+.aps select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+}
+
+.aps select:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.aps select[aria-invalid='true'] {
   border-color: #ef4444;
   outline-color: #ef4444;
 }
@@ -132,6 +156,78 @@
 
 .aps-table tbody tr:hover {
   background-color: color-mix(in srgb, var(--primary) 8%, var(--card));
+}
+
+.aps-compare {
+  margin-top: 2rem;
+}
+
+.aps-compare > h2 {
+  margin-top: 0;
+}
+
+.aps-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin: 1.25rem 0;
+}
+
+.aps-inst-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.aps-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.aps-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.aps-card-summary {
+  padding: 1.25rem;
+}
+
+.aps-card-summary h3 {
+  margin: 0 0 0.75rem;
+}
+
+.aps-card-summary .aps-score {
+  margin: 0;
+}
+
+.aps-card-content {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.aps-card-content h4 {
+  margin: 1rem 0 0.5rem;
+}
+
+.aps-qualification-list {
+  display: grid;
+  gap: 1rem;
+  padding-left: 1.25rem;
+}
+
+.aps-score-n {
+  font-size: 1.25rem;
+}
+
+.aps-note {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .aps-dim {
