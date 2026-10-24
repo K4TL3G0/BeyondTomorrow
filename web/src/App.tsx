@@ -8,7 +8,7 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Onboarding from './pages/Onboarding';
 import Pathways from './pages/Pathways';
-import Resources from './pages/Resources';
+import Resources, { SubjectResources } from './pages/Resources';
 
 export default function App() {
   return (
@@ -17,6 +17,7 @@ export default function App() {
         <Route index element={<Institutions />} />
         <Route path="login" element={<Login />} />
         <Route path="resources" element={<Resources />} />
+        <Route path="resources/:subjectSlug" element={<SubjectResources />} />
         <Route path="institutions" element={<Institutions />} />
         <Route path="onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
         <Route path="pathways" element={<RequireAuth><Pathways /></RequireAuth>} />
