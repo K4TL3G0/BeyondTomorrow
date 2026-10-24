@@ -28,6 +28,7 @@ export type InstitutionScheme =
       required?: string[];
       loBonus?: { minPercent: number; points: number };
     }
+  | { type: 'rhodes'; bestN: number; excludeLO: boolean }
   | { type: 'uct'; variant: 'general' | 'science' }
   | { type: 'wits' };
 
@@ -128,7 +129,7 @@ export function calculateForInstitution(
 ): InstitutionResult {
   const { scheme } = institution;
   const candidates = entries.filter((entry) =>
-    scheme.type === 'standard'
+    scheme.type === 'standard' || scheme.type === 'rhodes'
       ? !(scheme.excludeLO && isLifeOrientation(entry.name))
       : scheme.type === 'uct'
         ? !isLifeOrientation(entry.name)
@@ -203,6 +204,28 @@ export function calculateForInstitution(
         ...row,
         counted: selected.includes(row),
         reason: selected.includes(row) ? 'Included in the Wits score' : 'Not among the selected seven subjects',
+      })),
+    };
+  }
+
+  if (scheme.type === 'rhodes') {
+    const rows = candidates.map((entry) => ({
+      ...entry,
+      aps: entry.percent >= 40 ? entry.percent / 10 : 0,
+      level: getLevel(entry.percent),
+      reason: '',
+    }));
+    const selected = rows
+      .slice()
+      .sort((a, b) => b.aps - a.aps)
+      .slice(0, scheme.bestN);
+    return {
+      total: selected.reduce((sum, row) => sum + row.aps, 0),
+      maximum: scheme.bestN * 10,
+      breakdown: rows.map((row) => ({
+        ...row,
+        counted: selected.includes(row),
+        reason: selected.includes(row) ? 'Included in the Rhodes score' : 'Not among the selected subjects',
       })),
     };
   }

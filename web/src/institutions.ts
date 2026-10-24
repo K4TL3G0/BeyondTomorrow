@@ -129,9 +129,9 @@ export const INSTITUTIONS: ApsInstitution[] = [
     year: 2027,
     checked: "2026-10-21",
     source: "https://www.ru.ac.za/",    // page to verify against
-    scheme: { type: "standard", bestN: 6, excludeLO: false },
-    notes: ["Standard NSC APS: best six subjects on the 1-7 scale, Life Orientation excluded."],
-    caveat: "This is the standard NSC APS, not confirmed against Rhodes' own rules. Check their prospectus.",
+    scheme: { type: "rhodes", bestN: 6, excludeLO: true },
+    notes: ["The six best subjects are scored by dividing each percentage mark by 10; Life Orientation is excluded."],
+    caveat: "Confirm the subject selection rules and score calculation against the current Rhodes prospectus.",
   },
     {
     id: "uni venda",                       // unique, lowercase, no spaces

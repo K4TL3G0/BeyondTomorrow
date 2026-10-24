@@ -1,10 +1,17 @@
 import { ChartNoAxesColumnIncreasing } from 'lucide-react';
+import type { SubjectEntry } from '@beyond-tomorrow/engine';
 import { Hero } from '../components/Hero';
 import { ApsExplainer } from '../components/aps/ApsExplainer';
+import { InstitutionResults } from '../components/aps/InstitutionResults';
 import { ResultsTable } from '../components/aps/ResultsTable';
 import { SubjectRow } from '../components/aps/SubjectRow';
 import { InfoTooltip } from '../components/InfoTooltip';
-import { SUBJECT_SUGGESTIONS } from '../lib/subjects';
+import {
+  FIRST_ADDITIONAL_LANGUAGE_OPTIONS,
+  HOME_LANGUAGE_OPTIONS,
+  SUBJECT_SUGGESTIONS,
+  hasDuplicateSecondAdditionalLanguage,
+} from '../lib/subjects';
 import { useApsCalculator } from '../lib/useApsCalculator';
 import '../styles/aps.css';
 
@@ -13,6 +20,19 @@ const DATALIST_ID = 'aps-subjects';
 export default function ApsCalculator() {
   const calc = useApsCalculator();
   const { countedSubjects } = calc.result;
+  const homeLanguage = calc.rows.find((row) => row.type === 'home-language')?.name ?? '';
+  const firstAdditionalLanguage = calc.rows.find((row) => row.type === 'first-additional')?.name ?? '';
+  const englishHomeLanguage = homeLanguage === 'English Home Language';
+  const availableFirstAdditionalLanguages = englishHomeLanguage
+    ? FIRST_ADDITIONAL_LANGUAGE_OPTIONS.filter((language) => language !== 'English First Additional Language')
+    : ['English First Additional Language'];
+  const availableSubjectSuggestions = SUBJECT_SUGGESTIONS.filter((subject) =>
+    !hasDuplicateSecondAdditionalLanguage(subject, homeLanguage, firstAdditionalLanguage));
+  const institutionEntries: SubjectEntry[] = calc.result.breakdown.map(({ name, percent, counted }) => ({
+    name,
+    percent,
+    counted,
+  }));
 
   return (
     <div className="page-wrapper">
@@ -36,7 +56,7 @@ export default function ApsCalculator() {
           <ApsExplainer />
 
           <datalist id={DATALIST_ID}>
-            {SUBJECT_SUGGESTIONS.map((subject) => (
+            {availableSubjectSuggestions.map((subject) => (
               <option key={subject} value={subject} />
             ))}
           </datalist>
@@ -49,6 +69,16 @@ export default function ApsCalculator() {
                 invalid={calc.invalidIds.has(row.id)}
                 autoFocus={row.id === calc.focusId}
                 datalistId={DATALIST_ID}
+                nameOptions={row.type === 'life-orientation'
+                  ? ['Life Orientation']
+                  : row.type === 'home-language'
+                    ? HOME_LANGUAGE_OPTIONS
+                    : row.type === 'first-additional'
+                      ? availableFirstAdditionalLanguages
+                      : undefined}
+                nameDisabled={row.type === 'life-orientation' || (
+                  row.type === 'first-additional' && !englishHomeLanguage
+                )}
                 onName={calc.setName}
                 onMark={calc.setMark}
                 onCounted={calc.setCounted}
@@ -57,9 +87,13 @@ export default function ApsCalculator() {
             ))}
           </div>
 
-          {calc.invalidIds.size > 0 && (
+          {calc.invalidMarkIds.size > 0 && (
+            <p className="aps-err" role="alert">Marks must be whole numbers between 0 and 100.</p>
+          )}
+          {calc.duplicateLanguageIds.size > 0 && (
             <p className="aps-err" role="alert">
-              Marks must be whole numbers between 0 and 100.
+              A second additional language must be different from your home and first additional languages. English
+              cannot be a second additional language.
             </p>
           )}
 
@@ -81,10 +115,19 @@ export default function ApsCalculator() {
             </h2>
             <InfoTooltip
               title="How APS is calculated"
-              content="Most South African tertiary institutions calculate your APS using your best 6 subjects (excluding Life Orientation). Each percentage score maps to a 1–7 achievement level."
+              content="This general estimate adds every subject marked Count. Each percentage maps to a 1–7 achievement level. Institution estimates below use each institution's own rules."
             />
           </div>
           <ResultsTable breakdown={calc.result.breakdown} />
+
+          <section className="aps-compare" aria-labelledby="aps-compare-title">
+            <h2 id="aps-compare-title">Institutions with matching qualifications</h2>
+            <p className="muted">
+              These institutions have at least one listed 2027 qualification matching your APS and subject marks.
+              Selection, audition, interview, NBT and portfolio requirements may also apply.
+            </p>
+            <InstitutionResults entries={institutionEntries} />
+          </section>
         </section>
       </div>
     </div>

@@ -70,11 +70,27 @@ describe('APS calculator', () => {
     const uct = INSTITUTIONS.find((institution) => institution.id === 'uct');
     const uctScience = INSTITUTIONS.find((institution) => institution.id === 'uct-science');
     const wits = INSTITUTIONS.find((institution) => institution.id === 'wits');
+    const rhodes = INSTITUTIONS.find((institution) => institution.id === 'rhodes');
     const venda = INSTITUTIONS.find((institution) => institution.id === 'univen');
     expect(uj && calculateForInstitution(uj, entries).total).toBe(36);
     expect(uct && calculateForInstitution(uct, entries).total).toBe(440);
     expect(uctScience && calculateForInstitution(uctScience, entries).total).toBe(585);
     expect(wits && calculateForInstitution(wits, entries).total).toBe(44);
+    expect(rhodes && calculateForInstitution(rhodes, entries)).toMatchObject({
+      total: 44,
+      maximum: 60,
+      breakdown: [
+        { name: 'English Home Language', aps: 7, counted: true },
+        { name: 'Mathematics', aps: 6.5, counted: true },
+        { name: 'Physical Sciences', aps: 8, counted: true },
+        { name: 'Life Sciences', aps: 7.5, counted: true },
+        { name: 'Geography', aps: 9, counted: true },
+        { name: 'History', aps: 6, counted: true },
+      ],
+    });
+    expect(rhodes && calculateForInstitution(rhodes, [
+      { name: 'English Home Language', percent: 39, counted: true },
+    ]).breakdown[0]?.aps).toBe(0);
     expect(convertMark(29, 'univen')).toBe(1);
     expect(venda?.scheme).toMatchObject({ type: 'standard', excludeLO: true, scale: 'univen' });
     expect(INSTITUTIONS.some((institution) => institution.id === 'uni venda')).toBe(false);
