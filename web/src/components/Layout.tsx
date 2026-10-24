@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
@@ -15,25 +16,30 @@ const links = [
 export function Layout() {
   const { session } = useAuth();
   const location = useLocation();
+  const scrollToTop = () => window.scrollTo(0, 0);
+
+  useLayoutEffect(() => {
+    scrollToTop();
+  }, [location.pathname]);
   const isAuthPage = location.pathname === '/login';
   const isApplicationsPage = location.pathname === '/applications';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <header className="nav">
-        <Link to="/" className="brand">
+        <Link to="/" className="brand" onClick={scrollToTop}>
           <img src="/logo.svg" alt="Beyond Tomorrow Logo" />
           <span>Beyond Tomorrow</span>
         </Link>
         <nav aria-label="Main">
           {links.map(([to, label]) => (
-            <NavLink key={to} to={to}>{label}</NavLink>
+            <NavLink key={to} to={to} onClick={scrollToTop}>{label}</NavLink>
           ))}
         </nav>
         {session ? (
           <button onClick={() => supabase.auth.signOut()}>Sign out</button>
         ) : (
-          <NavLink to="/login">Sign in</NavLink>
+          <NavLink to="/login" onClick={scrollToTop}>Sign in</NavLink>
         )}
       </header>
       {isApplicationsPage ? (
