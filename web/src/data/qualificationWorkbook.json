@@ -18,7 +18,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-3",
@@ -39,7 +40,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-4",
@@ -60,7 +62,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-5",
@@ -81,7 +84,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-6",
@@ -102,7 +106,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-7",
@@ -123,7 +128,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-8",
@@ -144,7 +150,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement. Same requirements shown in the UP Faculty of Law brochure (cross-checked).",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-9",
@@ -165,7 +172,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-10",
@@ -186,7 +194,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-11",
@@ -207,7 +216,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-12",
@@ -228,7 +238,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-13",
@@ -249,7 +260,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-14",
@@ -270,7 +282,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-15",
@@ -291,7 +304,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-16",
@@ -312,7 +326,8 @@
     "needsChecking": false,
     "notes": "Accounting at school is not a subject requirement.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-17",
@@ -333,7 +348,8 @@
     "needsChecking": true,
     "notes": "Accounting at school is not a subject requirement. Brochure lists only '[4 years]' and does not name it as extended/foundation; selection criteria not published in the brochure.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-18",
@@ -354,7 +370,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-19",
@@ -375,7 +392,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-20",
@@ -396,7 +414,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-21",
@@ -417,7 +436,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-22",
@@ -438,7 +458,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-23",
@@ -459,7 +480,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-24",
@@ -480,7 +502,8 @@
     "needsChecking": false,
     "notes": "Interfaculty programme with Human Nutrition (Faculty of Health Sciences).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-25",
@@ -501,7 +524,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-26",
@@ -522,7 +546,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-27",
@@ -543,7 +568,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-28",
@@ -564,7 +590,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-29",
@@ -585,7 +612,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences. Brochure lists Genetics/Human Genetics (and Human Physiology / Human Physiology, Genetics and Psychology) on one shared requirements row.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-30",
@@ -606,7 +634,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences. Brochure lists Genetics/Human Genetics (and Human Physiology / Human Physiology, Genetics and Psychology) on one shared requirements row.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-31",
@@ -627,7 +656,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences. Brochure lists Genetics/Human Genetics (and Human Physiology / Human Physiology, Genetics and Psychology) on one shared requirements row.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-32",
@@ -648,7 +678,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences. Brochure lists Genetics/Human Genetics (and Human Physiology / Human Physiology, Genetics and Psychology) on one shared requirements row.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-33",
@@ -669,7 +700,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-34",
@@ -690,7 +722,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-35",
@@ -711,7 +744,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-36",
@@ -732,7 +766,8 @@
     "needsChecking": false,
     "notes": "Listed under Biological Sciences.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-37",
@@ -753,7 +788,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-38",
@@ -774,7 +810,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-39",
@@ -795,7 +832,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-40",
@@ -816,7 +854,8 @@
     "needsChecking": false,
     "notes": "Shares a requirements row with BSc Applied Mathematics.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-41",
@@ -837,7 +876,8 @@
     "needsChecking": false,
     "notes": "Shares a requirements row with BSc Mathematics.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-42",
@@ -858,7 +898,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-43",
@@ -879,7 +920,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-44",
@@ -900,7 +942,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-45",
@@ -921,7 +964,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-46",
@@ -942,7 +986,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-47",
@@ -963,7 +1008,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-48",
@@ -984,7 +1030,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-49",
@@ -1005,7 +1052,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-50",
@@ -1026,7 +1074,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc). Physical Sciences shown as N/A in the brochure.",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-51",
@@ -1047,7 +1096,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-52",
@@ -1068,7 +1118,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-53",
@@ -1089,7 +1140,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-54",
@@ -1110,7 +1162,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-55",
@@ -1131,7 +1184,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-56",
@@ -1152,7 +1206,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (five-year BSc in Agriculture).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 5
   },
   {
     "id": "up-workbook-row-57",
@@ -1173,7 +1228,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (five-year BSc in Agriculture).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 5
   },
   {
     "id": "up-workbook-row-58",
@@ -1194,7 +1250,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-59",
@@ -1215,7 +1272,8 @@
     "needsChecking": true,
     "notes": "Duration taken from the page heading (four-year BSc).",
     "faculty": "Natural and Agricultural Sciences",
-    "qualificationType": "Degree (foundation)"
+    "qualificationType": "Degree (foundation)",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-60",
@@ -1236,7 +1294,8 @@
     "needsChecking": false,
     "notes": "Vet science value-added form (VSVAF) discontinued; spending time in a veterinary setting is still recommended.",
     "faculty": "Veterinary Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 6
   },
   {
     "id": "up-workbook-row-61",
@@ -1257,7 +1316,8 @@
     "needsChecking": false,
     "notes": "Value-added form (VNVAF) discontinued.",
     "faculty": "Veterinary Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-62",
@@ -1278,7 +1338,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 5
   },
   {
     "id": "up-workbook-row-63",
@@ -1299,7 +1360,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-64",
@@ -1320,7 +1382,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-65",
@@ -1341,7 +1404,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-66",
@@ -1362,7 +1426,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-67",
@@ -1383,7 +1448,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-68",
@@ -1404,7 +1470,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-69",
@@ -1425,7 +1492,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-70",
@@ -1446,7 +1514,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 6
   },
   {
     "id": "up-workbook-row-71",
@@ -1467,7 +1536,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-72",
@@ -1488,7 +1558,8 @@
     "needsChecking": false,
     "notes": "Column order (Maths first, English second) read from the page image.",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-73",
@@ -1509,7 +1580,8 @@
     "needsChecking": false,
     "notes": "Column order (Maths first, English second) read from the page image.",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-74",
@@ -1530,7 +1602,8 @@
     "needsChecking": false,
     "notes": "Applicants with APS 32, Maths level 4 and English level 5 may start in another degree and transfer after passing STC 110 and STC 122.",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-75",
@@ -1551,7 +1624,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-76",
@@ -1572,7 +1646,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-77",
@@ -1593,7 +1668,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-78",
@@ -1614,7 +1690,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-79",
@@ -1635,7 +1712,8 @@
     "needsChecking": false,
     "notes": "Same requirements shown in the UP Faculty of Law brochure (cross-checked).",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-80",
@@ -1656,7 +1734,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-81",
@@ -1677,7 +1756,8 @@
     "needsChecking": false,
     "notes": "Brochure notes a possible name change to Bachelor of Social Science specialising in Heritage and Cultural Tourism.",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-82",
@@ -1698,7 +1778,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-83",
@@ -1719,7 +1800,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-84",
@@ -1740,7 +1822,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-85",
@@ -1761,7 +1844,8 @@
     "needsChecking": false,
     "notes": "Five-year programme as stated in the brochure.",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 5
   },
   {
     "id": "up-workbook-row-86",
@@ -1782,7 +1866,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-87",
@@ -1803,7 +1888,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-88",
@@ -1824,7 +1910,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-89",
@@ -1845,7 +1932,8 @@
     "needsChecking": false,
     "notes": "Music requirement wording condensed from the table.",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-90",
@@ -1866,7 +1954,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Humanities",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 5
   },
   {
     "id": "up-workbook-row-91",
@@ -1887,7 +1976,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Education",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-92",
@@ -1908,7 +1998,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Education",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-93",
@@ -1929,7 +2020,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Education",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-94",
@@ -1950,7 +2042,8 @@
     "needsChecking": true,
     "notes": "Elective-specific subject requirements are on pages 8\u20139; the Mathematical Literacy line is printed as 'level 4 in Mathematics' and should be confirmed.",
     "faculty": "Education",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-95",
@@ -1971,7 +2064,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Education",
-    "qualificationType": "Higher Certificate"
+    "qualificationType": "Higher Certificate",
+    "durationYears": 1
   },
   {
     "id": "up-workbook-row-96",
@@ -1992,7 +2086,8 @@
     "needsChecking": false,
     "notes": "Appears on the same requirements table as the 1-year contact programme.",
     "faculty": "Education",
-    "qualificationType": "Higher Certificate"
+    "qualificationType": "Higher Certificate",
+    "durationYears": 2
   },
   {
     "id": "up-workbook-row-97",
@@ -2013,7 +2108,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Theology and Religion",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-98",
@@ -2034,7 +2130,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Theology and Religion",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "up-workbook-row-99",
@@ -2055,7 +2152,8 @@
     "needsChecking": false,
     "notes": "Intended for candidates who completed the NSC/IEB but without the required university admission.",
     "faculty": "Theology and Religion",
-    "qualificationType": "Diploma"
+    "qualificationType": "Diploma",
+    "durationYears": 3
   },
   {
     "id": "up-workbook-row-100",
@@ -2076,7 +2174,8 @@
     "needsChecking": false,
     "notes": "BCom (Law) is listed under Economic and Management Sciences and BA (Law) under Humanities.",
     "faculty": "Law",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-101",
@@ -2097,7 +2196,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-102",
@@ -2118,7 +2218,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-103",
@@ -2139,7 +2240,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-104",
@@ -2160,7 +2262,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-105",
@@ -2181,7 +2284,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-106",
@@ -2202,7 +2306,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-107",
@@ -2223,7 +2328,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-108",
@@ -2244,7 +2350,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-109",
@@ -2265,7 +2372,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-110",
@@ -2286,7 +2394,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "AgriSciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-111",
@@ -2328,7 +2437,8 @@
     "needsChecking": false,
     "notes": "Faculty minimum: NSC/IEB with at least 50% (level 4) in each of four school subjects from the faculty's listed subjects (including one language of learning and teaching and two other recognised languages).",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-113",
@@ -2349,7 +2459,8 @@
     "needsChecking": false,
     "notes": "Faculty minimum: NSC/IEB with at least 50% (level 4) in each of four school subjects from the faculty's listed subjects (including one language of learning and teaching and two other recognised languages).",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-114",
@@ -2370,7 +2481,8 @@
     "needsChecking": false,
     "notes": "Faculty minimum: NSC/IEB with at least 50% (level 4) in each of four school subjects from the faculty's listed subjects (including one language of learning and teaching and two other recognised languages).",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-115",
@@ -2391,7 +2503,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-116",
@@ -2412,7 +2525,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-117",
@@ -2433,7 +2547,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-118",
@@ -2454,7 +2569,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-119",
@@ -2475,7 +2591,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-120",
@@ -2496,7 +2613,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-121",
@@ -2517,7 +2635,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-122",
@@ -2538,7 +2657,8 @@
     "needsChecking": false,
     "notes": "No NSC aggregate stated; entry rule is 40% in four subjects.",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Diploma"
+    "qualificationType": "Diploma",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-123",
@@ -2559,7 +2679,8 @@
     "needsChecking": true,
     "notes": "Not a school-leaver entry programme.",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Advanced Diploma"
+    "qualificationType": "Advanced Diploma",
+    "durationYears": 1
   },
   {
     "id": "stellies-workbook-row-124",
@@ -2580,7 +2701,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Higher Certificate"
+    "qualificationType": "Higher Certificate",
+    "durationYears": 1
   },
   {
     "id": "stellies-workbook-row-125",
@@ -2601,7 +2723,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Arts and Social Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-126",
@@ -2622,7 +2745,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Diploma"
+    "qualificationType": "Diploma",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-127",
@@ -2643,7 +2767,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-128",
@@ -2664,7 +2789,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-129",
@@ -2685,7 +2811,8 @@
     "needsChecking": true,
     "notes": "Brochure says the programme runs from 2027 and that no applicant can apply for it for 2027.",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-130",
@@ -2706,7 +2833,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-131",
@@ -2727,7 +2855,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-132",
@@ -2748,7 +2877,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-133",
@@ -2769,7 +2899,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-134",
@@ -2790,7 +2921,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-135",
@@ -2811,7 +2943,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-136",
@@ -2832,7 +2965,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Economic and Management Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-137",
@@ -2853,7 +2987,8 @@
     "needsChecking": false,
     "notes": "Interfaculty programme with Economic and Management Sciences.",
     "faculty": "Law",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-138",
@@ -2874,7 +3009,8 @@
     "needsChecking": false,
     "notes": "Interfaculty programme with Economic and Management Sciences.",
     "faculty": "Law",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 5
   },
   {
     "id": "stellies-workbook-row-139",
@@ -2895,7 +3031,8 @@
     "needsChecking": false,
     "notes": "Same requirements printed in four faculty sections (pages 3, 6, 8 and 14).",
     "faculty": "Interfaculty (AgriSciences, Arts, EMS, Science)",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-140",
@@ -2916,7 +3053,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Education",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-141",
@@ -2937,7 +3075,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Education",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-142",
@@ -2958,7 +3097,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Engineering",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-143",
@@ -2979,7 +3119,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Engineering",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-144",
@@ -3000,7 +3141,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Engineering",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-145",
@@ -3021,7 +3163,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Engineering",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-146",
@@ -3042,7 +3185,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Engineering",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-147",
@@ -3063,7 +3207,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Engineering",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-148",
@@ -3084,7 +3229,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Engineering",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-149",
@@ -3105,7 +3251,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Law",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-150",
@@ -3126,7 +3273,8 @@
     "needsChecking": false,
     "notes": "Not a school-leaver programme.",
     "faculty": "Law",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-151",
@@ -3147,7 +3295,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Law",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-152",
@@ -3168,7 +3317,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Medicine and Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 6
   },
   {
     "id": "stellies-workbook-row-153",
@@ -3189,7 +3339,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Medicine and Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-154",
@@ -3210,7 +3361,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Medicine and Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-155",
@@ -3231,7 +3383,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Medicine and Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-156",
@@ -3252,7 +3405,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Medicine and Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-157",
@@ -3273,7 +3427,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Medicine and Health Sciences",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-158",
@@ -3294,7 +3449,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-159",
@@ -3315,7 +3471,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-160",
@@ -3336,7 +3493,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-161",
@@ -3357,7 +3515,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-162",
@@ -3378,7 +3537,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-163",
@@ -3399,7 +3559,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-164",
@@ -3420,7 +3581,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-165",
@@ -3441,7 +3603,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-166",
@@ -3462,7 +3625,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-167",
@@ -3483,7 +3647,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-168",
@@ -3504,7 +3669,8 @@
     "needsChecking": false,
     "notes": "Focal areas: Biomedical Mathematical Sciences; Applied Medicinal Chemistry; Bioinformatics and Computational Biology; Biomathematics.",
     "faculty": "Science",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-169",
@@ -3525,7 +3691,8 @@
     "needsChecking": true,
     "notes": "No numeric minimum requirements are published in the brochure.",
     "faculty": "Science",
-    "qualificationType": "Degree (extended curriculum)"
+    "qualificationType": "Degree (extended curriculum)",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-170",
@@ -3546,7 +3713,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Theology",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 3
   },
   {
     "id": "stellies-workbook-row-171",
@@ -3567,7 +3735,8 @@
     "needsChecking": false,
     "notes": "",
     "faculty": "Theology",
-    "qualificationType": "Degree"
+    "qualificationType": "Degree",
+    "durationYears": 4
   },
   {
     "id": "stellies-workbook-row-172",

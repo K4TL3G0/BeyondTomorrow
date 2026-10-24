@@ -1,7 +1,9 @@
 import { ChartNoAxesColumnIncreasing } from 'lucide-react';
+import { useState } from 'react';
 import type { SubjectEntry } from '@beyond-tomorrow/engine';
 import { Hero } from '../components/Hero';
 import { ApsExplainer } from '../components/aps/ApsExplainer';
+import { InstitutionPicker } from '../components/aps/InstitutionPicker';
 import { InstitutionResults } from '../components/aps/InstitutionResults';
 import { ResultsTable } from '../components/aps/ResultsTable';
 import { SubjectRow } from '../components/aps/SubjectRow';
@@ -19,6 +21,7 @@ const DATALIST_ID = 'aps-subjects';
 
 export default function ApsCalculator() {
   const calc = useApsCalculator();
+  const [selectedInstitutions, setSelectedInstitutions] = useState<Set<string>>(() => new Set());
   const { countedSubjects } = calc.result;
   const homeLanguage = calc.rows.find((row) => row.type === 'home-language')?.name ?? '';
   const firstAdditionalLanguage = calc.rows.find((row) => row.type === 'first-additional')?.name ?? '';
@@ -33,6 +36,14 @@ export default function ApsCalculator() {
     percent,
     counted,
   }));
+  function toggleInstitution(id: string, checked: boolean) {
+    setSelectedInstitutions((current) => {
+      const next = new Set(current);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  }
 
   return (
     <div className="page-wrapper">
@@ -121,12 +132,13 @@ export default function ApsCalculator() {
           <ResultsTable breakdown={calc.result.breakdown} />
 
           <section className="aps-compare" aria-labelledby="aps-compare-title">
-            <h2 id="aps-compare-title">Institutions with matching qualifications</h2>
+            <h2 id="aps-compare-title">Compare institutions</h2>
             <p className="muted">
-              These institutions have at least one listed 2027 qualification matching your APS and subject marks.
-              Selection, audition, interview, NBT and portfolio requirements may also apply.
+              Select the institutions you want to compare. We’ll show the qualifications where your marks meet the
+              listed minimum requirements. Selection, audition, interview, NBT and portfolio requirements may also apply.
             </p>
-            <InstitutionResults entries={institutionEntries} />
+            <InstitutionPicker selected={selectedInstitutions} onToggle={toggleInstitution} />
+            <InstitutionResults entries={institutionEntries} selected={selectedInstitutions} />
           </section>
         </section>
       </div>

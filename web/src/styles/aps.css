@@ -195,25 +195,16 @@
   overflow: hidden;
 }
 
-.aps-card > summary {
+.aps-card-summary {
   padding: 1.25rem;
-  cursor: pointer;
 }
 
-.aps-card > summary h3 {
+.aps-card-summary h3 {
   margin: 0 0 0.75rem;
 }
 
-.aps-card > summary .aps-score {
+.aps-card-summary .aps-score {
   margin: 0;
-}
-
-.aps-card-hint {
-  display: inline-block;
-  margin-top: 0.75rem;
-  color: var(--primary);
-  font-size: 0.9rem;
-  font-weight: 600;
 }
 
 .aps-card-content {
@@ -230,20 +221,8 @@
   padding-left: 1.25rem;
 }
 
-.aps-qualification-list p {
-  margin: 0.4rem 0;
-}
-
-.aps-card > summary:focus-visible {
-  outline-offset: -3px;
-}
-
 .aps-score-n {
   font-size: 1.25rem;
-}
-
-.aps-breakdown {
-  padding-left: 1.25rem;
 }
 
 .aps-note {

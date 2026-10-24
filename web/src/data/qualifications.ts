@@ -33,6 +33,7 @@ export interface Qualification {
   institutionId: string;
   name: string;
   intakeYear?: number;
+  durationYears?: number;
   minimumScore?: number;
   minimumAggregate?: number;
   requirements: QualificationRequirement[];
@@ -574,6 +575,7 @@ const workbookQualifications: Qualification[] = workbookRows.map((row) => ({
   institutionId: row.institutionId,
   name: row.name,
   intakeYear: row.intakeYear,
+  durationYears: row.durationYears ?? undefined,
   minimumScore: row.minimumScore ?? undefined,
   minimumAggregate: row.minimumAggregate ?? undefined,
   requirements: [],

@@ -72,28 +72,75 @@ describe('APS calculator', () => {
     const wits = INSTITUTIONS.find((institution) => institution.id === 'wits');
     const rhodes = INSTITUTIONS.find((institution) => institution.id === 'rhodes');
     const venda = INSTITUTIONS.find((institution) => institution.id === 'univen');
+    const nmu = INSTITUTIONS.find((institution) => institution.id === 'neluni');
+    const stellenbosch = INSTITUTIONS.find((institution) => institution.id === 'stellies');
+    const rhodesMarks = [
+      { name: 'English Home Language', percent: 72, counted: true },
+      { name: 'Mathematics', percent: 65, counted: true },
+      { name: 'Physical Sciences', percent: 58, counted: true },
+      { name: 'Life Sciences', percent: 70, counted: true },
+      { name: 'Geography', percent: 63, counted: true },
+      { name: 'Accounting', percent: 55, counted: true },
+      { name: 'History', percent: 90, counted: true },
+      { name: 'Life Orientation', percent: 100, counted: true },
+    ];
     expect(uj && calculateForInstitution(uj, entries).total).toBe(36);
     expect(uct && calculateForInstitution(uct, entries).total).toBe(440);
     expect(uctScience && calculateForInstitution(uctScience, entries).total).toBe(585);
-    expect(wits && calculateForInstitution(wits, entries).total).toBe(44);
-    expect(rhodes && calculateForInstitution(rhodes, entries)).toMatchObject({
-      total: 44,
+    expect(wits && calculateForInstitution(wits, entries)).toMatchObject({ total: 45, maximum: 56 });
+    expect(rhodes && calculateForInstitution(rhodes, rhodesMarks)).toMatchObject({
+      total: 41.8,
       maximum: 60,
       breakdown: [
-        { name: 'English Home Language', aps: 7, counted: true },
+        { name: 'English Home Language', aps: 7.2, counted: true },
         { name: 'Mathematics', aps: 6.5, counted: true },
-        { name: 'Physical Sciences', aps: 8, counted: true },
-        { name: 'Life Sciences', aps: 7.5, counted: true },
-        { name: 'Geography', aps: 9, counted: true },
-        { name: 'History', aps: 6, counted: true },
+        { name: 'Physical Sciences', aps: 5.8, counted: true },
+        { name: 'Life Sciences', aps: 7, counted: true },
+        { name: 'Geography', aps: 6.3, counted: true },
+        { name: 'Accounting', aps: 5.5, counted: false },
+        { name: 'History', aps: 9, counted: true },
       ],
     });
-    expect(rhodes && calculateForInstitution(rhodes, [
-      { name: 'English Home Language', percent: 39, counted: true },
-    ]).breakdown[0]?.aps).toBe(0);
+    expect(nmu && calculateForInstitution(nmu, entries)).toMatchObject({ total: 440, maximum: 600 });
+    expect(stellenbosch && calculateForInstitution(stellenbosch, entries)).toMatchObject({
+      total: 440 / 6,
+      maximum: 100,
+    });
     expect(convertMark(29, 'univen')).toBe(1);
     expect(venda?.scheme).toMatchObject({ type: 'standard', excludeLO: true, scale: 'univen' });
     expect(INSTITUTIONS.some((institution) => institution.id === 'uni venda')).toBe(false);
+  });
+
+  it('excludes sub-30% subjects from TUT and uses NSC scoring for unverified rules', () => {
+    const tut = INSTITUTIONS.find((institution) => institution.id === 'tut');
+    const ufs = INSTITUTIONS.find((institution) => institution.id === 'ufs');
+    const marks = [
+      { name: 'English Home Language', percent: 90, counted: true },
+      { name: 'Mathematics', percent: 80, counted: true },
+      { name: 'Physical Sciences', percent: 70, counted: true },
+      { name: 'Life Sciences', percent: 60, counted: true },
+      { name: 'Geography', percent: 50, counted: true },
+      { name: 'Accounting', percent: 29, counted: true },
+      { name: 'Life Orientation', percent: 100, counted: true },
+    ];
+
+    expect(tut && calculateForInstitution(tut, marks)).toMatchObject({ total: 29, maximum: 42 });
+    expect(ufs && calculateForInstitution(ufs, marks)).toMatchObject({ total: 30, maximum: 42 });
+  });
+
+  it('matches the supplied Wits example calculation', () => {
+    const wits = INSTITUTIONS.find((institution) => institution.id === 'wits');
+    const marks = [
+      { name: 'English Home Language', percent: 72, counted: true },
+      { name: 'Mathematics', percent: 65, counted: true },
+      { name: 'Physical Sciences', percent: 58, counted: true },
+      { name: 'Life Sciences', percent: 70, counted: true },
+      { name: 'Geography', percent: 63, counted: true },
+      { name: 'Accounting', percent: 55, counted: true },
+      { name: 'Life Orientation', percent: 80, counted: true },
+    ];
+
+    expect(wits && calculateForInstitution(wits, marks)).toMatchObject({ total: 37, maximum: 56 });
   });
 });
 

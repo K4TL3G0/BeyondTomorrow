@@ -28,9 +28,12 @@ export const INSTITUTIONS: ApsInstitution[] = [
     year: 2027,
     checked: '2026-10-21',
     source: 'https://www.mandela.ac.za/',
-    scheme: { type: 'standard', bestN: 6, excludeLO: true, scale: 'univen' },
-    notes: ['Standard NSC APS: best six subjects on the 1-7 scale, Life Orientation excluded.'],
-    caveat: 'This is a provisional estimate, not confirmed against Nelson Mandela University’s own rules. Check their prospectus.',
+    scheme: { type: 'nmu' },
+    notes: [
+      'Applicant Score is the total percentage of the six best subjects, excluding Life Orientation (maximum 600).',
+      'Maths Literacy, Technical Mathematics and any Life Orientation bonus are not confirmed by the supplied calculation reference.',
+    ],
+    caveat: 'Confirm subject eligibility and any additional score adjustments against the current NMU prospectus.',
   },
   {
     id: 'rhodes',
@@ -39,8 +42,7 @@ export const INSTITUTIONS: ApsInstitution[] = [
     checked: '2026-10-21',
     source: 'https://www.ru.ac.za/',
     scheme: { type: 'rhodes', bestN: 6, excludeLO: true },
-    notes: ['The six best subjects are scored by dividing each percentage mark by 10; Life Orientation is excluded.'],
-    caveat: 'Confirm the subject selection rules and score calculation against the current Rhodes prospectus.',
+    notes: ['The six best subjects, excluding Life Orientation, are scored as their percentage mark divided by 10 (maximum 60).'],
   },
 
   // Free State
@@ -50,19 +52,8 @@ export const INSTITUTIONS: ApsInstitution[] = [
     year: 2027,
     checked: '2026-10-20',
     source: 'https://www.ufs.ac.za/',
-    scheme: {
-      type: 'standard',
-      bestN: 6,
-      excludeLO: true,
-      scale: 'ufs',
-      loBonus: { minPercent: 60, points: 1 },
-    },
-    notes: [
-      'Six academic subjects on an 8-point scale (90-100% = 8). Marks below 30% score nothing.',
-      'Life Orientation adds 1 point if you score 60% or more; it is otherwise not counted.',
-    ],
-    caveat:
-      'The official UFS brochure I could open is from 2021. A 2027 prospectus summary shows the same table, but a few sites say the top score is 7, so confirm against the current UFS prospectus.',
+    scheme: { type: 'standard', bestN: 6, excludeLO: true },
+    notes: ['Using the standard NSC APS estimate because the supplied reference marks UFS-specific scoring as partly confirmed.'],
   },
   {
     id: 'cut',
@@ -84,11 +75,10 @@ export const INSTITUTIONS: ApsInstitution[] = [
     source: 'https://www.wits.ac.za/',
     scheme: { type: 'wits' },
     notes: [
-      'Wits uses its own weighted scale: English and Mathematics get +2 from 60%, and Life Orientation is counted on a smaller scale (max 4).',
+      'Counts English, Mathematics (or Mathematical Literacy), Life Orientation and the four best remaining subjects.',
+      'English and Mathematics use Wits-specific points with a +2 bonus from 60%; Mathematical Literacy uses the other-subject table. Maximum 56.',
       'Faculty-specific subjects must be part of your seven. Health Sciences uses a different index, not APS.',
     ],
-    caveat:
-      'These rules come from several secondary sources that agree with each other; a few sites say Wits counts the best six without Life Orientation. Confirm against the Wits prospectus.',
   },
   {
     id: 'up',
@@ -128,9 +118,8 @@ export const INSTITUTIONS: ApsInstitution[] = [
     year: 2027,
     checked: '2026-10-21',
     source: 'https://www.tut.ac.za/',
-    scheme: { type: 'standard', bestN: 6, excludeLO: true, scale: 'univen' },
-    notes: ['Standard NSC APS: best six subjects on the 1-7 scale, Life Orientation excluded.'],
-    caveat: 'This is a provisional estimate, not confirmed against Tshwane University of Technology’s own rules. Check their prospectus.',
+    scheme: { type: 'standard', bestN: 6, excludeLO: true, excludeBelow: 30 },
+    notes: ['Best six subjects on the standard 1-7 scale; Life Orientation and subjects below 30% are excluded.'],
   },
   {
     id: 'vut',
@@ -291,9 +280,11 @@ export const INSTITUTIONS: ApsInstitution[] = [
     year: 2027,
     checked: '2026-10-21',
     source: 'https://www.su.ac.za/en',
-    scheme: { type: 'standard', bestN: 6, excludeLO: true, scale: 'univen' },
-    notes: ['Standard NSC APS: best six subjects on the 1-7 scale, Life Orientation excluded.'],
-    caveat: 'This is a provisional estimate, not confirmed against Stellenbosch University’s own rules. Check their prospectus.',
+    scheme: { type: 'stellies' },
+    notes: [
+      'Admission average is the best English or Afrikaans percentage plus the five best other percentages, divided by six.',
+      'Life Orientation, Advanced Mathematics and Mathematics Paper 3 are excluded.',
+    ],
   },
   {
     id: 'uniwc',
