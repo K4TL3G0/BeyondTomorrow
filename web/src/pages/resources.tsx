@@ -1,118 +1,277 @@
-import { BookOpenCheck } from 'lucide-react';
-import { Hero } from '../components/Hero';
+import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import './Resources.css';
 
-interface ResourceGuide {
-  id: string;
+type ResourceType = 'youtube' | 'notes' | 'pastPapers';
+
+type Subject = {
+  name: string;
   category: string;
-  title: string;
-  summary: string;
-  content: string;
-  sourceName: string;
-  sourceUrl: string;
-  lastVerified: string;
-}
+  resourceLinks?: Partial<Record<ResourceType, string>>;
+};
 
-const RESOURCES: ResourceGuide[] = [
+const subjectGroups: { category: string; subjects: string[] }[] = [
   {
-    id: 'r1',
-    category: 'Scam Safety',
-    title: 'How to Identify and Avoid Bursary and NSFAS Scams',
-    summary: 'Protect yourself from fraudulent schemes demanding upfront fees or personal banking PINs.',
-    content: 'Scammers frequently target matriculants during application season. Official government and university portals never charge an application fee for NSFAS or request money to "expedite" your bursary approval. Always verify that URLs end in .ac.za or .gov.za.',
-    sourceName: 'DHET / NSFAS Official Guidance',
-    sourceUrl: 'https://www.nsfas.org.za',
-    lastVerified: '2026-10-15',
+    category: 'Core subjects',
+    subjects: ['Life Orientation', 'Mathematics', 'Mathematical Literacy'],
   },
   {
-    id: 'r2',
-    category: 'Applications',
-    title: 'Step-by-Step Guide to University & TVET Admissions',
-    summary: 'Everything you need to know about opening applications, admission requirements, and offer letters.',
-    content: 'Ensure you apply to at least two institutions (one university and one TVET college) to maximize your options. Keep digital copies of your ID, latest results, and guardian details ready before starting online forms.',
-    sourceName: 'Department of Higher Education and Training',
-    sourceUrl: 'https://www.dhet.gov.za',
-    lastVerified: '2026-10-12',
+    category: 'Languages',
+    subjects: [
+      'Afrikaans Home Language',
+      'Afrikaans First Additional Language',
+      'English Home Language',
+      'English First Additional Language',
+      'isiNdebele Home Language',
+      'isiNdebele First Additional Language',
+      'isiXhosa Home Language',
+      'isiXhosa First Additional Language',
+      'isiZulu Home Language',
+      'isiZulu First Additional Language',
+      'Sepedi Home Language',
+      'Sepedi First Additional Language',
+      'Sesotho Home Language',
+      'Sesotho First Additional Language',
+      'Setswana Home Language',
+      'Setswana First Additional Language',
+      'siSwati Home Language',
+      'siSwati First Additional Language',
+      'Tshivenda Home Language',
+      'Tshivenda First Additional Language',
+      'Xiitsonga Home Language',
+      'Xiitsonga First Additional Language',
+    ],
   },
   {
-    id: 'r3',
-    category: 'Funding',
-    title: 'Understanding NSFAS Allowances and Qualifying Criteria',
-    summary: 'A breakdown of tuition, accommodation, book, and living allowances for qualifying students.',
-    content: 'Students with a household income under R350,000 per year (or R600,000 for students living with disabilities) may qualify for comprehensive NSFAS financial support covering tuition, meals, learning materials, and accommodation.',
-    sourceName: 'National Student Financial Aid Scheme',
-    sourceUrl: 'https://www.nsfas.org.za',
-    lastVerified: '2026-10-14',
+    category: 'Commerce and Management',
+    subjects: ['Accounting', 'Business Studies', 'Economics'],
+  },
+  {
+    category: 'Agriculture',
+    subjects: ['Agricultural Management Practices', 'Agricultural Sciences', 'Agricultural Technology'],
+  },
+  {
+    category: 'Science and technology',
+    subjects: [
+      'Computer Applications Technology',
+      'Civil Technology',
+      'Electrical Technology',
+      'Engineering Graphics and Design',
+      'Information Technology',
+      'Life Sciences',
+      'Mechanical Technology',
+      'Physical Sciences',
+      'Technical Mathematics',
+      'Technical Sciences',
+    ],
+  },
+  {
+    category: 'Humanities and social sciences',
+    subjects: ['Geography', 'History', 'Religion Studies', 'Tourism'],
+  },
+  {
+    category: 'Arts and culture',
+    subjects: ['Dance Studies', 'Design', 'Dramatic Arts', 'Music', 'Visual Arts'],
+  },
+  {
+    category: 'Consumer studies and hospitality',
+    subjects: ['Consumer Studies', 'Hospitality Studies'],
   },
 ];
 
-export default function Resources() {
+const resourceTypes: { id: ResourceType; label: string }[] = [
+  { id: 'youtube', label: 'YouTube' },
+  { id: 'notes', label: 'Notes' },
+  { id: 'pastPapers', label: 'Past papers' },
+];
+
+const subjects: Subject[] = subjectGroups.flatMap(({ category, subjects: names }) =>
+  names.map((name) => ({ name, category })),
+);
+
+function getSubjectSlug(name: string) {
+  return name.toLocaleLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function SubjectIcon() {
   return (
-    <div className="page-wrapper">
-      <Hero
-        eyebrow="Knowledge & Guidance"
-        title={
-          <h1>
-            Student <span>Resources.</span>
-          </h1>
-        }
-        description="Access curated study guides, application tips, and verified scam-safety warnings for South African tertiary students."
-        feature={{
-          symbol: <BookOpenCheck size={28} strokeWidth={1.8} />,
-          title: 'Verified Guides.',
-          description: 'Reliable information and advice to guide your tertiary journey every step of the way.',
-        }}
-      />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 6.5C9.5 4.7 6.3 4.5 3 5.5v14c3.3-1 6.5-.8 9 1 2.5-1.8 5.7-2 9-1v-14c-3.3-1-6.5-.8-9 1Z" />
+      <path d="M12 6.5v14" />
+    </svg>
+  );
+}
 
-      <div className="page-content">
-        <section style={{ marginBottom: '2rem' }}>
-          <div className="card" style={{ padding: '1.5rem', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 'var(--radius)' }}>
-            <h3 style={{ margin: '0 0 0.5rem', color: '#dc2626', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>🛡️</span> Scam Safety Notice
-            </h3>
-            <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5 }}>
-              Never pay anyone claiming they can secure your university admission or NSFAS bursary for a fee. Official applications are processed directly through verified `.ac.za` or `.gov.za` portals only.
-            </p>
-          </div>
-        </section>
-
-        <section>
-          <h2>Curated Guides &amp; References</h2>
-          <p className="muted" style={{ marginBottom: '1.5rem' }}>
-            All resources are verified against official government and institutional sources.
-          </p>
-
-          <div style={{ display: 'grid', gap: '1.5rem' }}>
-            {RESOURCES.map((guide) => (
-              <article key={guide.id} className="card" style={{ padding: '1.75rem', display: 'grid', gap: '0.75rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', fontWeight: 700 }}>
-                    {guide.category}
-                  </span>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
-                    Last verified: {guide.lastVerified}
-                  </span>
-                </div>
-
-                <h3 style={{ margin: 0, fontSize: '1.25rem' }}>{guide.title}</h3>
-                <p style={{ margin: 0, fontWeight: 500, fontSize: '1rem' }}>{guide.summary}</p>
-                <p className="muted" style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6 }}>{guide.content}</p>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid var(--line)', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>Source: {guide.sourceName}</span>
-                  <a
-                    href={guide.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}
-                  >
-                    Visit official source ↗
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+function SubjectCard({ subject, number }: { subject: Subject; number: number }) {
+  return (
+    <Link
+      className="resource-card subject-card-link"
+      to={`/resources/${getSubjectSlug(subject.name)}`}
+      aria-label={`Open ${subject.name} resources`}
+    >
+      <div className="resource-card-top">
+        <span className="resource-icon">
+          <SubjectIcon />
+        </span>
+        <span className="resource-number">{String(number).padStart(2, '0')}</span>
       </div>
-    </div>
+
+      <p className="resource-category">{subject.category}</p>
+      <h3>{subject.name}</h3>
+      <p className="resource-description">Study support for Grades 10–12.</p>
+      <span className="subject-card-action">
+        View subject resources <span aria-hidden="true">→</span>
+      </span>
+    </Link>
+  );
+}
+
+export default function Resources() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
+  const filteredSubjects = subjects.filter((subject) =>
+    `${subject.name} ${subject.category}`.toLocaleLowerCase().includes(normalizedSearch),
+  );
+  let subjectNumber = 0;
+
+  return (
+    <section className="page resources-page" aria-labelledby="resources-title">
+      <section className="resources-hero">
+        <div className="resources-hero-copy">
+          <p className="resources-kicker">Your next step starts here</p>
+          <h1 id="resources-title">Study smarter, your way.</h1>
+          <p className="resources-intro">
+            Find your Grade 10–12 subjects, then choose the study support you need. YouTube
+            channels, notes and past papers will be added as the links are collected.
+          </p>
+        </div>
+      </section>
+
+      <section className="resources-section" aria-labelledby="subjects-title">
+        <div className="resources-header">
+          <div>
+            <p className="resources-section-label">A place to start</p>
+            <h2 id="subjects-title">Study resources by subject</h2>
+          </div>
+          <p>Browse subjects or search by name to find your study resources.</p>
+        </div>
+
+        <label className="subject-search">
+          <span>Find a subject</span>
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Search subjects"
+          />
+        </label>
+
+        <p className="subject-count" aria-live="polite">
+          Showing {filteredSubjects.length} of {subjects.length} subjects
+        </p>
+
+        <div className="subject-groups">
+          {subjectGroups.map(({ category }) => {
+            const groupSubjects = filteredSubjects.filter((subject) => subject.category === category);
+            if (groupSubjects.length === 0) return null;
+            const groupId = category.toLocaleLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+            return (
+              <section className="subject-group" key={category} aria-labelledby={`group-${groupId}`}>
+                <h3 id={`group-${groupId}`}>{category}</h3>
+                <div className="resources-grid">
+                  {groupSubjects.map((subject) => {
+                    subjectNumber += 1;
+                    return (
+                      <SubjectCard
+                        key={subject.name}
+                        subject={subject}
+                        number={subjectNumber}
+                      />
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+
+        {filteredSubjects.length === 0 && (
+          <p className="subject-empty">No subjects match “{searchTerm}”. Try another search.</p>
+        )}
+
+        <p className="resources-note">
+          Subject availability can vary by school and curriculum. Confirm your subject offering
+          with your school.
+        </p>
+      </section>
+    </section>
+  );
+}
+
+export function SubjectResources() {
+  const { subjectSlug } = useParams();
+  const subject = subjects.find((item) => getSubjectSlug(item.name) === subjectSlug);
+
+  if (!subject) {
+    return (
+      <section className="page resources-page">
+        <div className="subject-detail-empty">
+          <h1>Subject not found</h1>
+          <p>That subject isn’t in the directory.</p>
+          <Link to="/resources">Back to all subjects</Link>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="page resources-page" aria-labelledby="subject-title">
+      <Link className="subject-back-link" to="/resources">
+        <span aria-hidden="true">←</span> All subjects
+      </Link>
+
+      <section className="resources-hero">
+        <div className="resources-hero-copy">
+          <p className="resources-kicker">{subject.category}</p>
+          <h1 id="subject-title">{subject.name}</h1>
+          <p className="resources-intro">
+            Find videos, notes and past papers to support your {subject.name} studies.
+          </p>
+        </div>
+      </section>
+
+      <section className="resources-section" aria-labelledby="subject-resources-title">
+        <div className="resources-header">
+          <div>
+            <p className="resources-section-label">Study support</p>
+            <h2 id="subject-resources-title">{subject.name} resources</h2>
+          </div>
+          <p>Choose a resource type to find the support you need.</p>
+        </div>
+
+        <div className="subject-detail-grid">
+          {resourceTypes.map(({ id, label }) => {
+            const href = subject.resourceLinks?.[id];
+
+            return (
+              <article className="subject-detail-card" key={id}>
+                <span className="subject-detail-icon">
+                  <SubjectIcon />
+                </span>
+                <h3>{label}</h3>
+                {href ? (
+                  <a href={href} target="_blank" rel="noopener noreferrer">
+                    Open {label.toLocaleLowerCase()} <span aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  <p>Resources for this subject will be added here.</p>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    </section>
   );
 }
