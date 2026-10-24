@@ -5,41 +5,39 @@ import { useAuth } from '../lib/auth';
 import { Footer } from './Footer';
 
 const links = [
+  ['/aps-calculator', 'APS Calculator'],
   ['/pathways', 'Pathways'],
-  ['/applications', 'Applications'],
   ['/funding', 'Funding'],
+  ['/applications', 'Applications'],
   ['/checklist', 'Checklist'],
   ['/resources', 'Resources'],
-  ['/aps-calculator', 'APS Calculator'],
 ] as const;
 
 export function Layout() {
   const { session } = useAuth();
   const location = useLocation();
-  const scrollToTop = () => window.scrollTo(0, 0);
-
-  useLayoutEffect(() => {
-    scrollToTop();
-  }, [location.pathname]);
   const isAuthPage = location.pathname === '/login';
   const isApplicationsPage = location.pathname === '/applications';
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <header className="nav">
-        <Link to="/" className="brand" onClick={scrollToTop}>
+        <Link to="/" className="brand">
           <img src="/logo.svg" alt="Beyond Tomorrow Logo" />
           <span>Beyond Tomorrow</span>
         </Link>
         <nav aria-label="Main">
           {links.map(([to, label]) => (
-            <NavLink key={to} to={to} onClick={scrollToTop}>{label}</NavLink>
+            <NavLink key={to} to={to}>{label}</NavLink>
           ))}
         </nav>
         {session ? (
           <button onClick={() => supabase.auth.signOut()}>Sign out</button>
         ) : (
-          <NavLink to="/login" onClick={scrollToTop}>Sign in</NavLink>
+          <NavLink to="/login">Sign in</NavLink>
         )}
       </header>
       {isApplicationsPage ? (

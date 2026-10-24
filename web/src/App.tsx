@@ -5,6 +5,7 @@ import ApplicationsPage from './features/applications/ApplicationsPage';
 import ApsCalculator from './pages/ApsCalculator';
 import Checklist from './pages/Checklist';
 import Funding from './pages/Funding';
+import Home from './pages/Home';
 import Institutions from './pages/Institutions';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
@@ -16,7 +17,7 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<Institutions />} />
+        <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="resources" element={<Resources />} />
         <Route path="institutions" element={<Institutions />} />

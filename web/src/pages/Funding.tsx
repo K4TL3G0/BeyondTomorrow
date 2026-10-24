@@ -5,6 +5,7 @@ import {
   type FundingFilter,
   type Opportunity,
 } from '../data/fundingOpportunities';
+import { HandCoins } from 'lucide-react';
 import { ParticleWaveBackground } from '../components/ParticleWaveBackground';
 import { supabase } from '../lib/supabase';
 import '../styles/funding.css';
@@ -363,7 +364,7 @@ export function Funding() {
           </div>
           <aside className="hero-feature" aria-label="Funding opportunities feature">
             <span className="feature-symbol" aria-hidden="true">
-              ↗
+              <HandCoins size={28} strokeWidth={1.8} />
             </span>
             <h2>Learn. Apply. Succeed.</h2>
             <p>Your future starts with the right opportunity and support.</p>

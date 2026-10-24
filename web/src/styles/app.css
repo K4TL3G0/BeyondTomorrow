@@ -85,6 +85,7 @@ body {
 
 .page:has(.page-wrapper),
 .page:has(.funding-page),
+.page:has(.home-page),
 .page:has(.bt-app) {
   max-width: none !important;
   margin: 0 !important;
@@ -216,6 +217,7 @@ body {
 }
 
 .feature-symbol {
+  position: relative;
   display: grid;
   width: 3.25rem;
   height: 3.25rem;
@@ -224,6 +226,11 @@ body {
   background: rgb(56 189 248 / 15%);
   color: #7dd3fc;
   font-size: 1.7rem;
+  box-shadow: inset 0 0 0 1px rgb(125 211 252 / 12%), 0 0.5rem 1.5rem rgb(56 189 248 / 10%);
+}
+
+.feature-symbol svg {
+  filter: drop-shadow(0 0 0.4rem rgb(56 189 248 / 30%));
 }
 
 .hero-feature h2 {
@@ -598,5 +605,124 @@ button.link:hover {
   .footer-links-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+}
+
+/* Progress Bar Styles with Smooth Light Flow Animation */
+.progress-track,
+.progress-bar-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(100, 116, 139, 0.15);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill,
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary, #1f53c3);
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Faded, angled light shimmer overlay flowing slowly through filled progress (Light Theme Purple) */
+.progress-fill::after,
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(216, 180, 254, 0) 0%,
+    rgba(216, 180, 254, 0.18) 30%,
+    rgba(233, 213, 255, 0.45) 50%,
+    rgba(216, 180, 254, 0.18) 70%,
+    rgba(216, 180, 254, 0) 100%
+  );
+  transform: translateX(-100%);
+  animation: progressLightFlow 3.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes progressLightFlow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Native HTML <progress> styling with faded angled slow light purple flow */
+progress,
+.bt-progress {
+  width: 100%;
+  height: 10px;
+  display: block;
+  margin: 10px 0;
+  border: 0;
+  border-radius: 9999px;
+  background: #e7edf7;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+progress::-webkit-progress-bar,
+.bt-progress::-webkit-progress-bar {
+  background: #e7edf7;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+progress::-webkit-progress-value,
+.bt-progress::-webkit-progress-value {
+  border-radius: 9999px;
+  background-image: linear-gradient(
+    115deg,
+    var(--primary, #1f53c3) 0%,
+    var(--primary, #1f53c3) 30%,
+    #a855f7 45%,
+    #c084fc 50%,
+    #a855f7 55%,
+    var(--primary, #1f53c3) 70%,
+    var(--primary, #1f53c3) 100%
+  );
+  background-size: 200% 100%;
+  animation: progressGlowFlow 3.6s linear infinite;
+  transition: width 0.4s ease;
+}
+
+progress::-moz-progress-bar,
+.bt-progress::-moz-progress-bar {
+  border-radius: 9999px;
+  background-image: linear-gradient(
+    115deg,
+    var(--primary, #1f53c3) 0%,
+    var(--primary, #1f53c3) 30%,
+    #a855f7 45%,
+    #c084fc 50%,
+    #a855f7 55%,
+    var(--primary, #1f53c3) 70%,
+    var(--primary, #1f53c3) 100%
+  );
+  background-size: 200% 100%;
+  animation: progressGlowFlow 3.6s linear infinite;
+  transition: width 0.4s ease;
+}
+
+@keyframes progressGlowFlow {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }

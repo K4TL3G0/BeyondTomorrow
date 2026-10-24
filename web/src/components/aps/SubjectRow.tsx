@@ -1,3 +1,4 @@
+import { Trash2 } from 'lucide-react';
 import type { SubjectRowState } from '../../lib/useApsCalculator';
 
 interface Props {
@@ -39,8 +40,14 @@ export function SubjectRow({ row, invalid, autoFocus, datalistId, onName, onMark
         <input type="checkbox" checked={row.counted} onChange={(event) => onCounted(row.id, event.target.checked)} />
         Count
       </label>
-      <button type="button" className="aps-remove" aria-label="Remove subject" onClick={() => onRemove(row.id)}>
-        Remove
+      <button
+        type="button"
+        className="aps-remove"
+        aria-label="Remove subject"
+        title="Remove subject"
+        onClick={() => onRemove(row.id)}
+      >
+        <Trash2 size={18} />
       </button>
     </div>
   );

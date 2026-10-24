@@ -1,46 +1,11 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ImageSlider, type SliderImage } from '../components/ImageSlider';
+import { ImageSlider } from '../components/ImageSlider';
+import { INSTITUTION_GROUPS } from '../data/institutionGroups';
 import '../styles/institutions.css';
 
 const APPLY_PATH = '/checklist';
 const CONTACT_EMAIL = 'enquiry@beytom.com';
-
-interface InstitutionGroup {
-  id: string;
-  title: string;
-  images: readonly SliderImage[];
-}
-
-const INSTITUTION_GROUPS: readonly InstitutionGroup[] = [
-  {
-    id: 'tvet',
-    title: 'TVET College',
-    images: [
-      { src: '/institutions/tshwane-tvet.png', alt: 'Tshwane TVET College' },
-      { src: '/institutions/ewc.png', alt: 'EWC TVET College' },
-      { src: '/institutions/kzn-tvet.png', alt: 'KwaZulu-Natal TVET College' },
-    ],
-  },
-  {
-    id: 'private',
-    title: 'Private University/College',
-    images: [
-      { src: '/institutions/eduvos.jpg', alt: 'Eduvos' },
-      { src: '/institutions/emeris.png', alt: 'Emeris' },
-      { src: '/institutions/stadio.png', alt: 'STADIO' },
-    ],
-  },
-  {
-    id: 'public',
-    title: 'Public University',
-    images: [
-      { src: '/institutions/wits.png', alt: 'University of the Witwatersrand' },
-      { src: '/institutions/up.jpg', alt: 'University of Pretoria' },
-      { src: '/institutions/uct.jpg', alt: 'University of Cape Town' },
-    ],
-  },
-];
 
 const CARD_DIRECTIONS = ['from-left', 'from-bottom', 'from-right'];
 const CARD_DELAYS = ['delay-1', 'delay-2', 'delay-3'];

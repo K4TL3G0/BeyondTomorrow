@@ -1,7 +1,9 @@
+import { ChartNoAxesColumnIncreasing } from 'lucide-react';
 import { Hero } from '../components/Hero';
 import { ApsExplainer } from '../components/aps/ApsExplainer';
 import { ResultsTable } from '../components/aps/ResultsTable';
 import { SubjectRow } from '../components/aps/SubjectRow';
+import { InfoTooltip } from '../components/InfoTooltip';
 import { SUBJECT_SUGGESTIONS } from '../lib/subjects';
 import { useApsCalculator } from '../lib/useApsCalculator';
 import '../styles/aps.css';
@@ -23,7 +25,7 @@ export default function ApsCalculator() {
         }
         description="Calculate your Admission Point Score (APS) for South African universities and TVET colleges. Enter your subjects and marks below to see your total score and qualification eligibility."
         feature={{
-          symbol: '∑',
+          symbol: <ChartNoAxesColumnIncreasing size={28} strokeWidth={1.8} />,
           title: 'Know Your Score.',
           description: 'Your APS score unlocks the degree and diploma options available to you across South Africa.',
         }}
@@ -70,12 +72,18 @@ export default function ApsCalculator() {
             </button>
           </div>
 
-          <h2>
-            {calc.result.total}{' '}
-            <small>
-              APS points from {countedSubjects} subject{countedSubjects === 1 ? '' : 's'}
-            </small>
-          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <h2>
+              {calc.result.total}{' '}
+              <small>
+                APS points from {countedSubjects} subject{countedSubjects === 1 ? '' : 's'}
+              </small>
+            </h2>
+            <InfoTooltip
+              title="How APS is calculated"
+              content="Most South African tertiary institutions calculate your APS using your best 6 subjects (excluding Life Orientation). Each percentage score maps to a 1–7 achievement level."
+            />
+          </div>
           <ResultsTable breakdown={calc.result.breakdown} />
         </section>
       </div>

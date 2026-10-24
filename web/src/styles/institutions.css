@@ -85,13 +85,14 @@
 }
 
 .inst-btn-primary {
-  background: var(--primary);
+  background: linear-gradient(90deg, #0d2159 0%, var(--primary) 100%);
   color: #fff;
   box-shadow: var(--shadow-sm);
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .inst-btn-primary:hover {
-  background: var(--primary-hover);
+  background: linear-gradient(90deg, #0a1945 0%, var(--primary-hover) 100%);
 }
 
 .inst-btn-secondary {

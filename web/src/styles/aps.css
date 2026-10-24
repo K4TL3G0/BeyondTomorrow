@@ -31,7 +31,32 @@
 }
 
 .aps-remove {
-  padding: 0.5rem 0.8rem;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
+  padding: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.aps-remove:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #b91c1c;
+}
+
+.aps-remove svg {
+  color: inherit;
+  width: 18px;
+  height: 18px;
+}
+
+.aps-remove:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #b91c1c;
 }
 
 .aps input[aria-invalid='true'] {

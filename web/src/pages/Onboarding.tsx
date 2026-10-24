@@ -1,3 +1,4 @@
+import { UserRound } from 'lucide-react';
 import { Hero } from '../components/Hero';
 
 export default function Onboarding() {
@@ -12,7 +13,7 @@ export default function Onboarding() {
         }
         description="Tell us about your subject marks, province, and interests so we can personalize course recommendations and funding options for you."
         feature={{
-          symbol: '👤',
+          symbol: <UserRound size={28} strokeWidth={1.8} />,
           title: 'Tailored For You.',
           description: 'Get custom funding and course matches based on your academic profile.',
         }}
