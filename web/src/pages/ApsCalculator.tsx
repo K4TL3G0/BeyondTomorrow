@@ -65,7 +65,7 @@ export default function ApsCalculator() {
             <button type="button" onClick={calc.addRow}>
               + Add subject
             </button>
-            <button type="button" onClick={calc.reset}>
+            <button type="button" className="aps-clear-button" onClick={calc.reset}>
               Clear all
             </button>
           </div>

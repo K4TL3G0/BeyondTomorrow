@@ -46,6 +46,22 @@
   margin: 1.25rem 0;
 }
 
+.aps-actions .aps-clear-button {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--muted);
+}
+
+.aps-actions .aps-clear-button:hover {
+  background: color-mix(in srgb, var(--muted) 8%, var(--card));
+  color: var(--text);
+}
+
+.aps-actions .aps-clear-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--muted) 35%, transparent);
+  outline-offset: 2px;
+}
+
 .aps-err {
   color: #ef4444;
   margin: 0.5rem 0;
