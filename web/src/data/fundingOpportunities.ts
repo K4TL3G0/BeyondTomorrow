@@ -142,16 +142,4 @@ export const OPPORTUNITIES: Opportunity[] = [
     url: 'https://my.nsfas.org.za/',
     ariaLabel: 'Visit NSFAS student portal',
   },
-  {
-    id: 'private-colleges',
-    categories: ['south-africa'],
-    logo: 'private-colleges.svg',
-    tag: 'Study options',
-    title: 'Private Colleges',
-    description:
-      'Explore private colleges and vocational training options. Before enrolling, confirm the institution’s registration, programme accreditation, fees, admission criteria and any available financial aid.',
-    actionLabel: 'Suggest a college',
-    // TODO: replace the placeholder address before submission.
-    url: 'mailto:hello@example.com?subject=Private%20college%20directory',
-  },
 ];
