@@ -11,6 +11,7 @@ const links = [
   ['/applications', 'Applications'],
   ['/checklist', 'Checklist'],
   ['/resources', 'Resources'],
+  ['/profile', 'Profile'],
 ] as const;
 
 export function Layout() {
