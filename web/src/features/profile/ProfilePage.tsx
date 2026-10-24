@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { ParticleWaveBackground } from '../../components/ParticleWaveBackground';
 import './profile.css';
 
 const GRADES = ['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'];
@@ -191,7 +192,7 @@ export function ProfilePage() {
     <div className="bt-profile-page">
       {/* ── Hero ── */}
       <section className="bt-profile-hero">
-        <div className="bt-profile-hero__particles" />
+        <ParticleWaveBackground density={0.65} className="bt-profile-hero__particles" />
         <div className="bt-profile-hero__content">
           <span className="bt-profile-hero__label">YOUR JOURNEY STARTS HERE</span>
           <h1 className="bt-profile-hero__title">
@@ -202,122 +203,148 @@ export function ProfilePage() {
             funding and pathways.
           </p>
         </div>
-
-        {/* Completeness card */}
-        <div className="bt-profile-hero__card">
-          <span className="bt-profile-hero__card-icon">🎓</span>
-          <strong>Personalised for you.</strong>
-          <p>Your details help us show the most relevant options for your journey — from APS calculations to funding alerts.</p>
-          <div className="bt-profile-progress">
-            <div className="bt-profile-progress__bar">
-              <div className="bt-profile-progress__fill" style={{ width: `${pct}%` }} />
-            </div>
-            <span className="bt-profile-progress__label">{pct}% COMPLETE</span>
-          </div>
-        </div>
       </section>
 
       <main className="bt-profile-main">
-        <form className="bt-profile-form" onSubmit={handleSave}>
-
-          {/* ── Profile completeness summary (sidebar-style) ── */}
-          <div className="bt-profile-completeness-box">
-            <h3 className="bt-profile-completeness-box__title">Profile Completeness</h3>
-            <div className="bt-profile-completeness-box__bar-wrap">
-              <div className="bt-profile-completeness-box__bar">
-                <div className="bt-profile-completeness-box__fill" style={{ width: `${pct}%` }} />
+        <div className="bt-profile-layout">
+          <aside className="bt-profile-sidebar">
+            {/* ── Avatar ── */}
+            <section className="bt-profile-section">
+              <h2 className="bt-profile-section__title">Profile picture</h2>
+              <div className="bt-profile-avatar-row">
+                <button
+                  type="button"
+                  className="bt-profile-avatar"
+                  onClick={() => fileInputRef.current?.click()}
+                  aria-label="Upload profile picture"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Profile" className="bt-profile-avatar__img" />
+                  ) : (
+                    <span className="bt-profile-avatar__initials">{initials}</span>
+                  )}
+                  <span className="bt-profile-avatar__overlay">Change</span>
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="bt-profile-avatar__input" onChange={handleAvatarChange} />
+                <div className="bt-profile-avatar__hint">
+                  <p>Click to upload a photo. JPG or PNG, max 5 MB.</p>
+                  <p>Your initials will show until you upload a picture.</p>
+                </div>
               </div>
-              <span className="bt-profile-completeness-box__pct">{pct}% complete</span>
-            </div>
-            <p className="bt-profile-completeness-box__hint">
-              Complete your profile to get the most out of BeyondTomorrow.
-            </p>
-          </div>
+            </section>
 
-          {/* ── Avatar ── */}
-          <section className="bt-profile-section">
-            <h2 className="bt-profile-section__title">Profile picture</h2>
-            <div className="bt-profile-avatar-row">
-              <button
-                type="button"
-                className="bt-profile-avatar"
-                onClick={() => fileInputRef.current?.click()}
-                aria-label="Upload profile picture"
-              >
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Profile" className="bt-profile-avatar__img" />
-                ) : (
-                  <span className="bt-profile-avatar__initials">{initials}</span>
-                )}
-                <span className="bt-profile-avatar__overlay">Change</span>
-              </button>
-              <input ref={fileInputRef} type="file" accept="image/*" className="bt-profile-avatar__input" onChange={handleAvatarChange} />
-              <div className="bt-profile-avatar__hint">
-                <p>Click to upload a photo. JPG or PNG, max 5 MB.</p>
-                <p>Your initials will show until you upload a picture.</p>
+            {/* ── Profile completeness summary ── */}
+            <div className="bt-profile-completeness-box">
+              <h3 className="bt-profile-completeness-box__title">Profile Completeness</h3>
+              <div className="bt-profile-completeness-box__bar-wrap">
+                <div className="bt-profile-completeness-box__bar">
+                  <div className="bt-profile-completeness-box__fill" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="bt-profile-completeness-box__pct">{pct}% complete</span>
               </div>
+              <p className="bt-profile-completeness-box__hint">
+                Complete your profile to get the most out of BeyondTomorrow.
+              </p>
             </div>
-          </section>
+          </aside>
 
-          {/* ── About you ── */}
-          <section className="bt-profile-section">
-            <h2 className="bt-profile-section__title">About you</h2>
-            <div className="bt-profile-grid">
-              <label className="bt-profile-field">
-                <span className="bt-profile-field__label">Display name</span>
-                <input type="text" className="bt-profile-field__input" placeholder="e.g. Thabo M." value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-              </label>
-              <label className="bt-profile-field">
-                <span className="bt-profile-field__label">School name</span>
-                <input type="text" className="bt-profile-field__input" placeholder="e.g. Soweto High School" value={school} onChange={(e) => setSchool(e.target.value)} />
-              </label>
-              <label className="bt-profile-field">
-                <span className="bt-profile-field__label">Current grade</span>
-                <select className="bt-profile-field__input" value={grade} onChange={(e) => setGrade(e.target.value)}>
-                  <option value="">Select grade</option>
-                  {GRADES.map((g) => <option key={g}>{g}</option>)}
-                </select>
-              </label>
-              <label className="bt-profile-field">
-                <span className="bt-profile-field__label">Province</span>
-                <select className="bt-profile-field__input" value={province} onChange={(e) => setProvince(e.target.value)}>
-                  <option value="">Select province</option>
-                  {PROVINCES.map((p) => <option key={p}>{p}</option>)}
-                </select>
-              </label>
-              <label className="bt-profile-field bt-profile-field--full">
-                <span className="bt-profile-field__label">Career interest</span>
-                <select className="bt-profile-field__input" value={careerInterest} onChange={(e) => setCareerInterest(e.target.value)}>
-                  <option value="">Select an area</option>
-                  {CAREER_INTERESTS.map((c) => <option key={c}>{c}</option>)}
-                </select>
-              </label>
-            </div>
-          </section>
+          <form className="bt-profile-form" onSubmit={handleSave}>
 
-          {/* ── Bio ── */}
-          <section className="bt-profile-section">
-            <h2 className="bt-profile-section__title">Your story</h2>
-            <p className="bt-profile-section__sub">
-              Write a short bio about yourself — your background, what drives you, and where you want to go. This is your space.
-            </p>
-            <div className="bt-profile-bio-wrapper">
-              <textarea
-                className="bt-profile-bio"
-                placeholder="e.g. I'm a Grade 12 learner from Limpopo with a passion for engineering. I want to study at Wits and eventually build infrastructure for rural communities..."
-                maxLength={500}
-                rows={5}
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-              />
-              <div className="bt-profile-bio__footer">
-                <span className={`bt-profile-bio__count${bio.length >= 480 ? ' bt-profile-bio__count--warn' : ''}`}>
-                  {bio.length}/500
-                </span>
-                {bio.length >= 20 && (
-                  <span className="bt-profile-bio__check">✓ Great bio!</span>
-                )}
+            {/* ── About you ── */}
+            <section className="bt-profile-section">
+              <h2 className="bt-profile-section__title">About you</h2>
+              <div className="bt-profile-grid">
+                <label className="bt-profile-field">
+                  <span className="bt-profile-field__label">Display name</span>
+                  <input type="text" className="bt-profile-field__input" placeholder="e.g. Thabo M." value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+                </label>
+                <label className="bt-profile-field">
+                  <span className="bt-profile-field__label">School name</span>
+                  <input type="text" className="bt-profile-field__input" placeholder="e.g. Soweto High School" value={school} onChange={(e) => setSchool(e.target.value)} />
+                </label>
+                <label className="bt-profile-field">
+                  <span className="bt-profile-field__label">Province</span>
+                  <select className="bt-profile-field__input" value={province} onChange={(e) => setProvince(e.target.value)}>
+                    <option value="">Select province</option>
+                    {PROVINCES.map((p) => <option key={p}>{p}</option>)}
+                  </select>
+                </label>
+                <label className="bt-profile-field">
+                  <span className="bt-profile-field__label">Current grade</span>
+                  <select className="bt-profile-field__input" value={grade} onChange={(e) => setGrade(e.target.value)}>
+                    <option value="">Select grade</option>
+                    {GRADES.map((g) => <option key={g}>{g}</option>)}
+                  </select>
+                </label>
+                <label className="bt-profile-field bt-profile-field--full">
+                  <span className="bt-profile-field__label">Career interest</span>
+                  <select className="bt-profile-field__input" value={careerInterest} onChange={(e) => setCareerInterest(e.target.value)}>
+                    <option value="">Select an area</option>
+                    {CAREER_INTERESTS.map((c) => <option key={c}>{c}</option>)}
+                  </select>
+                </label>
               </div>
+
+            {/* ── Subjects ── */}
+            <div className="bt-profile-subjects-block">
+              <h2 className="bt-profile-section__title">Your subjects</h2>
+              <p className="bt-profile-section__sub">
+                Select every subject you are currently studying. This helps us show accurate APS breakdowns for university programmes.
+              </p>
+
+              <div className="bt-profile-subject-search-wrap">
+                <input
+                  type="search"
+                  className="bt-profile-subject-search"
+                  placeholder="Search subjects…"
+                  value={subjectSearch}
+                  onChange={(e) => setSubjectSearch(e.target.value)}
+                />
+              </div>
+
+              {filteredSubjects ? (
+                <div className="bt-profile-subjects">
+                  {filteredSubjects.length === 0
+                    ? <p className="bt-profile-subjects__none">No subjects match your search.</p>
+                    : filteredSubjects.map((subject) => (
+                      <button key={subject} type="button"
+                        className={`bt-profile-subject-chip${selectedSubjects.includes(subject) ? ' bt-profile-subject-chip--selected' : ''}`}
+                        onClick={() => toggleSubject(subject)}
+                      >{subject}</button>
+                    ))
+                  }
+                </div>
+              ) : (
+                Object.entries(SUBJECTS).map(([category, subjects]) => (
+                  <div key={category} className="bt-profile-subject-group">
+                    <h3 className="bt-profile-subject-group__title">{category}</h3>
+                    <div className="bt-profile-subjects">
+                      {subjects.map((subject) => (
+                        <button key={subject} type="button"
+                          className={`bt-profile-subject-chip${selectedSubjects.includes(subject) ? ' bt-profile-subject-chip--selected' : ''}`}
+                          onClick={() => toggleSubject(subject)}
+                        >{subject}</button>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              )}
+
+              {selectedSubjects.length > 0 && (
+                <div className="bt-profile-subjects__summary">
+                  <p className="bt-profile-subjects__count">
+                    {selectedSubjects.length} subject{selectedSubjects.length !== 1 ? 's' : ''} selected
+                  </p>
+                  <div className="bt-profile-subjects__selected-list">
+                    {selectedSubjects.map((s) => (
+                      <span key={s} className="bt-profile-subjects__selected-chip">
+                        {s}
+                        <button type="button" onClick={() => toggleSubject(s)} aria-label={`Remove ${s}`}>×</button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
 
@@ -366,67 +393,30 @@ export function ProfilePage() {
             </div>
           </section>
 
-          {/* ── Subjects ── */}
+          {/* ── Bio ── */}
           <section className="bt-profile-section">
-            <h2 className="bt-profile-section__title">Your subjects</h2>
+            <h2 className="bt-profile-section__title">Your story</h2>
             <p className="bt-profile-section__sub">
-              Select every subject you are currently studying. This helps us show accurate APS breakdowns for university programmes.
+              Write a short bio about yourself — your background, what drives you, and where you want to go. This is your space.
             </p>
-
-            {/* Search */}
-            <div className="bt-profile-subject-search-wrap">
-              <input
-                type="search"
-                className="bt-profile-subject-search"
-                placeholder="Search subjects…"
-                value={subjectSearch}
-                onChange={(e) => setSubjectSearch(e.target.value)}
+            <div className="bt-profile-bio-wrapper">
+              <textarea
+                className="bt-profile-bio"
+                placeholder="e.g. I'm a Grade 12 learner from Limpopo with a passion for engineering. I want to study at Wits and eventually build infrastructure for rural communities..."
+                maxLength={500}
+                rows={5}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
               />
+              <div className="bt-profile-bio__footer">
+                <span className={`bt-profile-bio__count${bio.length >= 480 ? ' bt-profile-bio__count--warn' : ''}`}>
+                  {bio.length}/500
+                </span>
+                {bio.length >= 20 && (
+                  <span className="bt-profile-bio__check">✓ Great bio!</span>
+                )}
+              </div>
             </div>
-
-            {filteredSubjects ? (
-              <div className="bt-profile-subjects">
-                {filteredSubjects.length === 0
-                  ? <p className="bt-profile-subjects__none">No subjects match your search.</p>
-                  : filteredSubjects.map((subject) => (
-                    <button key={subject} type="button"
-                      className={`bt-profile-subject-chip${selectedSubjects.includes(subject) ? ' bt-profile-subject-chip--selected' : ''}`}
-                      onClick={() => toggleSubject(subject)}
-                    >{subject}</button>
-                  ))
-                }
-              </div>
-            ) : (
-              Object.entries(SUBJECTS).map(([category, subjects]) => (
-                <div key={category} className="bt-profile-subject-group">
-                  <h3 className="bt-profile-subject-group__title">{category}</h3>
-                  <div className="bt-profile-subjects">
-                    {subjects.map((subject) => (
-                      <button key={subject} type="button"
-                        className={`bt-profile-subject-chip${selectedSubjects.includes(subject) ? ' bt-profile-subject-chip--selected' : ''}`}
-                        onClick={() => toggleSubject(subject)}
-                      >{subject}</button>
-                    ))}
-                  </div>
-                </div>
-              ))
-            )}
-
-            {selectedSubjects.length > 0 && (
-              <div className="bt-profile-subjects__summary">
-                <p className="bt-profile-subjects__count">
-                  {selectedSubjects.length} subject{selectedSubjects.length !== 1 ? 's' : ''} selected
-                </p>
-                <div className="bt-profile-subjects__selected-list">
-                  {selectedSubjects.map((s) => (
-                    <span key={s} className="bt-profile-subjects__selected-chip">
-                      {s}
-                      <button type="button" onClick={() => toggleSubject(s)} aria-label={`Remove ${s}`}>×</button>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </section>
 
           {/* ── Save ── */}
@@ -437,7 +427,8 @@ export function ProfilePage() {
             {saved && <p className="bt-profile-save-confirm">Your profile has been updated successfully.</p>}
           </div>
 
-        </form>
+          </form>
+        </div>
       </main>
     </div>
   );
