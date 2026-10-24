@@ -25,7 +25,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'juniortukkie',
     categories: ['school'],
-    logo: 'juniortukkie.svg',
+    logo: 'JuniorTukkie_Logo.png',
     tag: 'Grades 8–12',
     title: 'Grade 8–12 Study Platforms',
     description:
@@ -73,7 +73,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'dhet-international',
     categories: ['international', 'south-africa'],
-    logo: 'dhet-international-scholarships.svg',
+    logo: 'dhet_Logo.jpg',
     tag: 'Government · International',
     title: 'DHET International Scholarships',
     description:
@@ -85,7 +85,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'nrf-connect',
     categories: ['postgraduate', 'south-africa'],
-    logo: 'nrf-connect.svg',
+    logo: 'NRF_Logo.png',
     tag: 'Research funding',
     title: 'NRF Connect',
     description:
@@ -97,7 +97,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'unisa-postgrad',
     categories: ['postgraduate', 'south-africa'],
-    logo: 'unisa-postgraduate-bursaries.svg',
+    logo: 'unisa-postgraduate-bursaries.png',
     tag: 'Postgraduate',
     title: 'UNISA Postgraduate Bursaries',
     description:
@@ -121,7 +121,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'ephraim-mogale',
     categories: ['south-africa'],
-    logo: 'ephraim-mogale-municipality.svg',
+    logo: 'zabursaries_logo.png',
     tag: 'Municipal bursary',
     title: 'Ephraim Mogale Local Municipality Bursary',
     description:
@@ -133,7 +133,7 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'nsfas',
     categories: ['south-africa'],
-    logo: 'nsfas-student-funding.svg',
+    logo: 'nsfas_Logo.png',
     tag: 'Government funding',
     title: 'NSFAS Student Funding',
     description:

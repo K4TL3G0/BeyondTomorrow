@@ -26,6 +26,25 @@ interface FundingSourceRecord {
 
 type FundingSourceTypeFilter = 'all' | FundingSourceRecord['type'];
 
+const fundingSourceLogos: { match: string; logo: string }[] = [
+  { match: 'nsfas', logo: 'nsfas_Logo.png' },
+  { match: 'standard bank', logo: 'standard-bank-student-loan.png' },
+  { match: 'absa', logo: 'absa-study-loan.png' },
+  { match: 'manati', logo: 'manati-student-funding-loan.png' },
+  { match: 'fundi', logo: 'fundi-student-loan.png' },
+  { match: 'university of johannesburg', logo: 'uj_logo.jpg' },
+  { match: 'nrf', logo: 'NRF_Logo.png' },
+  { match: 'national research foundation', logo: 'NRF_Logo.png' },
+  { match: 'dhet', logo: 'dhet_Logo.jpg' },
+  { match: 'unisa', logo: 'unisa-postgraduate-bursaries.png' },
+  { match: 'regenesys', logo: 'regenesys-student-loan-guide.png' },
+];
+
+const getFundingSourceLogo = (source: FundingSourceRecord) => {
+  const name = source.name.toLowerCase();
+  return fundingSourceLogos.find(({ match }) => name.includes(match))?.logo;
+};
+
 const formatRand = (amount: number) =>
   new Intl.NumberFormat('en-ZA', {
     style: 'currency',
@@ -148,6 +167,7 @@ function FundingSources() {
             const isSample =
               source.name.toLowerCase().includes('sample data') ||
               source.source_url?.includes('example.com');
+            const logo = getFundingSourceLogo(source);
 
             return (
               <article className="funding-source-card" key={source.id}>
@@ -155,7 +175,10 @@ function FundingSources() {
                   <span className="source-type">{source.type}</span>
                   {isSample && <span className="sample-data-badge">Sample data</span>}
                 </div>
-                <h3>{source.name}</h3>
+                <div className="funding-source-title">
+                  {logo && <img src={`/funding/${logo}`} alt="" aria-hidden="true" loading="lazy" />}
+                  <h3>{source.name}</h3>
+                </div>
                 {source.description && (
                   <p className="funding-source-description">{source.description}</p>
                 )}
@@ -255,16 +278,24 @@ function StudentLoanGuide() {
         </ul>
       </div>
       <p className="loan-guide-source">
-        Summary adapted from the{' '}
-        <a
-          href="https://www.regenesys.net/reginsights/best-student-loans-in-south-africa"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Regenesys guide to student loans in South Africa
-        </a>
-        . It is general guidance, not financial advice. Verify product details and get the full
-        agreement from the lender before signing.
+        <img
+          src="/funding/regenesys-student-loan-guide.png"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+        />
+        <span>
+          Summary adapted from the{' '}
+          <a
+            href="https://www.regenesys.net/reginsights/best-student-loans-in-south-africa"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Regenesys guide to student loans in South Africa
+          </a>
+          . It is general guidance, not financial advice. Verify product details and get the full
+          agreement from the lender before signing.
+        </span>
       </p>
     </section>
   );
