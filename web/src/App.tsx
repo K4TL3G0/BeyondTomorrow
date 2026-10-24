@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { RequireAuth } from './components/RequireAuth';
 import ApplicationsPage from './features/applications/ApplicationsPage';
+import { ProfilePage } from './features/profile/ProfilePage';
 import Checklist from './pages/Checklist';
 import Funding from './pages/Funding';
 import Home from './pages/Home';
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="resources" element={<Resources />} />
         <Route path="applications" element={<ApplicationsPage />} />
+        <Route path="profile" element={<ProfilePage />} />
         <Route path="onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
         <Route path="pathways" element={<RequireAuth><Pathways /></RequireAuth>} />
         <Route path="funding" element={<RequireAuth><Funding /></RequireAuth>} />
