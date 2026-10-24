@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { ParticleWaveBackground } from '../components/ParticleWaveBackground';
+import { supabase } from '../lib/supabase';
 
 export default function Login() {
   const nav = useNavigate();
@@ -138,16 +138,18 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="login-image-pane">
-        <ParticleWaveBackground />
+      <div className="login-hero-pane">
+        <ParticleWaveBackground density={0.7} className="login-hero-wave" />
+        <div className="login-hero-orb login-hero-orb-one" aria-hidden="true" />
+        <div className="login-hero-orb login-hero-orb-two" aria-hidden="true" />
         <img
           src="/logo.svg"
           alt="Beyond Tomorrow Logo"
-          style={{ position: 'absolute', top: '1rem', left: '0rem', width: '400px', height: '400px', objectFit: 'contain', filter: 'brightness(0) invert(1)', zIndex: 2 }}
+          className="login-hero-logo"
         />
-        <div className="login-image-content" style={{ zIndex: 2 }}>
+        <div className="login-hero-content">
           <h2>Find your path.<br />Fund your future.<br />Finish your degree.</h2>
-          <p style={{ opacity: 0.85, margin: 0, fontSize: '1rem', lineHeight: '1.5' }}>
+          <p>
             Helping young South Africans navigate higher education, affordability, and graduation success.
           </p>
         </div>

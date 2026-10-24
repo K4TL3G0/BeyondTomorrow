@@ -20,9 +20,9 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="resources" element={<Resources />} />
-        <Route path="institutions" element={<Institutions />} />
-        <Route path="aps-calculator" element={<ApsCalculator />} />
-        <Route path="applications" element={<ApplicationsPage />} />
+        <Route path="institutions" element={<RequireAuth><Institutions /></RequireAuth>} />
+        <Route path="aps-calculator" element={<RequireAuth><ApsCalculator /></RequireAuth>} />
+        <Route path="applications" element={<RequireAuth><ApplicationsPage /></RequireAuth>} />
         <Route path="onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
         <Route path="pathways" element={<RequireAuth><Pathways /></RequireAuth>} />
         <Route path="funding" element={<RequireAuth><Funding /></RequireAuth>} />
