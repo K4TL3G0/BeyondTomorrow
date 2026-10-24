@@ -1,12 +1,14 @@
+import { useLayoutEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { Footer } from './Footer';
 
 const links = [
+  ['/aps-calculator', 'APS Calculator'],
   ['/pathways', 'Pathways'],
-  ['/applications', 'Applications'],
   ['/funding', 'Funding'],
+  ['/applications', 'Applications'],
   ['/checklist', 'Checklist'],
   ['/resources', 'Resources'],
   ['/profile', 'Profile'],
@@ -17,6 +19,9 @@ export function Layout() {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login';
   const isApplicationsPage = location.pathname === '/applications';
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

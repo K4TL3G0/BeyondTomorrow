@@ -102,6 +102,7 @@ create table if not exists public.funding_sources (
   id                         uuid primary key default gen_random_uuid(),
   name                       text not null unique,
   type                       text not null check (type in ('bursary','loan')),
+  description                text not null default '',
   income_ceiling             numeric(12,2),
   disability_income_ceiling  numeric(12,2),
   eligible_fields            text[] not null default '{}',  -- empty array = any field

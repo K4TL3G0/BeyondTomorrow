@@ -1,5 +1,6 @@
 /* Design tokens inspired by the FNB App of the Year modern tech aesthetic */
 :root {
+  color-scheme: light;
   --navy: #061021;
   --primary: #1f53c3;
   --primary-hover: #1d4ed8;
@@ -14,15 +15,4 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 / 0.1), 0 2px 4px -2px rgb(0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 / 0.1), 0 4px 6px -4px rgb(0 0 / 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --navy: #030712;
-    --bg: #0b0f19;
-    --card: #111827;
-    --text: #f8fafc;
-    --muted: #94a3b8;
-    --line: #1f2937;
-  }
 }

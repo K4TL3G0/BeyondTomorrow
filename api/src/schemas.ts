@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import { INCOME_BRACKETS, PROVINCES } from '@beyond-tomorrow/engine';
 import type { StudentProfile } from '@beyond-tomorrow/engine';
 

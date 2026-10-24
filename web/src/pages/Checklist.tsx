@@ -1,167 +1,214 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../lib/auth';
-import { supabase } from '../lib/supabase';
+import { useState } from 'react';
+import { CalendarCheck } from 'lucide-react';
+import { assessDeadlineRisk } from '@beyond-tomorrow/engine';
+import { Hero } from '../components/Hero';
+import { InfoTooltip } from '../components/InfoTooltip';
+import { ProgressBar } from '../components/ProgressBar';
 
-interface TaskRow {
+interface ChecklistItem {
   id: string;
   title: string;
-  est_days: number;
-  sort_order: number;
+  description: string;
+  deadline: string;
+  estDays: number;
+  completed: boolean;
 }
 
-interface ProgressRow {
-  task_id: string;
-}
-
-interface DeadlineRow {
-  name: string;
-  deadline: string | null;
-}
-
-interface CourseDeadlineRow {
-  name: string;
-  application_deadline: string | null;
-}
-
-interface ParsedDeadline extends DeadlineRow {
-  parsed: Date;
-}
-
-function parseDate(value: string | null): Date | null {
-  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  const date = new Date(`${value}T12:00:00`);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function formatDate(value: string | null): string {
-  const date = parseDate(value);
-  return date ? new Intl.DateTimeFormat('en-ZA', { dateStyle: 'medium' }).format(date) : 'Not listed';
-}
+const INITIAL_TASKS: ChecklistItem[] = [
+  {
+    id: 't1',
+    title: 'Certified copy of ID or passport',
+    description: 'Must be certified by a commissioner of oaths (police station or post office) within the last 3 months.',
+    deadline: '2026-10-31',
+    estDays: 2,
+    completed: true,
+  },
+  {
+    id: 't2',
+    title: 'Final or latest matric results',
+    description: 'Grade 11 final report or Grade 12 June/trial examination results stamped by your school.',
+    deadline: '2026-10-31',
+    estDays: 1,
+    completed: true,
+  },
+  {
+    id: 't3',
+    title: 'NSFAS / Bursary Application',
+    description: 'Submit your financial aid application online at nsfas.org.za or via verified bursary portals.',
+    deadline: '2026-10-31',
+    estDays: 3,
+    completed: false,
+  },
+  {
+    id: 't4',
+    title: 'University / TVET Application',
+    description: 'Submit your online application directly through the institution admissions portal.',
+    deadline: '2026-11-15',
+    estDays: 2,
+    completed: false,
+  },
+  {
+    id: 't5',
+    title: 'Proof of address / Guardian income details',
+    description: 'Required for bursary and financial verification (parent/guardian payslips or affidavit).',
+    deadline: '2026-11-15',
+    estDays: 4,
+    completed: false,
+  },
+];
 
 export default function Checklist() {
-  const { session } = useAuth();
-  const [tasks, setTasks] = useState<TaskRow[]>([]);
-  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
-  const [deadlines, setDeadlines] = useState<DeadlineRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [busyId, setBusyId] = useState('');
-  const [error, setError] = useState('');
-  const [updateError, setUpdateError] = useState('');
+  const [tasks, setTasks] = useState<ChecklistItem[]>(INITIAL_TASKS);
 
-  useEffect(() => {
-    let active = true;
-    async function load() {
-      if (!session?.user.id) return;
-      setLoading(true);
-      setError('');
-      const [taskResult, progressResult, courseResult, fundingResult] = await Promise.all([
-        supabase.from('checklist_tasks').select('id,title,est_days,sort_order').order('sort_order'),
-        supabase.from('checklist_progress').select('task_id').eq('student_id', session.user.id),
-        supabase.from('courses').select('name,application_deadline'),
-        supabase.from('funding_sources').select('name,deadline'),
-      ]);
-      if (!active) return;
-      const failed = taskResult.error || progressResult.error || courseResult.error || fundingResult.error;
-      if (failed) setError(failed.message);
-      else {
-        setTasks((taskResult.data ?? []) as TaskRow[]);
-        setCompletedIds(new Set(((progressResult.data ?? []) as ProgressRow[]).map((row) => row.task_id)));
-        setDeadlines([
-          ...((courseResult.data ?? []) as CourseDeadlineRow[]).map((row) => ({ name: row.name, deadline: row.application_deadline })),
-          ...((fundingResult.data ?? []) as DeadlineRow[]).map((row) => ({ name: row.name, deadline: row.deadline })),
-        ]);
-      }
-      setLoading(false);
-    }
-    void load();
-    return () => { active = false; };
-  }, [session?.user.id]);
+  const toggleTask = (id: string) => {
+    setTasks((prev) =>
+      prev.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
+    );
+  };
 
-  const remainingDays = useMemo(
-    () => tasks.filter((task) => !completedIds.has(task.id)).reduce((total, task) => total + task.est_days, 0),
-    [completedIds, tasks],
-  );
-  const nearestDeadline = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return deadlines
-      .map((item) => ({ ...item, parsed: parseDate(item.deadline) }))
-      .filter((item): item is ParsedDeadline => item.parsed !== null && item.parsed >= today)
-      .sort((a, b) => a.parsed.getTime() - b.parsed.getTime())[0] ?? null;
-  }, [deadlines]);
-  const daysUntilDeadline = nearestDeadline
-    ? Math.ceil((nearestDeadline.parsed.getTime() - new Date().setHours(0, 0, 0, 0)) / 86_400_000)
-    : null;
+  const completedCount = tasks.filter((t) => t.completed).length;
+  const totalCount = tasks.length;
+  const progressPercent = Math.round((completedCount / totalCount) * 100);
 
-  async function toggle(task: TaskRow) {
-    if (!session?.user.id || busyId) return;
-    setUpdateError('');
-    setBusyId(task.id);
-    const isComplete = completedIds.has(task.id);
-    const result = isComplete
-      ? await supabase.from('checklist_progress').delete().eq('student_id', session.user.id).eq('task_id', task.id)
-      : await supabase.from('checklist_progress').insert({ student_id: session.user.id, task_id: task.id });
-    if (result.error) {
-      setUpdateError(`Could not update "${task.title}": ${result.error.message}`);
-      setBusyId('');
-      return;
-    }
-    setCompletedIds((current) => {
-      const next = new Set(current);
-      if (isComplete) next.delete(task.id);
-      else next.add(task.id);
-      return next;
-    });
-    setBusyId('');
-  }
+  const now = new Date();
+  const uncompletedTasks = tasks.filter((t) => !t.completed);
+  const remainingTaskDays = uncompletedTasks.map((t) => t.estDays);
+  const earliestDeadlineStr = uncompletedTasks.length > 0
+    ? uncompletedTasks.reduce((earliest, t) => (t.deadline < earliest ? t.deadline : earliest), uncompletedTasks[0]?.deadline ?? '2026-10-31')
+    : '2026-10-31';
 
-  if (loading) return <section><h1>Application checklist</h1><p>Loading your checklist…</p></section>;
+  const riskLevel = assessDeadlineRisk({
+    remainingTaskDays,
+    deadline: new Date(earliestDeadlineStr),
+    now,
+  });
 
   return (
-    <section className="db-stack">
-      <div>
-        <h1>Application checklist</h1>
-        <p className="muted">Track your planning tasks across sessions. Completion is private to your signed-in account.</p>
-      </div>
-      {error && <p role="alert" className="db-message db-message--error">{error}</p>}
-      {updateError && <p role="alert" className="db-message db-message--error">{updateError}</p>}
-      {!error && (
-        <>
-          {tasks.length === 0 ? (
-            <div className="card"><h2>No checklist tasks available</h2><p>Tasks will appear here when an administrator adds them to the database.</p></div>
-          ) : (
-            <>
-              <div className="card">
-                <p><strong>{completedIds.size} of {tasks.length} tasks complete</strong></p>
-                <progress className="db-progress" max={tasks.length} value={Math.min(completedIds.size, tasks.length)}>{completedIds.size} of {tasks.length}</progress>
-                <p>Estimated work remaining: {remainingDays} day(s). Estimates are planning aids, not guarantees.</p>
+    <div className="page-wrapper">
+      <Hero
+        eyebrow="Stay On Track"
+        title={
+          <h1>
+            Application <span>Checklist.</span>
+          </h1>
+        }
+        description="Track your application deadlines, required documents, and critical milestones to ensure a smooth transition to higher education."
+        feature={{
+          symbol: <CalendarCheck size={28} strokeWidth={1.8} />,
+          title: 'Never Miss A Deadline.',
+          description: 'Organize required documents and meet key closing dates with confidence.',
+        }}
+      />
+
+      <div className="page-content">
+        {/* Progress & Risk Nudge */}
+        <section style={{ marginBottom: '2.5rem' }}>
+          <div className="card" style={{ padding: '1.75rem', background: 'var(--card)', borderRadius: 'var(--radius)', border: '1px solid var(--line)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Progress: {completedCount} of {totalCount} steps completed</h2>
+                  <InfoTooltip
+                    title="Deadline Risk Nudges"
+                    content="Our deadline risk engine compares your completed milestone tasks against upcoming closing dates (such as NSFAS and university applications) to warn you if you are falling behind."
+                  />
+                </div>
+                <p className="muted" style={{ margin: '0.25rem 0 0', fontSize: '0.9rem' }}>Keep going to secure your placement and funding before deadlines arrive.</p>
               </div>
-              <div className="card db-task-list">
-                {tasks.map((task) => (
-                  <label className="db-task-row" key={task.id}>
-                    <input type="checkbox" checked={completedIds.has(task.id)} disabled={busyId === task.id || Boolean(busyId)} onChange={() => void toggle(task)} />
-                    <span className={completedIds.has(task.id) ? 'db-task-done' : ''}>{task.title}</span>
-                    <span className="muted">~{task.est_days} day(s)</span>
-                  </label>
-                ))}
+              <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)' }}>
+                {progressPercent}%
               </div>
-              <div className="card">
-                <h2>Deadline planning</h2>
-                {nearestDeadline && daysUntilDeadline !== null ? (
-                  <>
-                    <p>Nearest upcoming listed deadline: <strong>{nearestDeadline.name}</strong> — {formatDate(nearestDeadline.deadline)} ({daysUntilDeadline} day(s) away).</p>
-                    <p className="muted">
-                      {remainingDays > daysUntilDeadline
-                        ? 'Estimated work remaining exceeds the time until this deadline. Prioritize the next step and confirm the deadline with its provider.'
-                        : 'The remaining task estimates fit within the time to this deadline, but allow for delays and verify the date with the provider.'}
+            </div>
+
+            {/* Progress bar */}
+            <ProgressBar value={completedCount} max={totalCount} ariaLabel="Application progress" />
+
+            {riskLevel === 'overdue' ? (
+              <div style={{ marginTop: '1.25rem', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', color: '#dc2626', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '1.25rem' }}>🚨</span>
+                <div>
+                  <strong>Deadline Overdue:</strong> One or more application deadlines have passed or your remaining estimated work exceeds the time available. Prioritize submission immediately!
+                </div>
+              </div>
+            ) : riskLevel === 'at_risk' ? (
+              <div style={{ marginTop: '1.25rem', padding: '1rem', background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '8px', color: '#d97706', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                <div>
+                  <strong>Deadline Risk Nudge:</strong> Your remaining estimated task days exceed the time left until upcoming deadlines (such as NSFAS / university admissions). Accelerate your document preparation!
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginTop: '1.25rem', padding: '1rem', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', color: '#059669', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '1.25rem' }}>✅</span>
+                <div>
+                  <strong>On Track:</strong> You have sufficient time remaining before upcoming deadlines based on your estimated work needed. Keep up the steady pace!
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Task List */}
+        <section>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <h2 style={{ margin: 0 }}>Application Steps &amp; Deadlines</h2>
+            <InfoTooltip
+              title="Estimated Days Needed (~ est.)"
+              content="The approximate number of working days required to prepare, gather, or submit this specific document or application before the deadline."
+            />
+          </div>
+          <p className="muted" style={{ marginBottom: '1.5rem' }}>
+            Check off items as you complete them. Estimated days needed (~X days est.) represent the approximate working time required to complete each task.
+          </p>
+
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {tasks.map((task) => {
+              const deadlineDate = new Date(task.deadline);
+              const daysLeft = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+              const isOverdue = daysLeft < 0;
+
+              return (
+                <div
+                  key={task.id}
+                  className="card"
+                  style={{
+                    padding: '1.25rem 1.5rem',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '1rem',
+                    background: task.completed ? 'rgba(16, 185, 129, 0.03)' : 'var(--card)',
+                    borderColor: task.completed ? 'rgba(16, 185, 129, 0.3)' : 'var(--line)',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={task.completed}
+                    onChange={() => toggleTask(task.id)}
+                    style={{ marginTop: '0.25rem', width: '1.2rem', height: '1.2rem', accentColor: 'var(--primary)', cursor: 'pointer' }}
+                    aria-label={task.title}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', textDecoration: task.completed ? 'line-through' : 'none', opacity: task.completed ? 0.7 : 1 }}>
+                        {task.title}
+                      </h3>
+                      <span
+                        title="Estimated working days required to complete this task"
+                        style={{ fontSize: '0.85rem', fontWeight: 600, color: isOverdue && !task.completed ? '#dc2626' : 'var(--muted)', background: isOverdue && !task.completed ? 'rgba(239, 68, 68, 0.1)' : 'rgba(100, 116, 139, 0.1)', padding: '0.2rem 0.6rem', borderRadius: '12px', cursor: 'help' }}
+                      >
+                        Due: {task.deadline} ({isOverdue ? `${Math.abs(daysLeft)} days overdue` : `${daysLeft} days left`} · ~{task.estDays} days est. work)
+                      </span>
+                    </div>
+                    <p className="muted" style={{ margin: '0.35rem 0 0', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                      {task.description}
                     </p>
-                  </>
-                ) : <p>No future course or funding deadlines are currently listed in the database.</p>}
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </section>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+    </div>
   );
 }

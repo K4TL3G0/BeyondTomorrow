@@ -1,6 +1,7 @@
 export * from './types';
 export * from './config';
 export * from './aps';
+export { INSTITUTIONS } from './institutions';
 export * from './eligibility';
 export * from './fit';
 export * from './funding';

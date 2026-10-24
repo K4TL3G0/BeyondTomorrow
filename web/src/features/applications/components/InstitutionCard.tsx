@@ -8,6 +8,16 @@ const dateFormatter = new Intl.DateTimeFormat('en-ZA', {
 
 const NOT_VERIFIED = 'Not verified';
 
+const INSTITUTION_LOGOS: Record<string, string> = {
+  uct: '/institutions/uct.jpg',
+  wits: '/institutions/wits.png',
+  uj: '/UJ.jpg',
+  up: '/institutions/up.jpg',
+  unisa: '/funding/unisa-postgraduate-bursaries.png',
+  ufs: '/UFS.jpg',
+  ewc: '/institutions/ewc.png',
+};
+
 function formatDate(value: string | null): string {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return NOT_VERIFIED;
   const date = new Date(`${value}T12:00:00`);
@@ -40,7 +50,15 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
     <article className="bt-card" aria-labelledby={titleId}>
       <div className="bt-card-top">
         <span className="bt-logo" aria-hidden="true">
-          {item.short}
+          <span>{item.short}</span>
+          {INSTITUTION_LOGOS[item.id] && (
+            <img
+              src={INSTITUTION_LOGOS[item.id]}
+              alt=""
+              loading="lazy"
+              onError={(event) => event.currentTarget.remove()}
+            />
+          )}
         </span>
         <div>
           <h3 id={titleId}>{item.name}</h3>

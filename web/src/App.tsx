@@ -6,6 +6,7 @@ import { ProfilePage } from './features/profile/ProfilePage';
 import Checklist from './pages/Checklist';
 import Funding from './pages/Funding';
 import Home from './pages/Home';
+import Institutions from './pages/Institutions';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Onboarding from './pages/Onboarding';

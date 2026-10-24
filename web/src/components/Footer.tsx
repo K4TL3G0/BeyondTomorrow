@@ -30,7 +30,7 @@ export function Footer() {
           </div>
 
           <div className="footer-col">
-            <h3>Official Resources</h3>
+            <h3>External Resources</h3>
             <ul>
               <li><a href="https://www.nsfas.org.za" target="_blank" rel="noopener noreferrer">NSFAS Portal</a></li>
               <li><a href="https://www.dhet.gov.za" target="_blank" rel="noopener noreferrer">DHET South Africa</a></li>
@@ -50,7 +50,7 @@ export function Footer() {
 
       <div className="footer-bottom">
         <div className="footer-bottom-content">
-          <p>© {currentYear} Beyond Tomorrow. Built with care for South African students.</p>
+          <p>© {currentYear} Beyond Tomorrow. Advancing informed education choices and access to opportunity for South African students.</p>
           <div className="footer-bottom-links">
             <span className="muted">Last verified data: 2026</span>
           </div>

@@ -1,6 +1,11 @@
 import { useDocumentChecklist } from '../hooks/useDocumentChecklist';
 
-export function DocumentChecklist() {
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function DocumentChecklist({ isOpen, onClose }: Props) {
   const { items, checked, completedCount, total, statusMessage, toggle, reset } =
     useDocumentChecklist();
 
@@ -9,15 +14,28 @@ export function DocumentChecklist() {
     reset();
   };
 
+  if (!isOpen) return null;
+
   return (
     <aside
       id="document-checklist"
-      className="bt-checklist"
+      className="bt-checklist bt-checklist-drawer animate-fadeIn"
       aria-labelledby="checklist-title"
     >
-      <h2 id="checklist-title">My document checklist</h2>
-      <p className="bt-small">
-        A general preparation list. Check the official requirements for your programme and applicant category.
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+        <h2 id="checklist-title" style={{ margin: 0, fontSize: '1.2rem' }}>My document checklist</h2>
+        <button
+          type="button"
+          onClick={onClose}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', fontWeight: 700, color: 'var(--muted)', padding: '4px' }}
+          aria-label="Close checklist"
+        >
+          ✕
+        </button>
+      </div>
+
+      <p className="bt-small" style={{ marginBottom: '0.75rem' }}>
+        A general preparation list. Check official requirements for your programme.
       </p>
 
       <label htmlFor="document-progress" id="progress-text" className="bt-small">
@@ -53,12 +71,9 @@ export function DocumentChecklist() {
         Reset checklist
       </button>
 
-      <div className="bt-storage">
+      <div className="bt-storage" style={{ marginTop: '12px' }}>
         <p className="bt-small">
-          Privacy: this page stores only checkbox choices in this browser. It does
-          not upload documents or submit applications. Other people using this
-          browser profile may see your checklist. Clearing browser data may remove
-          it.
+          Privacy: choices are saved locally in this browser.
         </p>
       </div>
     </aside>

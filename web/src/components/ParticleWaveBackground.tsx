@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * ParticleWaveBackground — a login wallpaper for Beyond Tomorrow.
+ * ParticleWaveBackground — dotted "pathway braid" login wallpaper for Beyond Tomorrow.
  *
  * Three fine threads of dots (Pathways · Funding · Support) start wide apart at the
  * bottom-left, braid around each other as they climb, and draw together into one
- * bright thread that rises toward the top-right. Along the way their colours
- * lighten into a single white — separate steps becoming one journey.
- * A slow pulse of light travels the path now and then. Dots part and swirl softly
- * around the cursor. Transparent canvas.
+ * bright thread rising toward the top-right, lightening into a single white.
+ * A slow pulse of light travels the path. Dots part and swirl softly around the
+ * cursor. Click on the path and the dots scatter; move the mouse away and they
+ * settle back into their threads. Transparent canvas.
  */
 export interface ParticleWaveBackgroundProps {
   /** Strand colours: [pathways, funding, support]. Defaults to the site palette. */
@@ -19,7 +19,7 @@ export interface ParticleWaveBackgroundProps {
   density?: number;
   /** Fade the flow on one side so a login form stays readable. */
   calm?: 'left' | 'right' | 'none';
-  /** Dots react to the cursor when true. */
+  /** Dots react to the cursor and to clicks when true. */
   interactive?: boolean;
   /** Flow speed multiplier. */
   speed?: number;
@@ -36,6 +36,10 @@ interface Dot {
   alpha: number;
   ox: number; // cursor displacement
   oy: number;
+  sx: number; // click-scatter displacement
+  sy: number;
+  vx: number; // scatter spring velocity
+  vy: number;
 }
 interface Mote {
   x: number;
@@ -83,8 +87,8 @@ export function ParticleWaveBackground({
   unity = BRAND_UNITY,
   density = 1,
   calm = 'none',
-  speed = 1,
   interactive = true,
+  speed = 1,
   className,
 }: ParticleWaveBackgroundProps) {
   const ref = useRef<HTMLCanvasElement | null>(null);
@@ -106,9 +110,17 @@ export function ParticleWaveBackground({
     let T = rand(0, 60);
     let dots: Dot[] = [];
     let motes: Mote[] = [];
+
     const mouse = { x: -9999, y: -9999, tx: -9999, ty: -9999, vx: 0, vy: 0, active: false };
     let leanX = 0, leanY = 0; // the whole braid leans gently toward the cursor
-    const R = 150;
+    const R = 150; // cursor influence radius
+    const scatter = { x: -9999, y: -9999, held: false, releasedAt: -1e9 };
+    let touchTimer = 0;
+    const release = () => {
+      if (!scatter.held) return;
+      scatter.held = false;
+      scatter.releasedAt = T; // dots start drifting home from here, each after its own short delay
+    };
 
     // path tables, rebuilt each frame (cheap) so the whole braid can sway
     const cx = new Float32Array(N + 1), cy = new Float32Array(N + 1);
@@ -157,6 +169,10 @@ export function ParticleWaveBackground({
           alpha: 0.4 + depth * 0.55,
           ox: 0,
           oy: 0,
+          sx: 0,
+          sy: 0,
+          vx: 0,
+          vy: 0,
         };
       });
       motes = Array.from({ length: Math.round(per * 0.5) }, () => ({
@@ -188,6 +204,8 @@ export function ParticleWaveBackground({
       leanX += ((mouse.active ? mouse.x / w - 0.5 : 0) - leanX) * lean;
       leanY += ((mouse.active ? mouse.y / h - 0.5 : 0) - leanY) * lean;
       const decay = Math.pow(0.93, dt * 60);
+      const SR = Math.min(280, 120 + 0.2 * Math.min(w, h)); // scatter radius
+
       buildPath();
       const surge = (0.9 + 0.12 * Math.sin(T * 0.31)) * speed;
       const pulseS = (T * 0.06) % 1.5; // a slow wave of light travelling the path
@@ -211,6 +229,32 @@ export function ParticleWaveBackground({
         let x = cx[i]! + (cx[i + 1]! - cx[i]!) * t + (nx[i]! + (nx[i + 1]! - nx[i]!) * t) * across;
         let y = cy[i]! + (cy[i + 1]! - cy[i]!) * t + (ny[i]! + (ny[i + 1]! - ny[i]!) * t) * across;
 
+        // click-scatter: while held, dots near the click burst outward; once released they ease home
+        let tx = 0, ty = 0;
+        // each dot lets go a moment after the release, so the field re-forms as a soft wave
+        const active = scatter.held || T - scatter.releasedAt < 0.05 + (d.seed / TAU) * 0.6;
+        if (active) {
+          const rx = x - scatter.x;
+          const ry = y - scatter.y;
+          const dd = Math.hypot(rx, ry);
+          if (dd < SR) {
+            const kk = 1 - dd / SR;
+            const ang = Math.atan2(ry, rx) + (d.seed / TAU - 0.5) * 1.6;
+            const mag = kk * SR * (0.55 + 0.6 * ((d.seed * 7.3) % 1));
+            tx = Math.cos(ang) * mag;
+            ty = Math.sin(ang) * mag;
+          }
+        }
+        // spring: a quick, slightly springy burst out; a slow, critically-damped glide home
+        const kS = active ? 34 : 2.2 + 1.2 * ((d.seed * 7.3) % 1);
+        const cS = 2 * Math.sqrt(kS) * (active ? 0.85 : 1.05);
+        d.vx += ((tx - d.sx) * kS - cS * d.vx) * dt;
+        d.vy += ((ty - d.sy) * kS - cS * d.vy) * dt;
+        d.sx += d.vx * dt;
+        d.sy += d.vy * dt;
+        x += d.sx;
+        y += d.sy;
+
         // cursor: dots part around it with a slight swirl, then ease back into the thread
         let near = 0;
         if (interactive && mouse.active) {
@@ -228,6 +272,7 @@ export function ParticleWaveBackground({
         d.oy *= decay;
         x += d.ox;
         y += d.oy;
+        near = Math.max(near, Math.min(1, Math.hypot(d.sx, d.sy) / 80) * 0.5);
         if (x < -6 || x > w + 6 || y < -6 || y > h + 6) continue;
 
         const pulse = Math.exp(-(((d.s - pulseS) / 0.07) ** 2));
@@ -284,10 +329,42 @@ export function ParticleWaveBackground({
       running = false;
       cancelAnimationFrame(raf);
     };
+
+    // Click on one of the three threads -> scatter. Held until the mouse moves away.
+    const onDown = (e: PointerEvent) => {
+      if ((e.target as HTMLElement | null)?.closest?.('input,button,a,textarea,select,label')) return;
+      window.clearTimeout(touchTimer);
+      release();
+      const r = canvas.getBoundingClientRect();
+      const px = e.clientX - r.left;
+      const py = e.clientY - r.top;
+      for (let i = 0; i <= N && !scatter.held; i += 2) {
+        for (let k = 0; k < 3; k++) {
+          const o = off[k]![i]!;
+          const dx = cx[i]! + nx[i]! * o - px;
+          const dy = cy[i]! + ny[i]! * o - py;
+          if (dx * dx + dy * dy < 52 * 52) {
+            scatter.held = true;
+            scatter.x = px;
+            scatter.y = py;
+            break;
+          }
+        }
+      }
+    };
+    const onUp = (e: PointerEvent) => {
+      // touch has no "moving away" — let go shortly after the tap
+      if (scatter.held && e.pointerType !== 'mouse') {
+        touchTimer = window.setTimeout(release, 1400);
+      }
+    };
     const onMove = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
       const x = e.clientX - r.left;
       const y = e.clientY - r.top;
+      if (scatter.held && e.pointerType === 'mouse' && Math.hypot(x - scatter.x, y - scatter.y) > 90) {
+        release(); // mouse moved away: the dots return
+      }
       if (mouse.active) {
         mouse.vx = mouse.vx * 0.5 + (x - mouse.tx) * 0.5;
         mouse.vy = mouse.vy * 0.5 + (y - mouse.ty) * 0.5;
@@ -301,6 +378,7 @@ export function ParticleWaveBackground({
       mouse.active = true;
     };
     const onLeave = () => {
+      release();
       mouse.active = false;
       mouse.x = mouse.y = mouse.tx = mouse.ty = -9999;
     };
@@ -318,8 +396,12 @@ export function ParticleWaveBackground({
     });
     io.observe(canvas);
     document.addEventListener('visibilitychange', onVis);
-    host.addEventListener('pointermove', onMove);
-    host.addEventListener('pointerleave', onLeave);
+    if (interactive) {
+      host.addEventListener('pointermove', onMove);
+      host.addEventListener('pointerleave', onLeave);
+      host.addEventListener('pointerdown', onDown);
+      host.addEventListener('pointerup', onUp);
+    }
     setup();
     start();
 
@@ -330,6 +412,9 @@ export function ParticleWaveBackground({
       document.removeEventListener('visibilitychange', onVis);
       host.removeEventListener('pointermove', onMove);
       host.removeEventListener('pointerleave', onLeave);
+      host.removeEventListener('pointerdown', onDown);
+      host.removeEventListener('pointerup', onUp);
+      window.clearTimeout(touchTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [colorKey, density, calm, speed, interactive]);

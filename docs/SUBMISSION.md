@@ -10,6 +10,7 @@ Submit
 - [ ] SSDLC form filled in
 - [ ] Lean Business Canvas filled in
 - [ ] App hosted (free hosting is fine). Static sites are not allowed: it must receive and process data in real time
+- [ ] Configure Supabase Authentication → URL Configuration: use `http://localhost:5173` as the Site URL during local development and add `http://localhost:5173/**` to Redirect URLs. Once deployed to Vercel, change the Site URL to the actual hosted URL and add that URL with `/**` to Redirect URLs so Google sign-in and confirmation links work.
 
 Judging criteria (each 0-10)
 Product, Creativity, Usability, Sustainability, Impact, Presentation, Intelligence.

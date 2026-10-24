@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../lib/auth';
+import {
+  FILTERS,
+  OPPORTUNITIES,
+  type FundingFilter,
+  type Opportunity,
+} from '../data/fundingOpportunities';
+import { HandCoins } from 'lucide-react';
+import { ParticleWaveBackground } from '../components/ParticleWaveBackground';
 import { supabase } from '../lib/supabase';
+import '../styles/funding.css';
 
-interface FundingSourceRow {
+interface FundingSourceRecord {
   id: string;
   name: string;
   type: 'bursary' | 'loan';
+  description: string;
   income_ceiling: number | null;
   disability_income_ceiling: number | null;
   eligible_fields: string[];
@@ -16,117 +25,418 @@ interface FundingSourceRow {
   last_verified: string | null;
 }
 
-interface StudentProfileRow {
-  income_bracket: string | null;
-  province: string | null;
-  interests: string[];
-}
+type FundingSourceTypeFilter = 'all' | FundingSourceRecord['type'];
 
-function safeExternalUrl(value: string | null): string | null {
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' ? url.href : null;
-  } catch {
-    return null;
-  }
-}
+const fundingSourceLogos: { match: string; logo: string }[] = [
+  { match: 'nsfas', logo: 'nsfas_Logo.png' },
+  { match: 'standard bank', logo: 'standard-bank-student-loan.png' },
+  { match: 'absa', logo: 'absa-study-loan.png' },
+  { match: 'manati', logo: 'manati-student-funding-loan.png' },
+  { match: 'fundi', logo: 'fundi-student-loan.png' },
+  { match: 'university of johannesburg', logo: 'uj_logo.jpg' },
+  { match: 'nrf', logo: 'NRF_Logo.png' },
+  { match: 'national research foundation', logo: 'NRF_Logo.png' },
+  { match: 'dhet', logo: 'dhet_Logo.jpg' },
+  { match: 'unisa', logo: 'unisa-postgraduate-bursaries.png' },
+  { match: 'regenesys', logo: 'regenesys-student-loan-guide.png' },
+];
 
-function formatDate(value: string | null): string {
-  if (!value) return 'Not listed';
-  const date = new Date(`${value}T12:00:00`);
-  return Number.isNaN(date.getTime()) ? 'Not listed' : new Intl.DateTimeFormat('en-ZA', { dateStyle: 'medium' }).format(date);
-}
+const getFundingSourceLogo = (source: FundingSourceRecord) => {
+  const name = source.name.toLowerCase();
+  return fundingSourceLogos.find(({ match }) => name.includes(match))?.logo;
+};
 
-function formatAmount(value: number | null): string {
-  return value === null ? 'Not specified' : `R${new Intl.NumberFormat('en-ZA').format(value)}`;
-}
+const formatRand = (amount: number) =>
+  new Intl.NumberFormat('en-ZA', {
+    style: 'currency',
+    currency: 'ZAR',
+    maximumFractionDigits: 0,
+  }).format(amount);
 
-function incomeSummary(profile: StudentProfileRow | null): string {
-  if (!profile?.income_bracket) return 'Add an income bracket in Your details to compare it with the published criteria.';
-  switch (profile.income_bracket) {
-    case 'up_to_350k': return 'Your saved bracket is up to R350,000. Check each funder’s full criteria; this is not an eligibility decision.';
-    case '350k_to_600k': return 'Your saved bracket is R350,000–R600,000. Some records list a separate disability threshold; no disability details are stored here.';
-    case 'above_600k': return 'Your saved bracket is above R600,000. Review each funder’s criteria and confirm directly with the provider.';
-    default: return 'Your saved preference is not to specify income. Review each provider’s criteria directly.';
-  }
-}
+const formatDate = (date: string | null) => {
+  if (!date) return 'Not specified';
+  const parsed = new Date(`${date}T00:00:00`);
+  return Number.isNaN(parsed.getTime())
+    ? 'Not specified'
+    : new Intl.DateTimeFormat('en-ZA', { dateStyle: 'medium' }).format(parsed);
+};
 
-export default function Funding() {
-  const { session } = useAuth();
-  const [sources, setSources] = useState<FundingSourceRow[]>([]);
-  const [profile, setProfile] = useState<StudentProfileRow | null>(null);
+function FundingSources() {
+  const [sources, setSources] = useState<FundingSourceRecord[]>([]);
+  const [filter, setFilter] = useState<FundingSourceTypeFilter>('all');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let active = true;
-    async function load() {
-      if (!session?.user.id) return;
+
+    async function loadSources() {
       setLoading(true);
-      setError('');
-      const [sourcesResult, profileResult] = await Promise.all([
-        supabase.from('funding_sources').select('id,name,type,income_ceiling,disability_income_ceiling,eligible_fields,eligible_provinces,min_average,deadline,source_url,last_verified').order('deadline'),
-        supabase.from('student_profiles').select('income_bracket,province,interests').eq('id', session.user.id).maybeSingle(),
-      ]);
+      setError(null);
+
+      const { data, error: queryError } = await supabase
+        .from('funding_sources')
+        .select(
+          'id, name, type, description, income_ceiling, disability_income_ceiling, eligible_fields, eligible_provinces, min_average, deadline, source_url, last_verified',
+        )
+        .returns<FundingSourceRecord[]>()
+        .order('deadline', { ascending: true, nullsFirst: false });
+
       if (!active) return;
-      const failed = sourcesResult.error || profileResult.error;
-      if (failed) setError(failed.message);
-      else {
-        setSources((sourcesResult.data ?? []) as FundingSourceRow[]);
-        setProfile((profileResult.data ?? null) as StudentProfileRow | null);
+
+      if (queryError) {
+        setError(`Could not load funding data: ${queryError.message}`);
+        setSources([]);
+      } else {
+        setSources(data ?? []);
       }
       setLoading(false);
     }
-    void load();
-    return () => { active = false; };
-  }, [session?.user.id]);
 
-  if (loading) return <section><h1>Funding</h1><p>Loading funding sources…</p></section>;
+    void loadSources();
+    return () => {
+      active = false;
+    };
+  }, [reloadKey]);
+
+  const visibleSources = sources.filter((source) => filter === 'all' || source.type === filter);
 
   return (
-    <section className="db-stack">
-      <div>
-        <h1>Funding sources</h1>
-        <p className="muted">Review bursaries and loans stored in the database, including their published limits, deadlines and verification dates.</p>
+    <section className="database-funding" aria-labelledby="database-funding-heading">
+      <div className="database-funding-heading">
+        <div>
+          <p className="eyebrow">Funding data</p>
+          <h2 id="database-funding-heading">Bursaries and loans</h2>
+          <p className="intro">
+            Funding details maintained in the database. Confirm each opportunity with its source
+            before applying.
+          </p>
+        </div>
       </div>
-      {error && <p role="alert" className="db-message db-message--error">Could not load funding data: {error}</p>}
-      {!error && (
-        <>
-          <div className="card">
-            <h2>Your profile context</h2>
-            <p>{incomeSummary(profile)}</p>
-            {profile?.province && <p><strong>Province:</strong> {profile.province}</p>}
-            {profile?.interests.length ? <p><strong>Interests:</strong> {profile.interests.join(', ')}</p> : null}
-            <p className="muted">This page lists criteria only. It does not predict approval or determine eligibility. Confirm current requirements with the provider.</p>
-          </div>
-          {sources.length === 0 ? (
-            <div className="card"><h2>No funding sources listed</h2><p>Verified funding opportunities will appear here when reference data is added.</p></div>
-          ) : (
-            <div className="db-card-grid">
-              {sources.map((source) => {
-                const sourceUrl = safeExternalUrl(source.source_url);
-                return (
-                  <article className="card db-course-card" key={source.id}>
-                    <p className="db-eyebrow">{source.type === 'bursary' ? 'Bursary' : 'Loan'}</p>
-                    <h2>{source.name}</h2>
-                    <dl className="db-details">
-                      <div><dt>Income ceiling</dt><dd>{formatAmount(source.income_ceiling)}</dd></div>
-                      <div><dt>Disability income ceiling</dt><dd>{formatAmount(source.disability_income_ceiling)}</dd></div>
-                      <div><dt>Minimum average</dt><dd>{source.min_average === null ? 'Not specified' : `${source.min_average}%`}</dd></div>
-                      <div><dt>Deadline</dt><dd>{formatDate(source.deadline)}</dd></div>
-                      <div><dt>Last verified</dt><dd>{formatDate(source.last_verified)}</dd></div>
-                    </dl>
-                    <p><strong>Eligible fields:</strong> {source.eligible_fields.length ? source.eligible_fields.join(', ') : 'Any field listed by the provider'}</p>
-                    <p><strong>Eligible provinces:</strong> {source.eligible_provinces.length ? source.eligible_provinces.join(', ') : 'Any province listed by the provider'}</p>
-                    {sourceUrl && <a href={sourceUrl} target="_blank" rel="noopener noreferrer">Check provider website (new tab)</a>}
-                  </article>
-                );
-              })}
-            </div>
-          )}
-        </>
+
+      <div className="source-filters" role="group" aria-label="Filter database funding">
+        {([
+          ['all', 'All funding'],
+          ['bursary', 'Bursaries'],
+          ['loan', 'Loans'],
+        ] as const).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            className={`filter-button${filter === value ? ' active' : ''}`}
+            aria-pressed={filter === value}
+            onClick={() => setFilter(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {filter !== 'all' && <StudentLoanGuide />}
+
+      {loading && (
+        <p className="funding-status" role="status">
+          Loading funding data…
+        </p>
+      )}
+
+      {!loading && error && (
+        <div className="funding-status funding-error" role="alert">
+          <p>{error}</p>
+          <button
+            type="button"
+            className="funding-retry"
+            onClick={() => setReloadKey((key) => key + 1)}
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && visibleSources.length === 0 && (
+        <p className="funding-status">
+          {sources.length === 0
+            ? 'No funding sources have been added yet.'
+            : `No ${filter === 'bursary' ? 'bursaries' : 'loans'} have been added yet.`}
+        </p>
+      )}
+
+      {!loading && !error && visibleSources.length > 0 && (
+        <div className="funding-source-grid">
+          {visibleSources.map((source) => {
+            const isSample =
+              source.name.toLowerCase().includes('sample data') ||
+              source.source_url?.includes('example.com');
+            const logo = getFundingSourceLogo(source);
+
+            return (
+              <article className="funding-source-card" key={source.id}>
+                <div className="funding-source-card-heading">
+                  <span className="source-type">{source.type}</span>
+                  {isSample && <span className="sample-data-badge">Sample data</span>}
+                </div>
+                <div className="funding-source-title">
+                  {logo && <img src={`/funding/${logo}`} alt="" aria-hidden="true" loading="lazy" />}
+                  <h3>{source.name}</h3>
+                </div>
+                {source.description && (
+                  <p className="funding-source-description">{source.description}</p>
+                )}
+                <dl className="funding-criteria">
+                  <div>
+                    <dt>Income ceiling</dt>
+                    <dd>
+                      {source.income_ceiling === null
+                        ? 'Not specified'
+                        : formatRand(source.income_ceiling)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Ceiling for applicants with disabilities</dt>
+                    <dd>
+                      {source.disability_income_ceiling === null
+                        ? 'Not specified'
+                        : formatRand(source.disability_income_ceiling)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Eligible fields</dt>
+                    <dd>
+                      {source.eligible_fields.length
+                        ? source.eligible_fields.join(', ')
+                        : source.type === 'loan'
+                          ? 'Check provider'
+                          : 'Any field'}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Eligible provinces</dt>
+                    <dd>
+                      {source.eligible_provinces.length
+                        ? source.eligible_provinces.join(', ')
+                        : source.type === 'loan'
+                          ? 'Check provider'
+                          : 'Any province'}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Minimum average</dt>
+                    <dd>
+                      {source.min_average === null
+                        ? 'Not specified'
+                        : `${source.min_average}%`}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Application deadline</dt>
+                    <dd>{formatDate(source.deadline)}</dd>
+                  </div>
+                </dl>
+                <div className="funding-source-meta">
+                  <span>Last verified: {formatDate(source.last_verified)}</span>
+                  {source.source_url && (
+                    <a href={source.source_url} target="_blank" rel="noopener noreferrer">
+                      Check source <span aria-hidden="true">↗</span>
+                    </a>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
       )}
     </section>
   );
 }
+
+function StudentLoanGuide() {
+  return (
+    <section className="student-loan-guide" aria-labelledby="student-loan-guide-heading">
+      <div className="student-loan-guide-copy">
+        <p className="eyebrow">Before you borrow</p>
+        <h2 id="student-loan-guide-heading">How student loans work in South Africa</h2>
+        <p>
+          A student loan is borrowed money that must be repaid, usually with interest and possibly
+          fees. Depending on the lender and product, it may pay study costs directly or provide
+          funding for approved expenses. A bursary is different: it generally does not need to be
+          repaid if its conditions are met.
+        </p>
+        <p>
+          South African options include government student-loan schemes, bank study loans and
+          alternative private student finance. Providers set their own eligibility, affordability,
+          surety and repayment rules, so do not assume one provider’s terms apply to another.
+        </p>
+      </div>
+      <div className="loan-checklist">
+        <h3>Compare these details before applying</h3>
+        <ul>
+          <li>Total amount repayable, interest rate and all fees</li>
+          <li>Whether a parent, sponsor or other surety is required</li>
+          <li>Which study costs are covered and how the money is paid</li>
+          <li>When repayments begin and what the monthly instalment will be</li>
+          <li>What happens if you pause or do not complete your studies</li>
+        </ul>
+      </div>
+      <p className="loan-guide-source">
+        <img
+          src="/funding/regenesys-student-loan-guide.png"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+        />
+        <span>
+          Summary adapted from the{' '}
+          <a
+            href="https://www.regenesys.net/reginsights/best-student-loans-in-south-africa"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Regenesys guide to student loans in South Africa
+          </a>
+          . It is general guidance, not financial advice. Verify product details and get the full
+          agreement from the lender before signing.
+        </span>
+      </p>
+    </section>
+  );
+}
+
+function OpportunityLogo({ item }: { item: Opportunity }) {
+  return (
+    <span className="opportunity-logo">
+      <img
+        className="opportunity-logo-image"
+        src={`/funding/${item.logo}`}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+  );
+}
+
+function OpportunityCard({ item }: { item: Opportunity }) {
+  const isExternal = !item.url.startsWith('mailto:');
+
+  return (
+    <a
+      className={`expandable-box${isExternal ? '' : ' informational-card'}`}
+      href={item.url}
+      aria-label={item.ariaLabel}
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    >
+      <OpportunityLogo item={item} />
+      <span className="card-tag">{item.tag}</span>
+      <h3>{item.title}</h3>
+      <p className="card-description">{item.description}</p>
+      <span className="card-action">
+        {item.actionLabel} <span aria-hidden="true">↗</span>
+      </span>
+    </a>
+  );
+}
+
+export function Funding() {
+  const [filter, setFilter] = useState<FundingFilter>('all');
+
+  const visible = OPPORTUNITIES.filter(
+    (item) => filter === 'all' || item.categories.includes(filter),
+  );
+
+  return (
+    <div className="funding-page">
+      <section className="hero">
+        <ParticleWaveBackground density={0.65} className="funding-wave" />
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <p className="eyebrow">Your future starts now</p>
+            <h1>
+              Find Funding.
+              <br />
+              Build Your <span>Future.</span>
+            </h1>
+            <p>
+              Explore scholarships, bursaries and study opportunities in South Africa and abroad.
+              Compare the options below, then select a card to visit the provider’s website.
+            </p>
+          </div>
+          <aside className="hero-feature" aria-label="Funding opportunities feature">
+            <span className="feature-symbol" aria-hidden="true">
+              <HandCoins size={28} strokeWidth={1.8} />
+            </span>
+            <h2>Learn. Apply. Succeed.</h2>
+            <p>Your future starts with the right opportunity and support.</p>
+          </aside>
+        </div>
+      </section>
+
+      <FundingSources />
+
+      <section className="content-section" id="opportunities">
+        <div className="section-heading">
+          <p className="eyebrow">Explore your options</p>
+          <h2>Study resources and funding websites</h2>
+          <p className="intro">
+            These curated links are separate from the live database funding records above. Use the
+            category buttons to narrow the list.
+          </p>
+        </div>
+
+        <div className="filters" role="group" aria-label="Filter opportunities">
+          {FILTERS.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              className={`filter-button${filter === value ? ' active' : ''}`}
+              aria-pressed={filter === value}
+              onClick={() => setFilter(value)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="expandable-boxes">
+          {visible.map((item) => (
+            <OpportunityCard key={item.id} item={item} />
+          ))}
+        </div>
+
+        {visible.length === 0 && (
+          <p className="no-results">
+            No opportunities match this filter. Please choose another category.
+          </p>
+        )}
+
+        <p className="disclaimer">
+          <span className="disclaimer-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3.75 21 20.25H3L12 3.75Z"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.7"
+              />
+              <path
+                d="M12 9v5m0 3h.01"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="1.9"
+              />
+            </svg>
+          </span>
+          <span>
+            <strong>Important:</strong> These cards link to external websites. Funding availability
+            and application dates may change. Always verify details and apply through the official
+            provider where possible.
+          </span>
+        </p>
+      </section>
+    </div>
+  );
+}
+
+export default Funding;
