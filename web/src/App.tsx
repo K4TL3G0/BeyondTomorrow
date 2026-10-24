@@ -11,7 +11,7 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Onboarding from './pages/Onboarding';
 import Pathways from './pages/Pathways';
-import Resources from './pages/Resources';
+import Resources from './pages/resources';
 
 export default function App() {
   return (
