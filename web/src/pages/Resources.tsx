@@ -533,7 +533,7 @@ export default function Resources() {
           <h1 id="resources-title">Study smarter, your way.</h1>
           <p className="resources-intro">
             Find your Grade 10–12 subjects, then choose the study support you need. YouTube
-            channels, notes and past papers will be added as the links are collected.
+            channels, Notes and Past Papers.
           </p>
         </div>
       </section>
