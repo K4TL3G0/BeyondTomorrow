@@ -1,4 +1,5 @@
 import type { ApsInstitution } from './aps';
+import { TVET_COLLEGES } from './tvetColleges';
 
 export const INSTITUTIONS: ApsInstitution[] = [
   // Eastern Cape
@@ -306,4 +307,14 @@ export const INSTITUTIONS: ApsInstitution[] = [
     notes: ['Standard NSC APS: best six subjects on the 1-7 scale, Life Orientation excluded.'],
     caveat: 'This is a provisional estimate, not confirmed against Cape Peninsula University of Technology’s own rules. Check their prospectus.',
   },
+  ...TVET_COLLEGES.map((college): ApsInstitution => ({
+    id: college.id,
+    name: college.name,
+    year: 2027,
+    checked: '2026-10-25',
+    source: college.url,
+    scheme: { type: 'standard', bestN: 6, excludeLO: true, scale: 'univen' },
+    notes: ['Provisional generic six-subject NSC APS estimate only; TVET admission requirements vary by programme.'],
+    caveat: "This is not an institution-specific APS rule; check the college's current programme requirements before applying.",
+  })),
 ];

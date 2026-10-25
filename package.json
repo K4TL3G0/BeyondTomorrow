@@ -1,8 +1,14 @@
 {
   "name": "beyond-tomorrow",
   "private": true,
-  "workspaces": ["web", "api", "packages/*"],
-  "engines": { "node": ">=20" },
+  "workspaces": [
+    "web",
+    "api",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "npm run dev:web",
     "dev:web": "npm run dev -w web",
@@ -11,5 +17,8 @@
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build -w web",
     "audit:high": "npm audit --audit-level=high"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.5"
   }
 }

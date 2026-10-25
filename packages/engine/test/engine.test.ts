@@ -55,6 +55,13 @@ describe('APS calculator', () => {
     expect(convertMark(90, 'ufs')).toBe(8);
   });
 
+  it('includes the 50 TVET colleges with provisional APS caveats', () => {
+    const tvetColleges = INSTITUTIONS.filter((institution) => institution.id.endsWith('-tvet'));
+
+    expect(tvetColleges).toHaveLength(50);
+    expect(tvetColleges.every((institution) => institution.caveat?.includes('not an institution-specific APS rule'))).toBe(true);
+  });
+
   it('totals counted subjects while retaining excluded rows in the breakdown', () => {
     const result = calculateAps([
       { name: 'English', percent: 80, counted: true },

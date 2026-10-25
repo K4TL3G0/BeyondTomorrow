@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  CalendarClock,
   Check,
   ChevronRight,
   Clock3,
@@ -30,6 +32,14 @@ import {
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { Hero } from '../components/Hero';
+import { CoachGuide } from '../components/CoachGuide';
+import { CoachAvatar } from '../components/CoachAvatar';
+import { ParticleWaveBackground } from '../components/ParticleWaveBackground';
+import {
+  buildCoachDeadlineReminders,
+  type CourseDeadlineSource,
+  type StudentApplicationDeadlineSource,
+} from '../lib/coachDeadlines';
 import './coach.css';
 
 type Stage = 'route' | 'questions' | 'documents';
@@ -57,6 +67,37 @@ type FixClockRow = {
   window_days: number;
   outstanding_docs: string[];
 };
+type StoredCoachSession = {
+  answers: Pick<
+    HouseholdAnswers,
+    'ageBand' | 'supporter' | 'parentsOnRecord' | 'supporterIsParentOnRecord' | 'acceptance'
+  >;
+  selectedFundingId: string;
+  stage: Stage;
+  questionIndex: number;
+};
+
+const COACH_SESSION_STORAGE_PREFIX = 'beyond-tomorrow:coach:';
+
+function isStoredCoachSession(value: unknown): value is StoredCoachSession {
+  if (!isRecord(value) || !isRecord(value.answers)) return false;
+  const { answers } = value;
+  return (
+    (answers.ageBand === undefined || ['under18', '18to34', '35plus'].includes(String(answers.ageBand))) &&
+    (answers.supporter === undefined ||
+      ['both_parents', 'one_parent', 'legal_guardian', 'spouse', 'myself', 'other_relative'].includes(String(answers.supporter))) &&
+    (answers.parentsOnRecord === undefined ||
+      ['both', 'one', 'none', 'unsure'].includes(String(answers.parentsOnRecord))) &&
+    (answers.supporterIsParentOnRecord === undefined ||
+      ['yes', 'no', 'unsure'].includes(String(answers.supporterIsParentOnRecord))) &&
+    (answers.acceptance === undefined || ['accepted', 'applied', 'not_yet'].includes(String(answers.acceptance))) &&
+    typeof value.selectedFundingId === 'string' &&
+    (value.stage === 'route' || value.stage === 'questions' || value.stage === 'documents') &&
+    Number.isInteger(value.questionIndex) &&
+    Number(value.questionIndex) >= 0 &&
+    Number(value.questionIndex) < QUESTIONS.length
+  );
+}
 
 const INCOME_OPTIONS: { value: IncomeBracket; label: string; hint: string }[] = [
   { value: 'up_to_350k', label: 'R350,000 or less', hint: 'The lower-income bracket' },
@@ -343,16 +384,21 @@ export default function Coach() {
   const [incomeBracket, setIncomeBracket] = useState<IncomeBracket | ''>('');
   const [selectedFundingId, setSelectedFundingId] = useState('');
   const [answers, setAnswers] = useState<HouseholdAnswers>({});
+  const [restoredSessionFor, setRestoredSessionFor] = useState<string | null>(null);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [documents, setDocuments] = useState<CoachDocument[]>([]);
   const [rules, setRules] = useState<ReadinessRule[]>([]);
   const [funding, setFunding] = useState<FundingRow[]>([]);
+  const [courses, setCourses] = useState<CourseDeadlineSource[]>([]);
+  const [studentApplications, setStudentApplications] = useState<StudentApplicationDeadlineSource[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<Set<string>>(new Set());
   const [fixClocks, setFixClocks] = useState<FixClockRow[]>([]);
   const [notificationDate, setNotificationDate] = useState('');
   const [showFixClockForm, setShowFixClockForm] = useState(false);
   const [outstandingCodes, setOutstandingCodes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [researchModalOpen, setResearchModalOpen] = useState(false);
+  const researchAudioRef = useRef<HTMLAudioElement | null>(null);
   const [referenceError, setReferenceError] = useState('');
   const [saveError, setSaveError] = useState('');
   const [savingKey, setSavingKey] = useState('');
@@ -366,7 +412,16 @@ export default function Coach() {
     setLoading(true);
     setReferenceError('');
     try {
-      const [profileResult, fundingResult, documentResult, rulesResult, progressResult, applicationResult] =
+      const [
+        profileResult,
+        fundingResult,
+        documentResult,
+        rulesResult,
+        progressResult,
+        fixClockResult,
+        courseResult,
+        studentApplicationResult,
+      ] =
         await Promise.all([
           supabase.from('student_profiles').select('income_bracket').eq('id', userId).maybeSingle(),
           supabase
@@ -386,15 +441,27 @@ export default function Coach() {
             .from('fix_clocks')
             .select('funding_name,kind,notified_on,window_days,outstanding_docs')
             .eq('student_id', userId),
+          supabase
+            .from('courses')
+            .select('id,institution_id,name,application_deadline,source_url,last_verified')
+            .not('application_deadline', 'is', null),
+          supabase
+            .from('student_applications')
+            .select('id,institution_id,institution_key,programme_name,status,deadline')
+            .eq('student_id', userId),
         ]);
 
       if (profileResult.error) throw profileResult.error;
       if (fundingResult.error) throw fundingResult.error;
       if (progressResult.error) throw progressResult.error;
+      if (courseResult.error) throw courseResult.error;
+      if (studentApplicationResult.error) throw studentApplicationResult.error;
       const profile = profileResult.data as { income_bracket: IncomeBracket | null } | null;
       setIncomeBracket(profile?.income_bracket ?? '');
       setFunding((fundingResult.data ?? []) as FundingRow[]);
-      setFixClocks((applicationResult.data ?? []) as FixClockRow[]);
+      setCourses((courseResult.data ?? []) as CourseDeadlineSource[]);
+      setStudentApplications((studentApplicationResult.data ?? []) as StudentApplicationDeadlineSource[]);
+      setFixClocks((fixClockResult.data ?? []) as FixClockRow[]);
       setCheckedKeys(
         new Set(
           ((progressResult.data ?? []) as ProgressRow[])
@@ -403,7 +470,7 @@ export default function Coach() {
         ),
       );
 
-      if (documentResult.error || rulesResult.error || applicationResult.error) {
+      if (documentResult.error || rulesResult.error || fixClockResult.error) {
         setDocuments([]);
         setRules([]);
         setFixClocks([]);
@@ -432,6 +499,71 @@ export default function Coach() {
   }, [loadData]);
 
   useEffect(() => {
+    if (!userId) {
+      setRestoredSessionFor(null);
+      setAnswers({});
+      setSelectedFundingId('');
+      setStage('route');
+      setQuestionIndex(0);
+      return;
+    }
+
+    setAnswers({});
+    setSelectedFundingId('');
+    setStage('route');
+    setQuestionIndex(0);
+    const storageKey = `${COACH_SESSION_STORAGE_PREFIX}${userId}`;
+    try {
+      const serialized = window.sessionStorage.getItem(storageKey);
+      if (serialized) {
+        const parsed: unknown = JSON.parse(serialized);
+        if (!isStoredCoachSession(parsed)) {
+          throw new Error('The saved coach session has an invalid format.');
+        }
+        setAnswers({
+          ageBand: parsed.answers.ageBand,
+          supporter: parsed.answers.supporter,
+          parentsOnRecord: parsed.answers.parentsOnRecord,
+          supporterIsParentOnRecord: parsed.answers.supporterIsParentOnRecord,
+          acceptance: parsed.answers.acceptance,
+        });
+        setSelectedFundingId(parsed.selectedFundingId);
+        setStage(parsed.stage);
+        setQuestionIndex(parsed.questionIndex);
+      }
+      setSaveError('');
+      setRestoredSessionFor(userId);
+    } catch (error) {
+      setSaveError(errorMessage(error, 'Your coach session could not be restored.'));
+      setRestoredSessionFor(userId);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId || restoredSessionFor !== userId) return;
+
+    try {
+      window.sessionStorage.setItem(
+        `${COACH_SESSION_STORAGE_PREFIX}${userId}`,
+        JSON.stringify({
+          answers: {
+            ageBand: answers.ageBand,
+            supporter: answers.supporter,
+            parentsOnRecord: answers.parentsOnRecord,
+            supporterIsParentOnRecord: answers.supporterIsParentOnRecord,
+            acceptance: answers.acceptance,
+          },
+          selectedFundingId,
+          stage,
+          questionIndex,
+        } satisfies StoredCoachSession),
+      );
+    } catch (error) {
+      setSaveError(errorMessage(error, 'Your coach session could not be saved in this browser tab.'));
+    }
+  }, [answers, questionIndex, restoredSessionFor, selectedFundingId, stage, userId]);
+
+  useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 60_000);
     return () => window.clearInterval(timer);
   }, []);
@@ -454,6 +586,12 @@ export default function Coach() {
       ),
     [funding],
   );
+  useEffect(() => {
+    if (loading || !selectedFundingId || fundingRows.some((row) => row.id === selectedFundingId)) return;
+    setSelectedFundingId('');
+    setStage('route');
+    setQuestionIndex(0);
+  }, [fundingRows, loading, selectedFundingId]);
   const selectedFunding = fundingRows.find((row) => row.id === selectedFundingId);
   const fixClock = fixClocks.find(
     (row) => row.funding_name === (selectedFunding?.name ?? 'NSFAS Bursary') && row.kind === 'documents',
@@ -481,6 +619,10 @@ export default function Coach() {
       !isStaleReferenceDate(row.last_verified, now),
   );
   const deadlineDays = nsfasDeadline?.deadline ? daysUntil(nsfasDeadline.deadline, now) : null;
+  const deadlineReminders = useMemo(
+    () => buildCoachDeadlineReminders(fundingRows, courses, studentApplications, now),
+    [fundingRows, courses, studentApplications, now],
+  );
   const fixDays = fixClock?.notified_on
     ? daysUntil(addDays(fixClock.notified_on, fixClock.window_days), now)
     : null;
@@ -660,20 +802,43 @@ export default function Coach() {
 
   return (
     <div className="coach-page">
-      <Hero
-        eyebrow="Paperwork readiness coach"
-        title={
-          <h1>
-            Prepare your application <span>with confidence.</span>
-          </h1>
-        }
-        description="Find your funding route, answer a few broad questions and prepare with a checklist based only on sourced, dated guidance."
-        feature={{
-          symbol: <FileCheck2 size={28} strokeWidth={1.8} />,
-          title: 'Prepare. Check. Succeed.',
-          description: 'Household answers stay in your private page session.',
-        }}
-      />
+      <section className="hero">
+        <ParticleWaveBackground density={0.65} className="hero-wave" />
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <p className="eyebrow"><FileCheck2 size={16} /> Paperwork readiness coach</p>
+            <h1>
+              Prepare your application <span>with confidence.</span>
+            </h1>
+            <p>
+              Find your funding route, answer a few guided questions and prepare with a checklist
+              based only on sourced, dated guidance.
+            </p>
+          </div>
+          <aside
+            className="hero-feature hero-feature-clickable"
+            aria-label="Naledi research insight"
+            onClick={() => setResearchModalOpen(true)}
+            style={{ cursor: 'pointer', position: 'relative' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
+              <div style={{ position: 'relative', flexShrink: 0 }}>
+                <CoachAvatar mood="happy" size={56} name="Naledi" />
+                <span className="hero-play-badge" aria-hidden="true">
+                  ▶
+                </span>
+              </div>
+              <div>
+                <h2>Naledi's Research</h2>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#38bdf8', fontWeight: 600 }}>Click to play audio &amp; read data</p>
+              </div>
+            </div>
+            <p style={{ margin: 0 }}>
+              Discover why 1 in 4 NSFAS applications are marked incomplete due to paperwork and how to avoid it.
+            </p>
+          </aside>
+        </div>
+      </section>
 
       <main className="coach-content">
         <ol className="coach-steps" aria-label="Coach steps">
@@ -684,6 +849,63 @@ export default function Coach() {
             </li>
           ))}
         </ol>
+
+        <CoachGuide
+          tickedCount={checkedKeys.size}
+          situation={{
+            loading,
+            referenceError: Boolean(referenceError),
+            saveError: Boolean(saveError),
+            saving: savingIncome || savingFixClock || Boolean(savingKey),
+            stage,
+            hasIncome: Boolean(incomeBracket),
+            routeSelected: Boolean(selectedFundingId),
+            routeCount: allFunding.length,
+            questionIndex,
+            questionTotal: QUESTIONS.length,
+            documentCount: required.length,
+            allReady: required.length > 0 && preflight.allReady,
+            riskLevel: riskAnalysis?.forecast?.level ?? null,
+            nextAction: riskAnalysis?.forecast?.nextAction ?? null,
+          }}
+        />
+
+        {deadlineReminders.length > 0 && (
+          <aside className="coach-deadline-panel" aria-labelledby="coach-deadlines-title">
+            <div className="coach-deadline-heading">
+              <CalendarClock size={20} aria-hidden="true" />
+              <div>
+                <h2 id="coach-deadlines-title">Upcoming deadlines</h2>
+                <p>On-screen reminders from current dated records. These are not spoken aloud.</p>
+              </div>
+            </div>
+            <ul className="coach-deadline-list">
+              {deadlineReminders.map((reminder) => (
+                <li className="coach-deadline-item" key={reminder.id}>
+                  <div>
+                    <strong>{reminder.title}</strong>
+                    <span>
+                      {reminder.daysLeft === 0
+                        ? 'Due today'
+                        : `Due in ${reminder.daysLeft} ${reminder.daysLeft === 1 ? 'day' : 'days'}`}
+                      {' · '}{formatDate(reminder.deadline)}
+                    </span>
+                    <small>
+                      {reminder.sourceLabel}
+                      {reminder.verifiedOn ? ` · Verified ${formatDate(reminder.verifiedOn)}` : ''}
+                      {' · '}{reminder.confirmation}
+                    </small>
+                  </div>
+                  {reminder.sourceUrl && (
+                    <a href={reminder.sourceUrl} target="_blank" rel="noreferrer">
+                      Verify source <ExternalLink size={14} aria-hidden="true" />
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
 
         {referenceError && (
           <div className="coach-alert" role="alert">
@@ -772,7 +994,12 @@ export default function Coach() {
                                 <span>{row.last_verified ? `Source checked ${formatDate(row.last_verified)}` : 'Source date unavailable'}</span>
                                 {sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer">Review source <ExternalLink size={14} /></a>}
                               </div>
-                              {row.type === 'loan' && <p className="coach-debt-note">This is a loan you must repay. Compare terms carefully.</p>}
+                              {row.type === 'loan' && (
+                                <p className="coach-debt-note">
+                                  <AlertTriangle size={14} />
+                                  <span>This is a loan you must repay. Compare terms carefully.</span>
+                                </p>
+                              )}
                               <button
                                 type="button"
                                 className={`coach-select-route ${selectedFundingId === row.id ? 'is-selected' : ''}`}
@@ -812,6 +1039,7 @@ export default function Coach() {
                     <p className="coach-kicker">Step 2 of 3 · Question {questionIndex + 1} of {QUESTIONS.length}</p>
                     <h2 id="question-title">{currentQuestion.title}</h2>
                     <p>{currentQuestion.help}</p>
+                    <p>Your answers are kept in this browser tab for this session, not saved to your account. Optional sensitive details are kept in memory only.</p>
                   </div>
                   <span className="coach-step-icon"><span>{questionIndex + 1}</span></span>
                 </div>
@@ -874,7 +1102,23 @@ export default function Coach() {
                 {required.length ? (
                   <>
                     <div className="coach-progress-summary" aria-live="polite">
-                      <strong>{preflight.perDocument.reduce((sum, item) => sum + item.ticked, 0)} of {preflight.perDocument.reduce((sum, item) => sum + item.total, 0)} checks complete</strong>
+                      {(() => {
+                        const completedChecks = preflight.perDocument.reduce((sum, item) => sum + item.ticked, 0);
+                        const totalChecks = preflight.perDocument.reduce((sum, item) => sum + item.total, 0);
+                        return (
+                          <>
+                            <strong>{completedChecks} of {totalChecks} checks complete</strong>
+                            {totalChecks > 0 && (
+                              <progress
+                                className="coach-checklist-progress"
+                                value={completedChecks}
+                                max={totalChecks}
+                                aria-label={`${completedChecks} of ${totalChecks} checklist checks complete`}
+                              />
+                            )}
+                          </>
+                        );
+                      })()}
                       <span>{preflight.allReady ? 'Checklist complete — review official instructions before submitting.' : 'A reminder: ticking boxes does not upload or submit documents.'}</span>
                     </div>
                     {riskAnalysis?.forecast && (
@@ -941,9 +1185,11 @@ export default function Coach() {
                   <div className="coach-no-checklist">
                     <ShieldAlert size={22} />
                     <div>
-                      <h3>No personalized document rules are available yet.</h3>
-                      <p>We won’t guess which documents you need. Your income route is shown above; check current document requirements directly with NSFAS until verified rules are added.</p>
-                      <a href="https://www.nsfas.org.za" target="_blank" rel="noreferrer">Visit NSFAS <ExternalLink size={14} /></a>
+                      <h3>No verified document rules match {selectedFunding?.name ?? 'this funding route'}.</h3>
+                      <p>We use your selected route and answers, but we won’t guess which documents you need. The current seed supports NSFAS bursary/loan and Standard Bank student loans only. Apply <code>db/11_supported_subset_seed.sql</code> after <code>db/09_coach_reference_data.sql</code> in Supabase to load that subset; for other providers, confirm requirements directly with them.</p>
+                      {selectedFunding?.name.toLowerCase().includes('nsfas') && (
+                        <a href="https://www.nsfas.org.za" target="_blank" rel="noreferrer">Visit NSFAS <ExternalLink size={14} /></a>
+                      )}
                     </div>
                   </div>
                 )}
@@ -1024,6 +1270,59 @@ export default function Coach() {
           </>
         )}
       </main>
+
+      {researchModalOpen && (
+        <div className="coach-modal-overlay" onClick={() => setResearchModalOpen(false)}>
+          <div className="coach-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="coach-modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <CoachAvatar mood="happy" size={48} name="Naledi" />
+                <div>
+                  <h3 style={{ margin: 0 }}>Naledi's Research Briefing</h3>
+                  <p className="muted" style={{ margin: 0, fontSize: '0.85rem' }}>NSFAS 2026 Intake Data Analysis</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="coach-modal-close"
+                onClick={() => setResearchModalOpen(false)}
+                aria-label="Close research modal"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="coach-modal-body">
+              <div className="coach-audio-player-bar">
+                <audio
+                  ref={researchAudioRef}
+                  src={encodeURI("/coach/audio/Naledi's Research.mp3")}
+                  controls
+                  autoPlay
+                  style={{ width: '100%', marginBottom: '1.25rem' }}
+                />
+              </div>
+
+              <h4>The pain point in the data</h4>
+              <p>
+                For the 2026 intake, NSFAS received a record 893,847 first-time applications. Of those, 609,403 qualified, 49,538 were rejected, and 218,043 were marked incomplete because of missing documents. That’s about 1 in 4 still incomplete when results were announced. The rejection rate is only about 5.5%, so the problem is mostly paperwork, not eligibility.
+              </p>
+              <p>
+                The outstanding documents were mainly the parental consent form and a correctly completed, signed declaration form.
+              </p>
+              <p>
+                NSFAS’s acting CEO described the errors. Consent forms were often incomplete, unsigned or undated, signed by the student instead of the parent, or covered only one parent when Home Affairs records identified both.
+              </p>
+              <p>
+                The deadline for fixing it is tight. Applicants have 30 days from notification to submit the missing documents, or the application is treated as unsuccessful.
+              </p>
+              <p>
+                One guide calls silent document requests the number one cause of stuck applications.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
