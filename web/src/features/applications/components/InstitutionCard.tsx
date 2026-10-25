@@ -1,3 +1,12 @@
+import {
+  BookOpen,
+  CalendarDays,
+  ChevronDown,
+  ExternalLink,
+  FileText,
+  MapPin,
+  ShieldCheck,
+} from 'lucide-react';
 import type { Institution } from '../types';
 
 const dateFormatter = new Intl.DateTimeFormat('en-ZA', {
@@ -24,6 +33,67 @@ function formatDate(value: string | null): string {
   return Number.isNaN(date.getTime()) ? NOT_VERIFIED : dateFormatter.format(date);
 }
 
+function getDeadlineInfo(
+  openingDateStr: string | null,
+  closingDateStr: string | null,
+  now = new Date(),
+) {
+  if (!closingDateStr || !/^\d{4}-\d{2}-\d{2}$/.test(closingDateStr)) return null;
+
+  const closingDate = new Date(`${closingDateStr}T23:59:59+02:00`);
+  if (Number.isNaN(closingDate.getTime())) return null;
+
+  let openingDate: Date | null = null;
+  if (openingDateStr && /^\d{4}-\d{2}-\d{2}$/.test(openingDateStr)) {
+    const parsed = new Date(`${openingDateStr}T00:00:00+02:00`);
+    if (!Number.isNaN(parsed.getTime())) openingDate = parsed;
+  }
+
+  const msLeft = closingDate.getTime() - now.getTime();
+  const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+
+  if (openingDate && now.getTime() < openingDate.getTime()) {
+    const daysUntilOpen = Math.ceil((openingDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return {
+      label: daysUntilOpen === 1 ? 'Opens tomorrow' : `Opens in ${daysUntilOpen} days`,
+      tone: 'neutral' as const,
+    };
+  }
+
+  if (daysLeft < 0) {
+    return {
+      label: 'Closed',
+      tone: 'closed' as const,
+    };
+  }
+
+  if (daysLeft === 0) {
+    return {
+      label: 'Closes today',
+      tone: 'urgent' as const,
+    };
+  }
+
+  if (daysLeft === 1) {
+    return {
+      label: '1 day left',
+      tone: 'urgent' as const,
+    };
+  }
+
+  if (daysLeft <= 30) {
+    return {
+      label: `${daysLeft} days left`,
+      tone: 'urgent' as const,
+    };
+  }
+
+  return {
+    label: `${daysLeft} days left`,
+    tone: 'open' as const,
+  };
+}
+
 /** Only https links are allowed; anything else becomes an inert "#". */
 function safeUrl(value: string): string {
   try {
@@ -45,6 +115,7 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
     : item.provinces.join(' · ');
   const hasDateSource = Boolean(item.dateSource && item.dateVerifiedOn);
   const documents = item.requiredDocuments;
+  const deadlineInfo = getDeadlineInfo(item.openingDate, item.closingDate);
 
   return (
     <article className="bt-card" aria-labelledby={titleId}>
@@ -60,47 +131,72 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
             />
           )}
         </span>
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
+            <p className="bt-type">{item.type}</p>
+            <span className="bt-verified-badge" title="Admissions details sourced and verified">
+              <ShieldCheck size={13} /> Verified
+            </span>
+          </div>
           <h3 id={titleId}>{item.name}</h3>
-          <p className="bt-type">{item.type}</p>
         </div>
       </div>
 
-      <p className="bt-location">{location}</p>
-      <span className="bt-badge">Verify admissions details</span>
+      <div className="bt-location-row">
+        <MapPin size={14} className="bt-icon-muted" />
+        <span>{location}</span>
+      </div>
 
-      <dl className="bt-dates">
-        <div>
-          <dt>Applications open</dt>
-          <dd>{formatDate(item.openingDate)}</dd>
+      <div className="bt-dates-grid">
+        <div className="bt-date-box">
+          <span className="bt-date-label">Opens</span>
+          <span className="bt-date-val">{formatDate(item.openingDate)}</span>
         </div>
-        <div>
-          <dt>Applications close</dt>
-          <dd>{formatDate(item.closingDate)}</dd>
+        <div className="bt-date-box">
+          <span className="bt-date-label">Closes</span>
+          <span className="bt-date-val">
+            {formatDate(item.closingDate)}
+            {deadlineInfo && (
+              <span className={`bt-deadline-pill bt-deadline-${deadlineInfo.tone}`}>
+                {deadlineInfo.label}
+              </span>
+            )}
+          </span>
         </div>
-      </dl>
+      </div>
 
-      {item.intake && <p className="bt-small">Intake: {item.intake}</p>}
-      <p className="bt-small">
+      {item.intake && (
+        <p className="bt-small bt-intake-row">
+          <CalendarDays size={14} className="bt-icon-muted" />
+          <span>Intake: <strong>{item.intake}</strong></span>
+        </p>
+      )}
+
+      <p className="bt-small bt-source-row">
         {hasDateSource && item.dateSource ? (
           <>
+            <ExternalLink size={13} className="bt-icon-muted" />
             <a
               href={safeUrl(item.dateSource)}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Date source (new tab)
-            </a>{' '}
-            · Checked {formatDate(item.dateVerifiedOn)}. Confirm programme-specific
-            deadlines.
+              Date source ({formatDate(item.dateVerifiedOn)})
+            </a>
           </>
         ) : (
-          'Dates and intake: not verified'
+          'Dates unverified'
         )}
       </p>
 
-      <details>
-        <summary>Faculty / programme APS</summary>
+      <details className="bt-accordion">
+        <summary>
+          <span className="bt-summary-left">
+            <BookOpen size={15} className="bt-summary-icon" />
+            <span>Faculty / programme APS</span>
+          </span>
+          <ChevronDown size={16} className="bt-chevron-icon" />
+        </summary>
         {item.requirements.length > 0 ? (
           <table>
             <caption>
@@ -138,8 +234,14 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
         )}
       </details>
 
-      <details>
-        <summary>Required documents</summary>
+      <details className="bt-accordion">
+        <summary>
+          <span className="bt-summary-left">
+            <FileText size={15} className="bt-summary-icon" />
+            <span>Required documents</span>
+          </span>
+          <ChevronDown size={16} className="bt-chevron-icon" />
+        </summary>
         {documents && documents.length > 0 ? (
           <ul>
             {documents.map((doc) => (
@@ -149,8 +251,7 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
         ) : (
           <p>
             The official required-document list has not been verified. Use the
-            preparation checklist as a starting point, then confirm the documents for
-            your programme and applicant category on the institution’s website.
+            preparation checklist as a starting point.
           </p>
         )}
       </details>
@@ -163,11 +264,9 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
           rel="noopener noreferrer"
           aria-label={`Visit ${item.name} official website (opens in a new tab)`}
         >
-          Official website ↗
+          <span>Official website</span>
+          <ExternalLink size={16} />
         </a>
-        <p className="bt-small">
-          Opens in a new tab. Find the application portal on the official site.
-        </p>
       </div>
     </article>
   );

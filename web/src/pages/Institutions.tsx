@@ -5,7 +5,7 @@ import { INSTITUTION_GROUPS } from '../data/institutionGroups';
 import '../styles/institutions.css';
 
 const APPLY_PATH = '/checklist';
-const CONTACT_EMAIL = 'enquiry@beytom.com';
+const CONTACT_EMAIL = 'contact@beyondtomorrow.co.za';
 
 const CARD_DIRECTIONS = ['from-left', 'from-bottom', 'from-right'];
 const CARD_DELAYS = ['delay-1', 'delay-2', 'delay-3'];

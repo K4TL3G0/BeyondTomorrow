@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { pointsForMark } from '@beyond-tomorrow/engine';
 import { APS_BANDS, APS_LEVELS } from './apsLevels';
 import { hasDuplicateSecondAdditionalLanguage } from './subjects';
@@ -26,7 +26,7 @@ function initialRows(): SubjectRowState[] {
   return [
     { id: 1, type: 'life-orientation', name: 'Life Orientation', mark: '', counted: false },
     { id: 2, type: 'home-language', name: '', mark: '', counted: true },
-    { id: 3, type: 'first-additional', name: 'English First Additional Language', mark: '', counted: true },
+    { id: 3, type: 'first-additional', name: '', mark: '', counted: true },
     ...Array.from({ length: 3 }, (_, index) => ({
       id: index + 4,
       type: 'subject' as const,
@@ -50,6 +50,16 @@ function duplicateSecondAdditionalIds(rows: SubjectRowState[]): Set<number> {
     .map((row) => row.id));
 }
 
+function duplicateSubjectIds(rows: SubjectRowState[]): Set<number> {
+  const idsByName = new Map<string, number[]>();
+  for (const row of rows) {
+    const normalizedName = row.name.trim().toLocaleLowerCase();
+    if (!normalizedName) continue;
+    idsByName.set(normalizedName, [...(idsByName.get(normalizedName) ?? []), row.id]);
+  }
+  return new Set([...idsByName.values()].filter((ids) => ids.length > 1).flat());
+}
+
 function rowMarkIsInvalid(row: SubjectRowState): boolean {
   if (row.mark.trim() === '') return false;
   const mark = Number(row.mark);
@@ -60,15 +70,17 @@ export function useApsCalculator() {
   const [rows, setRows] = useState(initialRows);
   const [focusId, setFocusId] = useState<number | null>(null);
   const nextId = useRef(7);
+  const hasEdited = useRef(false);
 
   const invalidMarkIds = useMemo(
     () => new Set(rows.filter(rowMarkIsInvalid).map((row) => row.id)),
     [rows],
   );
   const duplicateLanguageIds = useMemo(() => duplicateSecondAdditionalIds(rows), [rows]);
+  const duplicateIds = useMemo(() => duplicateSubjectIds(rows), [rows]);
   const invalidIds = useMemo(
-    () => new Set([...invalidMarkIds, ...duplicateLanguageIds]),
-    [duplicateLanguageIds, invalidMarkIds],
+    () => new Set([...invalidMarkIds, ...duplicateLanguageIds, ...duplicateIds]),
+    [duplicateIds, duplicateLanguageIds, invalidMarkIds],
   );
 
   const result = useMemo(() => {
@@ -101,10 +113,12 @@ export function useApsCalculator() {
   }, [invalidIds, rows]);
 
   function updateRow(id: number, update: Partial<SubjectRowState>) {
+    hasEdited.current = true;
     setRows((current) => current.map((row) => row.id === id ? { ...row, ...update } : row));
   }
 
   function setName(id: number, name: string) {
+    hasEdited.current = true;
     setRows((current) => {
       const homeRow = current.find((row) => row.type === 'home-language');
       const nextHomeLanguage = id === homeRow?.id ? name : homeRow?.name ?? '';
@@ -129,14 +143,72 @@ export function useApsCalculator() {
 
   function addRow() {
     const id = nextId.current++;
+    hasEdited.current = true;
     setRows((current) => [...current, { id, type: 'subject', name: '', mark: '', counted: true }]);
     setFocusId(id);
   }
 
   function reset() {
+    hasEdited.current = true;
     setRows(initialRows());
     setFocusId(null);
   }
+
+  const loadSavedRows = useCallback(
+    (savedRows: Array<{ name: string; mark: number | null; counted: boolean }>): boolean => {
+      if (hasEdited.current) return false;
+
+      const restoredRows = initialRows();
+      let nextSubjectSlot = 4;
+      for (const savedRow of savedRows) {
+        const type: SubjectRowType = savedRow.name === 'Life Orientation'
+          ? 'life-orientation'
+          : savedRow.name.endsWith(' Home Language')
+            ? 'home-language'
+            : savedRow.name.endsWith(' First Additional Language')
+              ? 'first-additional'
+              : 'subject';
+        const slot = type === 'life-orientation'
+          ? restoredRows.findIndex((row) => row.type === type)
+          : type === 'home-language'
+            ? restoredRows.findIndex((row) => row.type === type && !row.name)
+            : type === 'first-additional'
+              ? restoredRows.findIndex((row) => row.type === type)
+              : -1;
+
+        const savedState = {
+          name: savedRow.name,
+          mark: savedRow.mark === null ? '' : String(savedRow.mark),
+          counted: savedRow.counted,
+        };
+        if (slot >= 0) {
+          const existingRow = restoredRows[slot];
+          if (existingRow) restoredRows[slot] = { ...existingRow, ...savedState };
+        } else {
+          const emptySlot = restoredRows.findIndex((row) =>
+            row.id >= 4 && row.type === 'subject' && !row.name && !row.mark,
+          );
+          if (emptySlot >= 0) {
+            const existingRow = restoredRows[emptySlot];
+            if (existingRow) restoredRows[emptySlot] = { ...existingRow, ...savedState };
+          } else {
+            restoredRows.push({
+              id: nextSubjectSlot + 3,
+              type: 'subject',
+              ...savedState,
+            });
+            nextSubjectSlot += 1;
+          }
+        }
+      }
+
+      nextId.current = Math.max(7, ...restoredRows.map((row) => row.id + 1));
+      setRows(restoredRows);
+      setFocusId(null);
+      return true;
+    },
+    [],
+  );
 
   return {
     rows,
@@ -144,13 +216,17 @@ export function useApsCalculator() {
     invalidIds,
     invalidMarkIds,
     duplicateLanguageIds,
+    duplicateSubjectIds: duplicateIds,
     focusId,
     setName,
     setMark: (id: number, mark: string) => updateRow(id, { mark }),
     setCounted: (id: number, counted: boolean) => updateRow(id, { counted }),
-    removeRow: (id: number) => setRows((current) =>
-      current.filter((row) => row.id !== id || row.type !== 'subject')),
+    removeRow: (id: number) => {
+      hasEdited.current = true;
+      setRows((current) => current.filter((row) => row.id !== id || row.type !== 'subject'));
+    },
     addRow,
     reset,
+    loadSavedRows,
   };
 }

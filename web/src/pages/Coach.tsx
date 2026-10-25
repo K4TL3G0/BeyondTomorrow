@@ -29,6 +29,7 @@ import {
 } from '@beyond-tomorrow/engine';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
+import { Hero } from '../components/Hero';
 import './coach.css';
 
 type Stage = 'route' | 'questions' | 'documents';
@@ -659,18 +660,20 @@ export default function Coach() {
 
   return (
     <div className="coach-page">
-      <header className="coach-hero">
-        <div className="coach-hero-content">
-          <p className="coach-eyebrow"><FileCheck2 size={16} /> Paperwork readiness coach</p>
-          <h1>Prepare your application <span>with confidence.</span></h1>
-          <p>
-            Find your funding route, answer a few broad questions and prepare with a checklist
-            based only on sourced, dated guidance.
-          </p>
-          <div className="coach-trust-note"><LockKeyhole size={16} /> Household answers stay in this page session.</div>
-        </div>
-        <div className="coach-hero-mark" aria-hidden="true"><FileCheck2 size={66} /></div>
-      </header>
+      <Hero
+        eyebrow="Paperwork readiness coach"
+        title={
+          <h1>
+            Prepare your application <span>with confidence.</span>
+          </h1>
+        }
+        description="Find your funding route, answer a few broad questions and prepare with a checklist based only on sourced, dated guidance."
+        feature={{
+          symbol: <FileCheck2 size={28} strokeWidth={1.8} />,
+          title: 'Prepare. Check. Succeed.',
+          description: 'Household answers stay in your private page session.',
+        }}
+      />
 
       <main className="coach-content">
         <ol className="coach-steps" aria-label="Coach steps">

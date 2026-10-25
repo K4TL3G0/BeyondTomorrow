@@ -8,6 +8,8 @@ import {
 import { HandCoins } from 'lucide-react';
 import { ParticleWaveBackground } from '../components/ParticleWaveBackground';
 import { supabase } from '../lib/supabase';
+import { useStudentMarks } from '../lib/useStudentMarks';
+import { Link } from 'react-router-dom';
 import '../styles/funding.css';
 
 interface FundingSourceRecord {
@@ -62,6 +64,7 @@ const formatDate = (date: string | null) => {
 };
 
 function FundingSources() {
+  const studentMarks = useStudentMarks();
   const [sources, setSources] = useState<FundingSourceRecord[]>([]);
   const [filter, setFilter] = useState<FundingSourceTypeFilter>('all');
   const [loading, setLoading] = useState(true);
@@ -100,7 +103,18 @@ function FundingSources() {
     };
   }, [reloadKey]);
 
-  const visibleSources = sources.filter((source) => filter === 'all' || source.type === filter);
+  const visibleSources = sources
+    .filter(
+      (source) =>
+        !source.name.toLowerCase().includes('sample data') &&
+        !source.name.toLowerCase().includes('(demo)') &&
+        !source.source_url?.includes('example.com'),
+    )
+    .filter((source) => filter === 'all' || source.type === filter);
+  const markedSubjects = studentMarks.marks.filter((subject) => subject.mark !== null);
+  const averageMark = markedSubjects.length
+    ? markedSubjects.reduce((total, subject) => total + (subject.mark ?? 0), 0) / markedSubjects.length
+    : null;
 
   return (
     <section className="database-funding" aria-labelledby="database-funding-heading">
@@ -114,6 +128,30 @@ function FundingSources() {
           </p>
         </div>
       </div>
+
+      <aside className="funding-profile-insight" aria-label="Your saved study marks">
+        <div>
+          <h3>Your study marks</h3>
+          {studentMarks.loading
+            ? <p>Loading saved marks…</p>
+            : studentMarks.error
+              ? <p role="alert">{studentMarks.error}</p>
+              : averageMark === null
+                ? <p>No marked subjects are saved yet. Add your subjects and marks to the APS calculator.</p>
+                : (
+                  <p>
+                    Your saved marks average {averageMark.toFixed(1)}% across {markedSubjects.length} marked subject
+                    {markedSubjects.length === 1 ? '' : 's'}. Providers may calculate averages differently, so confirm
+                    their criteria before applying.
+                  </p>
+                )}
+        </div>
+        {!studentMarks.loading && studentMarks.error ? (
+          <button type="button" onClick={studentMarks.reload}>Try again</button>
+        ) : (
+          <Link to="/aps-calculator">Update marks <span aria-hidden="true">→</span></Link>
+        )}
+      </aside>
 
       <div className="source-filters" role="group" aria-label="Filter database funding">
         {([
@@ -165,16 +203,12 @@ function FundingSources() {
       {!loading && !error && visibleSources.length > 0 && (
         <div className="funding-source-grid">
           {visibleSources.map((source) => {
-            const isSample =
-              source.name.toLowerCase().includes('sample data') ||
-              source.source_url?.includes('example.com');
             const logo = getFundingSourceLogo(source);
 
             return (
               <article className="funding-source-card" key={source.id}>
                 <div className="funding-source-card-heading">
                   <span className="source-type">{source.type}</span>
-                  {isSample && <span className="sample-data-badge">Sample data</span>}
                 </div>
                 <div className="funding-source-title">
                   {logo && <img src={`/funding/${logo}`} alt="" aria-hidden="true" loading="lazy" />}

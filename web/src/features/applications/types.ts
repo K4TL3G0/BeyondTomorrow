@@ -16,6 +16,10 @@ export const INSTITUTION_TYPES = ['University', 'TVET College'] as const;
 
 export type InstitutionType = (typeof INSTITUTION_TYPES)[number];
 
+export type ApplicationStatusFilter = 'all' | 'open' | 'closing_soon' | 'opening_soon' | 'closed';
+
+export type DeliveryModeFilter = 'all' | 'campus' | 'distance';
+
 export const isProvince = (value: string): value is Province =>
   (PROVINCES as readonly string[]).includes(value);
 

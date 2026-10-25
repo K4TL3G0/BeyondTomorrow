@@ -6,6 +6,7 @@ interface Props {
   invalid: boolean;
   autoFocus: boolean;
   datalistId: string;
+  disabled?: boolean;
   nameOptions?: readonly string[];
   nameDisabled?: boolean;
   onName: (id: number, name: string) => void;
@@ -19,6 +20,7 @@ export function SubjectRow({
   invalid,
   autoFocus,
   datalistId,
+  disabled = false,
   nameOptions,
   nameDisabled,
   onName,
@@ -31,7 +33,7 @@ export function SubjectRow({
       {nameOptions ? (
         <select
           value={row.name}
-          disabled={nameDisabled}
+          disabled={disabled || nameDisabled}
           aria-label={
             row.type === 'life-orientation'
               ? 'Compulsory subject'
@@ -52,6 +54,7 @@ export function SubjectRow({
           list={datalistId}
           value={row.name}
           autoFocus={autoFocus}
+          disabled={disabled}
           aria-label="Subject name"
           aria-invalid={invalid || undefined}
           onChange={(event) => onName(row.id, event.target.value)}
@@ -65,12 +68,13 @@ export function SubjectRow({
         inputMode="numeric"
         placeholder="%"
         value={row.mark}
+        disabled={disabled}
         aria-label="Mark percentage"
         aria-invalid={invalid || undefined}
         onChange={(event) => onMark(row.id, event.target.value)}
       />
       <label className="aps-count">
-        <input type="checkbox" checked={row.counted} onChange={(event) => onCounted(row.id, event.target.checked)} />
+        <input type="checkbox" checked={row.counted} disabled={disabled} onChange={(event) => onCounted(row.id, event.target.checked)} />
         {row.type === 'life-orientation' ? 'Count LO' : 'Count'}
       </label>
       {row.type === 'subject' ? (
@@ -79,6 +83,7 @@ export function SubjectRow({
           className="aps-remove"
           aria-label="Remove subject"
           title="Remove subject"
+          disabled={disabled}
           onClick={() => onRemove(row.id)}
         >
           <Trash2 size={18} />

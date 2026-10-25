@@ -1,15 +1,14 @@
 # 12. APS calculator and subject memory
 
-Status: **Proposed**. Written Saturday 24 October 2026.
-Read with: `11_GAP_ANALYSIS_AND_TRACKING_PLAN.md`. SQL: `db/08_subjects_and_marks.sql`.
-Caveat: this is based on the repo audit summary (the calculator and profile were not read by me directly), so check the subject list and the hook names against the real code.
+Status: **Partially implemented**. The APS calculator loads and explicitly saves a signed-in student's subjects, marks, and counted choices; the Profile page reads those saved subjects and marks. Run `db/10_aps_calculator_persistence.sql` after `db/08_subjects_and_marks.sql` to enable the calculator's atomic save operation and complete its subject catalog.
+Read with: `11_GAP_ANALYSIS_AND_TRACKING_PLAN.md`.
 
 ---
 
 ## 1. Short answer
 
 - **The APS calculator stays, in a supporting role.** It is useful, but not our differentiator (several free calculators already exist, and sources disagree on university rules). Its job here is to be the **one place a student enters subjects and marks**, which then feeds Profile, Pathways, Resources and the what-if.
-- **"Memory of selected subjects" = rows in `student_marks`**, one per subject, with the mark allowed to be empty. No new table.
+- **"Memory of selected subjects" = rows in `student_marks`**, one per subject, with the mark allowed to be empty. The `counted` choice is saved too. No new table.
 - **Results are not stored.** An APS score can always be recomputed from saved marks plus the institution's rule, so storing it would only create stale numbers.
 
 ## 2. What is wrong today (from the audit and the live schema)
@@ -37,6 +36,7 @@ SUBJECT_CATALOG (engine, typed)  ──seeds──▶  subjects table (code, nam
 |---|---|---|
 | Which subjects the student takes | Yes | a `student_marks` row per subject |
 | Marks (0 to 100, whole numbers) | Yes | `student_marks.mark`, may be empty |
+| Whether the subject counts in the general APS total | Yes | `student_marks.counted` |
 | Last change time | Yes | `student_marks.updated_at` (new) |
 | Grade (11, 12, completed) | Yes | `student_profiles.grade` (06) |
 | APS result per institution | **No** | recomputed on demand |
@@ -46,7 +46,7 @@ SUBJECT_CATALOG (engine, typed)  ──seeds──▶  subjects table (code, nam
 ## 4. Data contract: subject codes
 
 - **Codes** are our identifiers: capital letters only, 2 to 10 characters (the API validates `^[A-Z]{2,10}$`). Existing codes (`MATH`, `MATHLIT`, `PHSC`, `ENGHL`, `LO` and so on) do not change.
-- `08_subjects_and_marks.sql` adds Technical Mathematics and Sciences, all official home and first-additional languages as listed, and further electives. **Cross-check the names against the Department of Basic Education's NSC subject list** and add any subject the calculator has that is missing.
+- `08_subjects_and_marks.sql` and `10_aps_calculator_persistence.sql` seed the subjects offered by the calculator. **Cross-check the names against the Department of Basic Education's NSC subject list** before relying on this list as official.
 - The calculator must use `code`, never a display name, as the key.
 
 ### Engine: `subjects.ts` (new, typed catalog and validation)
@@ -68,19 +68,18 @@ export function validateSubjectSelection(codes: string[]): { errors: string[]; w
 
 These rules reflect the general NSC structure (two languages with at least one at Home Language level, one mathematics-type subject, Life Orientation, seven subjects in total). **Verify them against the DBE's current NSC requirements** before showing them as advice. Errors block "Calculate"; warnings only inform.
 
-## 5. Persistence behaviour (the `useStudentMarks` hook)
+## 5. Persistence behaviour
 
 One hook used by the Calculator, Profile, Pathways and Resources. Do not keep separate copies of the subject state.
 
 | Method | Behaviour |
 |---|---|
-| `load()` | `student_marks` joined to `subjects(code, name)` for the signed-in student; also loads the `subjects` map `code -> id` once (public read) |
-| `ensureProfile()` | Before the first write, upsert `{ id: userId }` into `student_profiles` with "ignore duplicates". Without it, writes fail on the foreign key if onboarding was skipped |
-| `setSelected(codes)` | Diff against the saved rows: insert new subjects with `mark = null`; delete removed ones |
-| `setMark(code, mark)` | Upsert on `(student_id, subject_id)`; accept an integer 0 to 100 or empty (null); round and reject anything else before it leaves the browser |
-| Autosave | Debounce about 600 ms; show "Saved at hh:mm" or a clear error with a retry button. The Save button must give feedback, never a silent change |
-| Offline or failed save | Keep the values in React state, mark them "not saved", retry on the next change |
-| `clearAll()` | "Remove my marks" button (deletes the student's rows) |
+| Load | The calculator reads the signed-in student's `student_marks`, joined to `subjects(code, name)`, and prefills the rows |
+| Save | An explicit Save button sends subject codes, marks (nullable), and counted choices to `save_student_marks(jsonb)` |
+| Atomicity | The database function validates input, creates a profile row if needed, and synchronizes marks in one transaction under the existing owner-only RLS policies |
+| Empty save | Saving an empty subject list removes the user's saved marks; the UI confirms this if saved subjects exist |
+| Scores | APS totals are recalculated from the current marks; no APS result is persisted |
+| Errors | Load and save failures are shown to the student; unsaved calculator rows remain on screen |
 
 Writes use the existing owner-only policy (`own rows`). No new policy is needed.
 
@@ -88,10 +87,11 @@ Writes use the existing owner-only policy (`own rows`). No new policy is needed.
 
 | Page | Use |
 |---|---|
-| **APS Calculator** | Prefills subjects and marks on load; autosaves; shows the selection warnings; institution results are computed from saved marks and the institution's rule (static data) and labelled **"estimate"** |
-| **Profile** | Shows subject chips from the same hook (read-only, with "edit in the calculator"); the completeness score counts subjects with marks |
-| **Pathways and what-if** | Reads saved marks (for example Mathematics) instead of the defaults; if there are none, label the page "sample student" |
-| **Resources** | Highlights the student's subjects first ("Your subjects") |
+| **APS Calculator** | Prefills saved subjects and marks; explicitly saves changes; recalculates totals from the current rows |
+| **Profile** | Reads and displays saved subjects and marks, with an "edit in the calculator" link |
+| **Pathways and what-if** | Uses saved counted marks and Mathematics where available; clearly labels sample inputs and estimates |
+| **Resources** | Shows saved subjects and marks first, with links to matching resource pages when available |
+| **Funding** | Shows an informational average of saved marked subjects; it does not infer funding eligibility from that average |
 | **Coach** | Does not need marks; only the income bracket and household answers |
 | **Events** | Log `aps_calculated` with no payload when the student presses Calculate |
 
@@ -134,18 +134,16 @@ Marks of minors are personal information. We store only subject codes and marks 
 
 | Task | Owner | Size |
 |---|---|---|
-| Run `db/08_subjects_and_marks.sql` after `06`; cross-check the added subject names | Daniel | S |
-| Compare the calculator's subject list with the database: list any missing codes | Daniel | S |
+| Run `db/10_aps_calculator_persistence.sql` after `08` in Supabase | Database owner | S |
+| Cross-check calculator subject names against current DBE requirements | Database owner | S |
 | `SUBJECT_CATALOG` and `validateSubjectSelection` with tests | Jeremie and Andile | M |
-| `useStudentMarks` hook (load, ensureProfile, setSelected, setMark, autosave, clearAll) | Jeremie and Andile with Blessing and Katlego | M |
-| Wire Calculator, Profile, Resources to the hook; remove their local copies of subject state | Blessing and Katlego | M |
-| Pathways reads saved marks; label sample data when none | Blessing and Katlego | S |
+| Extend personalized subject data to any new study-planning surfaces | Product team | S |
 | Institution rule records and the verification table | Daniel and pitch lead | M to L |
 
 ## 10. Acceptance tests
 
 1. Select subjects (no marks), sign out and in on another browser: the same subjects appear.
-2. Enter marks, reload: marks present; "Saved at" shows.
+2. Enter marks and counted choices, save, then reload: rows are restored and APS is recalculated.
 3. Enter 101, -3 or 72.5: rejected in the UI before sending; the database also refuses 101.
 4. Choose Mathematics and Mathematical Literacy together: error shown and Calculate disabled.
 5. Choose six subjects: warning appears, calculation still allowed.

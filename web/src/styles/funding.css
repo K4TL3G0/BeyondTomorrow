@@ -255,6 +255,43 @@
   color: var(--muted);
 }
 
+.funding-page .funding-profile-insight {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--line));
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--primary) 5%, var(--card));
+}
+
+.funding-page .funding-profile-insight h3,
+.funding-page .funding-profile-insight p {
+  margin: 0;
+}
+
+.funding-page .funding-profile-insight h3 {
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.funding-page .funding-profile-insight p {
+  color: var(--muted);
+}
+
+.funding-page .funding-profile-insight a {
+  flex: 0 0 auto;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.funding-page .funding-profile-insight a:hover {
+  text-decoration: underline;
+}
+
 .funding-page .database-source-label {
   flex: 0 0 auto;
   padding: 0.4rem 0.7rem;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Landmark } from 'lucide-react';
+import { CalendarCheck, Check, Globe, Landmark, RotateCcw } from 'lucide-react';
 import { Hero } from '../../components/Hero';
 import { DocumentChecklist } from './components/DocumentChecklist';
 import { InstitutionCard } from './components/InstitutionCard';
@@ -47,7 +47,7 @@ export default function ApplicationsPage() {
         <div style={{ marginBottom: '1.5rem' }}>
           <button
             type="button"
-            className={`bt-hamburger-btn ${!allChecked ? 'bt-hamburger-pulse' : ''}`}
+            className={`bt-hamburger-btn ${!allChecked ? 'bt-hamburger-pulse' : 'bt-hamburger-completed'}`}
             onClick={() => setIsChecklistOpen(!isChecklistOpen)}
             aria-expanded={isChecklistOpen}
             aria-controls="document-checklist"
@@ -60,7 +60,11 @@ export default function ApplicationsPage() {
             <span style={{ flex: 1, textAlign: 'left' }}>
               Document Checklist ({checklist.completedCount}/{checklist.total})
             </span>
-            {!allChecked && (
+            {allChecked ? (
+              <span title="Checklist complete!" style={{ fontSize: '1.1rem' }}>
+                ✅
+              </span>
+            ) : (
               <span title="Action required: checklist not complete" style={{ fontSize: '1.1rem' }}>
                 💡
               </span>
@@ -82,19 +86,56 @@ export default function ApplicationsPage() {
                 search={filters.search}
                 province={filters.province}
                 type={filters.type}
+                status={filters.status}
+                mode={filters.mode}
                 searchInputRef={filters.searchInputRef}
                 onSearchChange={filters.setSearch}
                 onProvinceChange={filters.setProvince}
                 onTypeChange={filters.setType}
+                onStatusChange={filters.setStatus}
+                onModeChange={filters.setMode}
               />
 
               <div className="bt-results-bar">
                 <p id="result-count" role="status" aria-live="polite" aria-atomic="true">
-                  Showing {filtered.length} of {institutions.length} institutions
+                  Showing <strong>{filtered.length}</strong> of {institutions.length} institutions
                 </p>
-                <button className="bt-link-button" type="button" onClick={reset}>
-                  Clear filters
-                </button>
+
+                <div className="bt-quick-filters" role="group" aria-label="Quick filters">
+                  <button
+                    type="button"
+                    className={`bt-chip ${filters.status === 'open' ? 'is-active' : ''}`}
+                    aria-pressed={filters.status === 'open'}
+                    onClick={filters.toggleStillOpen}
+                  >
+                    <CalendarCheck size={15} />
+                    <span>Still open</span>
+                    {filters.status === 'open' && <Check size={14} className="bt-chip-check" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`bt-chip ${filters.mode === 'distance' ? 'is-active' : ''}`}
+                    aria-pressed={filters.mode === 'distance'}
+                    onClick={() => filters.setMode(filters.mode === 'distance' ? 'all' : 'distance')}
+                  >
+                    <Globe size={15} />
+                    <span>Distance learning</span>
+                    {filters.mode === 'distance' && <Check size={14} className="bt-chip-check" />}
+                  </button>
+
+                  {filters.activeFilterCount > 0 && (
+                    <button
+                      className="bt-clear-button"
+                      type="button"
+                      onClick={reset}
+                      aria-label="Clear all applied filters"
+                    >
+                      <RotateCcw size={15} />
+                      <span>Clear filters ({filters.activeFilterCount})</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
