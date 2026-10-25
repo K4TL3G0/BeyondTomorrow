@@ -113,6 +113,7 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
   const location = item.distanceLearning
     ? 'Distance learning · national reach'
     : item.provinces.join(' · ');
+  const isVerified = item.verified ?? Boolean(item.dateSource && item.dateVerifiedOn);
   const hasDateSource = Boolean(item.dateSource && item.dateVerifiedOn);
   const documents = item.requiredDocuments;
   const deadlineInfo = getDeadlineInfo(item.openingDate, item.closingDate);
@@ -134,7 +135,7 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
             <p className="bt-type">{item.type}</p>
-            {item.dateVerifiedOn && (
+            {isVerified && (
               <span className="bt-verified-badge" title="Admissions details sourced and verified">
                 <ShieldCheck size={13} /> Verified
               </span>
@@ -195,7 +196,11 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
         <summary>
           <span className="bt-summary-left">
             <BookOpen size={15} className="bt-summary-icon" />
-            <span>Faculty / programme APS</span>
+            <span>
+              {item.type === 'TVET College'
+                ? 'Faculty / programme entry requirements'
+                : 'Faculty / programme APS'}
+            </span>
           </span>
           <ChevronDown size={16} className="bt-chevron-icon" />
         </summary>
@@ -207,7 +212,7 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
             <thead>
               <tr>
                 <th scope="col">Faculty / programme</th>
-                <th scope="col">APS / conditions</th>
+                <th scope="col">{item.type === 'TVET College' ? 'TVET entry requirements' : 'APS / conditions'}</th>
               </tr>
             </thead>
             <tbody>
@@ -215,7 +220,7 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
                 <tr key={r.faculty}>
                   <th scope="row">{r.faculty}</th>
                   <td>
-                    {r.aps}
+                    {r.requirement ?? r.aps}
                     {r.notes && (
                       <>
                         <br />

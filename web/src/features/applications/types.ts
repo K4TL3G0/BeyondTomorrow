@@ -19,14 +19,25 @@ export const isProvince = (value: string): value is Province =>
 export const isInstitutionType = (value: string): value is InstitutionType =>
   (INSTITUTION_TYPES as readonly string[]).includes(value);
 
-export interface ProgrammeRequirement {
-  /** Exact faculty / programme name. */
-  faculty: string;
-  /** Verified APS rule. */
-  aps: string;
-  /** Subjects / selection conditions. */
-  notes?: string;
-}
+export type ProgrammeRequirement =
+  | {
+      /** Exact faculty / programme name. */
+      faculty: string;
+      /** Verified APS rule, used by university admissions. */
+      aps: string;
+      requirement?: never;
+      /** Subjects / selection conditions. */
+      notes?: string;
+    }
+  | {
+      /** Exact faculty / programme name. */
+      faculty: string;
+      aps?: never;
+      /** Subject and level requirements, used by TVET admissions. */
+      requirement: string;
+      /** Subjects / selection conditions. */
+      notes?: string;
+    };
 
 /**
  * Admissions fields. `null` always means "not verified", never "none required".
@@ -54,6 +65,7 @@ export interface Institution extends AdmissionsDetails {
   provinces: readonly Province[];
   type: InstitutionType;
   url: string;
+  verified?: boolean;
   /** Distance-learning institution with national reach (e.g. Unisa). */
   distanceLearning?: boolean;
 }
