@@ -280,10 +280,10 @@ export const INSTITUTIONS: ApsInstitution[] = [
     year: 2027,
     checked: '2026-10-21',
     source: 'https://www.su.ac.za/en',
-    scheme: { type: 'stellies' },
+    scheme: { type: 'marks-only' },
     notes: [
-      'Admission average is the best English or Afrikaans percentage plus the five best other percentages, divided by six.',
-      'Life Orientation, Advanced Mathematics and Mathematics Paper 3 are excluded.',
+      'Admission is based on programme-specific subject marks; Stellenbosch does not use a single APS calculation.',
+      'Some programmes require National Benchmark Test (NBT) results. Check the current programme requirements.',
     ],
   },
   {

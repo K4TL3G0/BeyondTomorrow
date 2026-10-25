@@ -54,7 +54,7 @@ export const INSTITUTIONS: ApsInstitution[] = [
   },
   {
     id: "uct-science",
-    name: "UCT (Science)",
+    name: "UCT (Science & Medicine)",
     year: 2027,
     checked: "2026-10-20",
     source:
@@ -62,7 +62,7 @@ export const INSTITUTIONS: ApsInstitution[] = [
     scheme: { type: "uct", variant: "science" },
     notes: [
       "English, Mathematics and Physical Sciences are counted, with Mathematics and Physical Sciences doubled, plus your best three other subjects, out of 800.",
-      "The Weighted Points Score (disadvantage factor) is not calculated here.",
+      "The Weighted Points Score (disadvantage factor) and National Benchmark Tests are not calculated here. Medicine has separate FPS/WPS selection thresholds.",
     ],
   },
   {

@@ -17,14 +17,16 @@ const LANGUAGE_NAMES = [
 ];
 
 const SUBJECT_PATTERNS: { subject: QualificationSubject; pattern: RegExp }[] = [
-  { subject: 'mathematical-literacy', pattern: /\bmathematical literacy\b/i },
-  { subject: 'technical-mathematics', pattern: /\btechnical mathematics\b/i },
-  { subject: 'mathematics', pattern: /\bmathematics\b/i },
-  { subject: 'physical-sciences', pattern: /\bphysical sciences\b/i },
-  { subject: 'life-sciences', pattern: /\blife sciences\b/i },
-  { subject: 'agricultural-sciences', pattern: /\bagricultural sciences\b/i },
-  { subject: 'engineering-graphics-and-design', pattern: /\bengineering graphics and design\b/i },
-  { subject: 'business-studies', pattern: /\bbusiness studies\b/i },
+  { subject: 'mathematical-literacy', pattern: /\bmathematic(?:s|al)? literacy\b|\bmaths? lit(?:eracy)?\b|\bml\b/i },
+  { subject: 'technical-mathematics', pattern: /\btechnical mathematics\b|\btech(?:nical)?\s+maths\b|\btm\b/i },
+  { subject: 'technical-sciences', pattern: /\btechnical science\b|\btech(?:nical)?\s+science\b/i },
+  { subject: 'mathematics', pattern: /(?<!technical )(?<!tech )\bmathematics\b(?!\s*(?:lit|literacy))|(?<!technical )(?<!tech )\bmaths\b(?!\s*(?:lit|literacy))/i },
+  { subject: 'physical-sciences', pattern: /\bphysical sciences?\b|\bphys(?:ical)?\s+sci(?:ences?)?\b/i },
+  { subject: 'life-orientation', pattern: /\blife\s*orientation\b|\blo\b/i },
+  { subject: 'life-sciences', pattern: /\blife sciences?\b|\blife sci(?:ences?)?\b/i },
+  { subject: 'agricultural-sciences', pattern: /\bagricultural sciences?\b|\bagricultural sci(?:ences?)?\b|\bagric sci\b/i },
+  { subject: 'engineering-graphics-and-design', pattern: /\bengineering graphics and design\b|\begd\b/i },
+  { subject: 'business-studies', pattern: /\bbusiness studies\b|\bbus(?:iness)? stud(?:ies)?\b/i },
   { subject: 'accounting', pattern: /\baccounting\b/i },
   { subject: 'economics', pattern: /\beconomics\b/i },
   { subject: 'geography', pattern: /\bgeography\b/i },
@@ -113,20 +115,44 @@ function stripOuterParentheses(value: string): string {
 
 function normalizeRequirement(value: string): string {
   return value
+    .replace(/\bNSC\s+(?:or\s+equivalent\s+)?with\s+(?:(?:degree|diploma|higher certificate)\s+endorsement(?:\s+and\s+)?\d*\s*points?|\d+\s+points?);?/gi, '')
+    .replace(/\bNSC\s+pass\s+with\b/gi, '')
+    .replace(/\(or\s+SG\s+[A-F](?:\s*\/\s*HG\s+[A-F])?\)/gi, '')
+    .replace(/\band\/or\b/gi, ' OR ')
+    .replace(
+      /\b(English(?:\s+Language)?|Mathematics|Maths|Mathematical Literacy|Physical Sciences?|Life Sciences?|Agricultural Sciences?|Life Orientation|Geography|History|Accounting|Economics|Business Studies)\s*:\s*([1-7])\b/gi,
+      '$1 Level $2',
+    )
+    .replace(
+      /\bEnglish\s+HL\s+(\d+(?:\.\d+)?\s*%)\s+or\s+FAL\s+(\d+(?:\.\d+)?\s*%)/gi,
+      'English Home Language $1 OR English First Additional Language $2',
+    )
+    .replace(/\bEnglish\s+as\s+above\b/gi, 'English Home Language 50% OR English First Additional Language 60%')
     .replace(/English\s+Home Language\s+or\s+First Additional Language/gi, 'EnglishHomeOrFAL')
     .replace(/English\s+or\s+Afrikaans/gi, 'EnglishOrAfrikaans')
     .replace(/Afrikaans\s+or\s+English/gi, 'AfrikaansOrEnglish')
+    .replace(/\bNSC[- ]Deg\b/gi, '')
+    .replace(/\bEngl\b/gi, 'English')
+    .replace(/\bPhys(?:ical)?\s+Sci(?:ence)?\b/gi, 'Physical Sciences')
+    .replace(/\bLife\s+Sci(?:ence)?\b/gi, 'Life Sciences')
+    .replace(/\bAgric(?:ultural)?\s+Sci(?:ence)?\b/gi, 'Agricultural Sciences')
+    .replace(/\bBus(?:iness)?\s+Stud(?:ies)?\b/gi, 'Business Studies')
+    .replace(/&/g, ' AND ')
     .replace(/(\d+(?:\.\d+)?\s*%)\s+or\s+\d+(?:\.\d+)?\s*%\s*\(depends on[^)]*\)/gi, '$1')
     .replace(/\s+with\s+/gi, ' AND ')
     .replace(/\s+and\s+/gi, ' AND ');
 }
 
 function minimumPercent(value: string): number | null {
-  const level = value.match(/\blevel\s+([1-7])\b/i);
-  if (level?.[1]) return [0, 0, 30, 40, 50, 60, 70, 80][Number(level[1])] ?? null;
+  const range = value.match(/(\d+(?:\.\d+)?)\s*%?\s*[-–—]\s*\d+(?:\.\d+)?\s*%/);
+  if (range?.[1]) return Number(range[1]);
 
   const percent = value.match(/(\d+(?:\.\d+)?)\s*%/);
   if (percent?.[1]) return Number(percent[1]);
+
+  const level = value.match(/\blevel\s+([1-7])\b/i);
+  if (level?.[1]) return [0, 0, 30, 40, 50, 60, 70, 80][Number(level[1])] ?? null;
+
   return null;
 }
 
@@ -151,7 +177,31 @@ function countDistinctLanguageSubjects(entries: SubjectEntry[], threshold: numbe
 function atomicRequirementMatches(value: string, entries: SubjectEntry[]): boolean {
   const clause = stripOuterParentheses(value).trim();
   if (!clause || /^(n\/a|not applicable|see mathematics column)$/i.test(clause)) return true;
+  if (/\bnot accepted\b|\bnot considered\b|:\s*no\s*$/i.test(clause)) return false;
   if (/prior bachelor's degree|requires? a diploma|senate-approved/i.test(clause)) return false;
+
+  const anyCount = clause.match(/\bany\s+(\d+)\s+of\b/i) ??
+    clause.match(/\bother subjects?\s*\((\d+)\)/i);
+  if (anyCount?.[1]) {
+    const threshold = minimumPercent(clause);
+    if (threshold === null) return false;
+    const requiredCount = Number(anyCount[1]);
+    const subjects = SUBJECT_PATTERNS.filter(({ pattern }) => pattern.test(clause));
+    if (/other subjects?/i.test(clause) || /any\s+\d+\s+subjects?\b/i.test(clause)) {
+      return entries.filter((entry) =>
+        !/life\s*orientation/i.test(entry.name) && entry.percent >= threshold,
+      ).length >= requiredCount;
+    }
+    const qualifyingEntries = entries.filter((entry) =>
+      entry.percent >= threshold && (
+        subjects.some(({ subject }) => matchingSubject(entry.name, subject)) ||
+        (isLanguageSubject(entry.name) && languageNamesIn(clause).some((language) =>
+          new RegExp(`\\b${language.replaceAll(' ', '\\s+')}\\b`).test(entry.name.toLocaleLowerCase()),
+        ))
+      ),
+    );
+    return new Set(qualifyingEntries.map((entry) => entry.name.trim().toLocaleLowerCase())).size >= requiredCount;
+  }
 
   const fourSubjectMinimum = clause.match(
     /at least\s+(\d+(?:\.\d+)?)\s*%(?:\s*\(level\s+\d+\))?\s+in each of four school subjects/i,
@@ -179,7 +229,7 @@ function atomicRequirementMatches(value: string, entries: SubjectEntry[]): boole
     );
   }
 
-  const hasLanguageType = /home language|\bhl\b|first additional language|\bfal\b|second additional language/i.test(requirement);
+  const hasLanguageType = /home language|\bhl\b|first additional language|\bfal\b|second additional language|additional language/i.test(requirement);
   const isLanguageRequirement = hasLanguageType || languageNamesIn(requirement).length > 0 ||
     /third south african language/i.test(requirement);
   if (isLanguageRequirement) {
@@ -250,7 +300,18 @@ function requirementTextMatches(value: string, entries: SubjectEntry[]): boolean
 
   const semicolonConditions = splitTopLevel(normalized, ';');
   if (semicolonConditions.length > 1) {
-    return semicolonConditions.every((condition) => requirementTextMatches(condition, entries));
+    const applicableConditions = semicolonConditions.filter((condition) =>
+      !/\bnot accepted\b|\bnot considered\b|:\s*no\s*$/i.test(condition.trim()),
+    );
+    const mathematicsConditions = applicableConditions.filter((condition) =>
+      /\b(mathematics|maths|mathematical literacy|maths lit|technical mathematics|tech maths)\b/i.test(condition),
+    );
+    const otherConditions = applicableConditions.filter((condition) =>
+      !mathematicsConditions.includes(condition),
+    );
+    return otherConditions.every((condition) => requirementTextMatches(condition, entries)) &&
+      (mathematicsConditions.length === 0 ||
+        mathematicsConditions.some((condition) => requirementTextMatches(condition, entries)));
   }
   return atomicRequirementMatches(normalized, entries);
 }
@@ -258,11 +319,105 @@ function requirementTextMatches(value: string, entries: SubjectEntry[]): boolean
 function workbookRequirementsMatch(qualification: Qualification, entries: SubjectEntry[]): boolean {
   const requirements = qualification.sourceRequirements;
   if (!requirements) return true;
-  return Object.entries(requirements).every(([key, value]) =>
-    key === 'other' && /^(teaching modules|mathematics elective):/i.test(value.trim())
-      ? true
-      : requirementTextMatches(value, entries),
+  const requirementValues = Object.values(requirements).filter(Boolean);
+  const clauses = requirementValues.flatMap((value) =>
+    splitTopLevel(normalizeRequirement(value), ';'),
   );
+  const isAdditionalSubjectClause = (clause: string) =>
+    /\b(?:other|additional)\s+subjects?\b/i.test(clause) ||
+    /\badditional\s+subject\s+\d+\b/i.test(clause) ||
+    /\bnext\s+(?:\d+|one|two|three|four|five|six)\s+subjects?\b/i.test(clause) ||
+    /\bany\s+\d+\s+other\s+(?:NSC\s+)?subjects?\b/i.test(clause) ||
+    /\b\d+\s+(?:recognised\s+)?(?:20-credit\s+)?subjects?\b/i.test(clause);
+  const otherSubjectClauses = clauses.filter(isAdditionalSubjectClause);
+  const explicitClauses = clauses.filter((clause) => !isAdditionalSubjectClause(clause));
+  const explicitSubjects = SUBJECT_PATTERNS
+    .filter(({ pattern }) => explicitClauses.some((clause) => pattern.test(clause)))
+    .map(({ subject }) => subject);
+  const requiresLanguage = explicitClauses.some((clause) =>
+    /\b(language|english|afrikaans|isixhosa|isizulu|sesotho|sepedi|setswana|tshivenda|itsonga|siswati)\b/i.test(clause),
+  );
+  const otherSubjectEntries = entries.filter((entry) =>
+    !/life\s*orientation/i.test(entry.name) &&
+    !(requiresLanguage && isLanguageSubject(entry.name)) &&
+    !explicitSubjects.some((subject) => matchingSubject(entry.name, subject)),
+  );
+  const otherSubjectsMatch = otherSubjectClauses.every((clause) => {
+    const groups = [...clause.matchAll(/(\d+)\s*[xX]\s*(\d)\s*\((\d+(?:\.\d+)?)\s*%?\s*[-–—]\s*\d+/g)]
+      .map((match) => ({ count: Number(match[1]), mark: Number(match[3]) }))
+      .sort((left, right) => right.mark - left.mark);
+    if (groups.length > 0) {
+      let cumulativeCount = 0;
+      return groups.every((group) => {
+        cumulativeCount += group.count;
+        return otherSubjectEntries.filter((entry) => entry.percent >= group.mark).length >= cumulativeCount;
+      });
+    }
+    const individualAdditionalSubject = clause.match(/\badditional\s+subject\s+(\d+)\s*:\s*(?:level\s+)?([1-7])\b/i);
+    if (individualAdditionalSubject?.[1] && individualAdditionalSubject[2]) {
+      const count = Number(individualAdditionalSubject[1]);
+      const threshold = [0, 0, 30, 40, 50, 60, 70, 80][Number(individualAdditionalSubject[2])];
+      return threshold !== undefined &&
+        otherSubjectEntries.filter((entry) => entry.percent >= threshold).length >= count;
+    }
+    const nextSubjects = clause.match(/\bnext\s+(\d+|one|two|three|four|five|six)\s+subjects?\s+(\d+(?:\.\d+)?)\s*%/i);
+    if (nextSubjects?.[1] && nextSubjects[2]) {
+      const count = Number(nextSubjects[1]) || ({
+        one: 1,
+        two: 2,
+        three: 3,
+        four: 4,
+        five: 5,
+        six: 6,
+      }[nextSubjects[1].toLocaleLowerCase()] ?? 0);
+      const threshold = Number(nextSubjects[2]);
+      return count > 0 &&
+        otherSubjectEntries.filter((entry) => entry.percent >= threshold).length >= count;
+    }
+    const additionalGroup = clause.match(
+      /\b(?:additional|any)\s+(\d+|one|two|three|four|five|six)\s+(?:other\s+)?(?:NSC\s+)?subjects?\s*:\s*(?:level\s+)?([1-7])\s*(?:each)?\b/i,
+    );
+    if (additionalGroup?.[1] && additionalGroup[2]) {
+      const count = Number(additionalGroup[1]) || ({
+        one: 1,
+        two: 2,
+        three: 3,
+        four: 4,
+        five: 5,
+        six: 6,
+      }[additionalGroup[1].toLocaleLowerCase()] ?? 0);
+      const threshold = [0, 0, 30, 40, 50, 60, 70, 80][Number(additionalGroup[2])];
+      return count > 0 && threshold !== undefined &&
+        otherSubjectEntries.filter((entry) => entry.percent >= threshold).length >= count;
+    }
+    const fourSubjects = clause.match(/\b(\d+)\s+(?:recognised\s+)?(?:20-credit\s+)?subjects?\b/i);
+    const fourSubjectsThreshold = minimumPercent(clause);
+    if (fourSubjects?.[1] && fourSubjectsThreshold !== null) {
+      return entries.filter((entry) =>
+        !/life\s*orientation/i.test(entry.name) && entry.percent >= fourSubjectsThreshold,
+      ).length >= Number(fourSubjects[1]);
+    }
+    const count = clause.match(/\bother subjects?\s*\((\d+)\)/i);
+    const threshold = minimumPercent(clause);
+    if (count?.[1] && threshold !== null) {
+      return otherSubjectEntries.filter((entry) => entry.percent >= threshold).length >= Number(count[1]);
+    }
+    const anyOtherSubject = clause.match(/\bany\s+other\s+(?:NSC\s+)?subjects?\s*:\s*(?:level\s+)?([1-7])\b/i);
+    if (anyOtherSubject?.[1]) {
+      const anyThreshold = [0, 0, 30, 40, 50, 60, 70, 80][Number(anyOtherSubject[1])];
+      return anyThreshold !== undefined &&
+        otherSubjectEntries.some((entry) => entry.percent >= anyThreshold);
+    }
+    return false;
+  });
+  if (!otherSubjectsMatch) return false;
+
+  return requirementValues.every((value) => {
+    const withoutOtherSubjects = splitTopLevel(normalizeRequirement(value), ';')
+      .filter((clause) => !isAdditionalSubjectClause(clause))
+      .join(';');
+    return !withoutOtherSubjects.trim() || requirementTextMatches(withoutOtherSubjects, entries);
+  });
 }
 
 export function calculateNsCAggregate(entries: SubjectEntry[]): number | null {
@@ -278,10 +433,9 @@ export function calculateNsCAggregate(entries: SubjectEntry[]): number | null {
 export function qualificationMeetsRequirements(
   qualification: Qualification,
   entries: SubjectEntry[],
-  score: number,
+  score: number | null,
   aggregate?: number | null,
 ): boolean {
-  if (qualification.needsChecking) return false;
   const hasRequirements = qualification.requirements.length > 0 ||
     Object.values(qualification.sourceRequirements ?? {}).some(Boolean);
   if (qualification.minimumScore === undefined &&
@@ -289,7 +443,20 @@ export function qualificationMeetsRequirements(
     !hasRequirements) return false;
   if (qualification.minimumScore !== undefined) {
     const academicSubjects = entries.filter((entry) => !/life\s*orientation/i.test(entry.name));
-    if (academicSubjects.length < 6 || score < qualification.minimumScore) return false;
+    if (academicSubjects.length < 6 || score === null) return false;
+    if (qualification.minimumScoreOptions?.length) {
+      const meetsScoreOption = qualification.minimumScoreOptions.some((option) =>
+        score >= option.minimumScore &&
+        (option.subjects.length === 0 || option.subjects.some(({ subject, minimumMark }) =>
+          entries.some((entry) =>
+            matchingSubject(entry.name, subject) && entry.percent >= minimumMark,
+          ),
+        )),
+      );
+      if (!meetsScoreOption) return false;
+    } else if (score < qualification.minimumScore) {
+      return false;
+    }
   }
   if (qualification.minimumAggregate !== undefined &&
     (aggregate === undefined || aggregate === null || aggregate < qualification.minimumAggregate)) return false;
@@ -308,7 +475,7 @@ export function qualifyingQualifications(
   qualifications: Qualification[],
   institutionId: string,
   entries: SubjectEntry[],
-  score: number,
+  score: number | null,
   aggregate?: number | null,
 ): Qualification[] {
   return qualifications.filter((qualification) =>

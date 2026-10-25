@@ -54,7 +54,7 @@ export default function ApsCalculator() {
             Admission Point <span>Calculator.</span>
           </h1>
         }
-        description="Calculate your Admission Point Score (APS) for South African universities and TVET colleges. Enter your subjects and marks below to see your total score and qualification eligibility."
+        description="Calculate your Admission Point Score (APS) for South African universities. Enter your subjects and marks below to see your total score and qualification eligibility."
         feature={{
           symbol: <ChartNoAxesColumnIncreasing size={28} strokeWidth={1.8} />,
           title: 'Know Your Score.',
@@ -136,6 +136,10 @@ export default function ApsCalculator() {
             <p className="muted">
               Select the institutions you want to compare. We’ll show the qualifications where your marks meet the
               listed minimum requirements. Selection, audition, interview, NBT and portfolio requirements may also apply.
+            </p>
+            <p className="muted">
+              Results are estimates for guidance only, not admission decisions. Requirements can change and may include
+              additional criteria; confirm current entry requirements with each institution.
             </p>
             <InstitutionPicker selected={selectedInstitutions} onToggle={toggleInstitution} />
             <InstitutionResults entries={institutionEntries} selected={selectedInstitutions} />

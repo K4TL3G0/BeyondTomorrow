@@ -84,9 +84,9 @@ describe('APS calculator', () => {
       { name: 'History', percent: 90, counted: true },
       { name: 'Life Orientation', percent: 100, counted: true },
     ];
-    expect(uj && calculateForInstitution(uj, entries).total).toBe(36);
-    expect(uct && calculateForInstitution(uct, entries).total).toBe(440);
-    expect(uctScience && calculateForInstitution(uctScience, entries).total).toBe(585);
+    expect(uj && calculateForInstitution(uj, entries)?.total).toBe(36);
+    expect(uct && calculateForInstitution(uct, entries)?.total).toBe(440);
+    expect(uctScience && calculateForInstitution(uctScience, entries)?.total).toBe(585);
     expect(wits && calculateForInstitution(wits, entries)).toMatchObject({ total: 45, maximum: 56 });
     expect(rhodes && calculateForInstitution(rhodes, rhodesMarks)).toMatchObject({
       total: 41.8,
@@ -102,10 +102,7 @@ describe('APS calculator', () => {
       ],
     });
     expect(nmu && calculateForInstitution(nmu, entries)).toMatchObject({ total: 440, maximum: 600 });
-    expect(stellenbosch && calculateForInstitution(stellenbosch, entries)).toMatchObject({
-      total: 440 / 6,
-      maximum: 100,
-    });
+    expect(stellenbosch && calculateForInstitution(stellenbosch, entries)).toBeNull();
     expect(convertMark(29, 'univen')).toBe(1);
     expect(venda?.scheme).toMatchObject({ type: 'standard', excludeLO: true, scale: 'univen' });
     expect(INSTITUTIONS.some((institution) => institution.id === 'uni venda')).toBe(false);

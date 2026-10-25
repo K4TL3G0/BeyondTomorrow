@@ -31,7 +31,7 @@ export type InstitutionScheme =
     }
   | { type: 'nmu' }
   | { type: 'rhodes'; bestN: number; excludeLO: boolean }
-  | { type: 'stellies' }
+  | { type: 'marks-only' }
   | { type: 'uct'; variant: 'general' | 'science' }
   | { type: 'wits' };
 
@@ -138,18 +138,19 @@ export function calculateAps(entries: SubjectEntry[]): ApsResult {
 export function calculateForInstitution(
   institution: ApsInstitution,
   entries: SubjectEntry[],
-): InstitutionResult {
+): InstitutionResult | null {
   const { scheme } = institution;
+  if (scheme.type === 'marks-only') return null;
+
   const candidates = entries.filter((entry) => {
     if (scheme.type === 'standard') {
       return !(scheme.excludeLO && isLifeOrientation(entry.name)) &&
         (scheme.excludeBelow === undefined || entry.percent >= scheme.excludeBelow);
     }
     if (scheme.type === 'rhodes') return !(scheme.excludeLO && isLifeOrientation(entry.name));
-    if (scheme.type === 'nmu' || scheme.type === 'stellies' || scheme.type === 'uct') {
+    if (scheme.type === 'nmu' || scheme.type === 'uct') {
       if (isLifeOrientation(entry.name)) return false;
-      return scheme.type !== 'stellies' ||
-        !/advanced mathematics|(?:maths|mathematics) paper\s*3/i.test(entry.name);
+      return true;
     }
     return true;
   });
@@ -276,39 +277,6 @@ export function calculateForInstitution(
         ...row,
         counted: selected.includes(row),
         reason: selected.includes(row) ? 'Included in the Rhodes score' : 'Not among the selected subjects',
-      })),
-    };
-  }
-
-  if (scheme.type === 'stellies') {
-    const rows = candidates.map((entry) => ({
-      ...entry,
-      aps: entry.percent,
-      level: getLevel(entry.percent),
-      reason: '',
-    }));
-    const language = bestByMark(rows.filter((row) => {
-      const kind = classifySubject(row.name);
-      return kind === 'english' || kind === 'afrikaans';
-    }));
-    const otherSubjects = rows
-      .filter((row) => row !== language)
-      .sort((left, right) => right.percent - left.percent)
-      .slice(0, 5);
-    const selected = [...(language ? [language] : []), ...otherSubjects];
-    return {
-      total: language
-        ? selected.reduce((sum, row) => sum + row.percent, 0) / 6
-        : 0,
-      maximum: 100,
-      breakdown: rows.map((row) => ({
-        ...row,
-        counted: selected.includes(row),
-        reason: selected.includes(row)
-          ? 'Included in the Stellenbosch admission average'
-          : language
-            ? 'Not among the selected subjects'
-            : 'English or Afrikaans is required for this calculation',
       })),
     };
   }

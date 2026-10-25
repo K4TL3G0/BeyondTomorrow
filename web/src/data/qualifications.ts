@@ -13,7 +13,9 @@ export type QualificationSubject =
   | 'mathematics'
   | 'mathematical-literacy'
   | 'technical-mathematics'
+  | 'technical-sciences'
   | 'physical-sciences'
+  | 'life-orientation'
   | 'life-sciences'
   | 'agricultural-sciences'
   | 'accounting'
@@ -34,7 +36,15 @@ export interface Qualification {
   name: string;
   intakeYear?: number;
   durationYears?: number;
+  durationRange?: {
+    minYears: number;
+    maxYears: number;
+  };
   minimumScore?: number;
+  minimumScoreOptions?: {
+    minimumScore: number;
+    subjects: { subject: QualificationSubject; minimumMark: number }[];
+  }[];
   minimumAggregate?: number;
   requirements: QualificationRequirement[];
   sourceRequirements?: {
@@ -60,12 +70,6 @@ const nwuNaturalSciencesSource =
 const nwuTheologySource = 'https://studies.nwu.ac.za/undergraduate-studies/theology-2027';
 const ufsProspectusSource =
   'https://www.ufs.ac.za/docs/librariesprovider44/undergraduate/ufs---ug-prospectus-2027---jan.pdf?sfvrsn=f3a0f820_1';
-const witsBcomSource = 'https://www.wits.ac.za/course-finder/undergraduate/clm/bcom/';
-const witsBcomAccountingSource = 'https://www.wits.ac.za/course-finder/undergraduate/clm/accounting/';
-const witsBcomLawSource = 'https://www.wits.ac.za/course-finder/undergraduate/clm/law/';
-const witsLlbSource = 'https://www.wits.ac.za/course-finder/undergraduate/clm/llb-law/';
-const witsCivilEngineeringSource = 'https://www.wits.ac.za/course-finder/undergraduate/ebe/civil-engineering/';
-const witsChemicalEngineeringSource = 'https://www.wits.ac.za/course-finder/undergraduate/ebe/chemical-engineering/';
 const checked = '2026-10-24';
 
 const nwuEnglish60 = {
@@ -133,117 +137,6 @@ const nwuBusinessProgrammes: {
 ];
 
 export const QUALIFICATIONS: Qualification[] = [
-  {
-    id: 'wits-bcom-general',
-    institutionId: 'wits',
-    name: 'Bachelor of Commerce (General)',
-    minimumScore: 38,
-    requirements: [
-      { label: 'English Home Language or First Additional Language at 60% or higher', anyOf: [
-        { subject: 'english-home', minimumMark: 60 },
-        { subject: 'english-first-additional', minimumMark: 60 },
-      ] },
-      { label: 'Mathematics at 60% or higher', anyOf: [{ subject: 'mathematics', minimumMark: 60 }] },
-    ],
-    source: witsBcomSource,
-    checked,
-    selectionNote: 'Wait-listing and capacity-based selection may apply.',
-  },
-  {
-    id: 'wits-bcom-accounting',
-    institutionId: 'wits',
-    name: 'Bachelor of Commerce (Accounting)',
-    minimumScore: 38,
-    requirements: [
-      { label: 'English Home Language or First Additional Language at 60% or higher', anyOf: [
-        { subject: 'english-home', minimumMark: 60 },
-        { subject: 'english-first-additional', minimumMark: 60 },
-      ] },
-      { label: 'Mathematics at 60% or higher', anyOf: [{ subject: 'mathematics', minimumMark: 60 }] },
-    ],
-    source: witsBcomAccountingSource,
-    checked,
-    selectionNote: 'Wait-listing and capacity-based selection may apply.',
-  },
-  {
-    id: 'wits-bcom-law',
-    institutionId: 'wits',
-    name: 'Bachelor of Commerce with Law',
-    minimumScore: 43,
-    requirements: [
-      { label: 'English Home Language or First Additional Language at 60% or higher', anyOf: [
-        { subject: 'english-home', minimumMark: 60 },
-        { subject: 'english-first-additional', minimumMark: 60 },
-      ] },
-      { label: 'Mathematics at 60% or higher', anyOf: [{ subject: 'mathematics', minimumMark: 60 }] },
-    ],
-    source: witsBcomLawSource,
-    checked,
-    selectionNote: 'Wait-listing and capacity-based selection may apply.',
-  },
-  ...[
-    { id: 'economics', name: 'Economics', source: 'https://www.wits.ac.za/course-finder/undergraduate/clm/economics/' },
-    { id: 'finance', name: 'Finance', source: 'https://www.wits.ac.za/course-finder/undergraduate/clm/finance/' },
-    { id: 'human-resources', name: 'Human Resource Management', source: 'https://www.wits.ac.za/course-finder/undergraduate/clm/human-resource-management/' },
-    { id: 'information-systems', name: 'Information Systems', source: 'https://www.wits.ac.za/course-finder/undergraduate/clm/information-systems/' },
-  ].map((specialisation): Qualification => ({
-    id: `wits-bcom-${specialisation.id}`,
-    institutionId: 'wits',
-    name: `Bachelor of Commerce (${specialisation.name})`,
-    minimumScore: 38,
-    requirements: [
-      { label: 'English Home Language or First Additional Language at 60% or higher', anyOf: [
-        { subject: 'english-home', minimumMark: 60 },
-        { subject: 'english-first-additional', minimumMark: 60 },
-      ] },
-      { label: 'Mathematics at 60% or higher', anyOf: [{ subject: 'mathematics', minimumMark: 60 }] },
-    ],
-    source: specialisation.source,
-    checked,
-    selectionNote: 'Wait-listing and capacity-based selection may apply.',
-  })),
-  ...[
-    { name: 'BEng Civil Engineering', source: witsCivilEngineeringSource },
-    { name: 'BEng Chemical Engineering', source: witsChemicalEngineeringSource },
-  ].map((programme): Qualification => ({
-    id: `wits-${programme.name.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-')}`,
-    institutionId: 'wits',
-    name: programme.name,
-    minimumScore: 42,
-    requirements: [
-      { label: 'English Home Language or First Additional Language at 60% or higher', anyOf: [
-        { subject: 'english-home', minimumMark: 60 },
-        { subject: 'english-first-additional', minimumMark: 60 },
-      ] },
-      { label: 'Mathematics at 60% or higher', anyOf: [{ subject: 'mathematics', minimumMark: 60 }] },
-      { label: 'Physical Sciences at 60% or higher', anyOf: [{ subject: 'physical-sciences', minimumMark: 60 }] },
-    ],
-    source: programme.source,
-    checked,
-    selectionNote: 'Wait-listing and capacity-based selection may apply.',
-  })),
-  {
-    id: 'wits-llb-four-year',
-    institutionId: 'wits',
-    name: 'LLB (four-year stream)',
-    minimumScore: 46,
-    requirements: [
-      { label: 'English Home Language or First Additional Language at 70% or higher', anyOf: [
-        { subject: 'english-home', minimumMark: 70 },
-        { subject: 'english-first-additional', minimumMark: 70 },
-      ] },
-      {
-        label: 'Mathematics at 60% or Mathematical Literacy at 70%',
-        anyOf: [
-          { subject: 'mathematics', minimumMark: 60 },
-          { subject: 'mathematical-literacy', minimumMark: 70 },
-        ],
-      },
-    ],
-    source: witsLlbSource,
-    checked,
-    selectionNote: 'Wait-listing and capacity-based selection may apply. Graduate-entry streams use separate assessment rules.',
-  },
   ...[
     'Chemical Engineering',
     'Electrical and Electronic Engineering',
@@ -565,9 +458,29 @@ export const QUALIFICATIONS: Qualification[] = [
 ];
 
 function workbookSource(institutionId: string): string {
+  if (institutionId === 'wits') return 'https://www.wits.ac.za/';
+  if (institutionId === 'uct') return 'https://uct.ac.za/';
+  if (institutionId === 'uct-science') return 'https://uct.ac.za/';
+  if (institutionId === 'uj') return 'https://www.uj.ac.za/';
+  if (institutionId === 'ukzn') return 'https://ukzn.ac.za/';
+  if (institutionId === 'forthare') return 'https://www.ufh.ac.za/';
+  if (institutionId === 'waltuni') return 'https://www.wsu.ac.za/index.php/en/';
+  if (institutionId === 'unizulu') return 'https://www.unizulu.ac.za/';
+  if (institutionId === 'sefako-makgatho') return 'https://www.smu.ac.za/';
   if (institutionId === 'up') return 'https://www.up.ac.za/';
   if (institutionId === 'stellies') return 'https://www.su.ac.za/en';
   throw new Error(`Unsupported institution in qualification workbook: ${institutionId}`);
+}
+
+function workbookQualificationSubject(subject: string): QualificationSubject {
+  switch (subject) {
+    case 'mathematical-literacy':
+    case 'technical-mathematics':
+    case 'mathematics':
+      return subject;
+    default:
+      throw new Error(`Unsupported subject in qualification workbook score option: ${subject}`);
+  }
 }
 
 const workbookQualifications: Qualification[] = workbookRows.map((row) => ({
@@ -576,7 +489,15 @@ const workbookQualifications: Qualification[] = workbookRows.map((row) => ({
   name: row.name,
   intakeYear: row.intakeYear,
   durationYears: row.durationYears ?? undefined,
+  durationRange: row.durationRange ?? undefined,
   minimumScore: row.minimumScore ?? undefined,
+  minimumScoreOptions: row.minimumScoreOptions?.map((option) => ({
+    minimumScore: option.minimumScore,
+    subjects: option.subjects.map(({ subject, minimumMark }) => ({
+      subject: workbookQualificationSubject(subject),
+      minimumMark,
+    })),
+  })),
   minimumAggregate: row.minimumAggregate ?? undefined,
   requirements: [],
   sourceRequirements: {
@@ -585,7 +506,7 @@ const workbookQualifications: Qualification[] = workbookRows.map((row) => ({
   },
   source: workbookSource(row.institutionId),
   sourceReference: `${row.sourceFile}${row.sourcePage ? `, p. ${row.sourcePage}` : ''}`,
-  checked: '2026-10-24',
+  checked: row.institutionId === 'waltuni' ? '2025-01-01' : '2026-10-25',
   needsChecking: row.needsChecking,
   selectionNote: [row.selectionRequirements, row.notes].filter(Boolean).join(' '),
 }));
@@ -593,15 +514,20 @@ const workbookQualifications: Qualification[] = workbookRows.map((row) => ({
 QUALIFICATIONS.push(...workbookQualifications);
 
 export const QUALIFICATION_COVERAGE: Record<string, string> = {
-  wits: 'Initial list includes verified Commerce specialisations, two Engineering degrees, and the four-year LLB. Other Wits degrees and selection-based routes are not yet included.',
+  wits: '58 programmes are included from the supplied 2027 prospectus dataset. Health Sciences points and graduate-entry LLB routes that do not use matric APS are excluded from automatic matching.',
   nwu: 'Initial list includes programmes from the linked Economic and Management Sciences, Engineering, Law, Natural and Agricultural Sciences, and Theology pages; Education and Humanities are not yet included.',
   ufs: 'Initial list includes selected Economic and Management Sciences, Natural Sciences, Law, and Health Sciences programmes from the 2027 prospectus.',
-  uct: 'UCT selection also depends on NBT results, applicant category, and FPS/WPS rules that this calculator does not collect.',
-  uj: 'Qualification-level requirements have not yet been structured from the linked prospectus.',
-  ukzn: 'The supplied UKZN document is a postgraduate prospectus, so undergraduate qualifications are not included.',
+  uct: '23 Commerce, Engineering and Built Environment, Humanities, and Law programmes are included from the supplied prospectus dataset. FPS/WPS bands and NBT results are not assessed; rows flagged for checking are provisional.',
+  'uct-science': 'The Science faculty BSc and MBChB subject requirements are matched using the separate UCT Science score estimate. FPS/WPS bands and NBT results are not assessed; confirm medicine selection thresholds with UCT.',
+  uj: '179 programmes are included from the supplied 2027 prospectus dataset. Campus codes and parser-extracted requirements should be confirmed with UJ; flagged rows are provisional but still used for estimate matching.',
+  ukzn: '66 programmes are included from the supplied prospectus dataset. Subject requirements are compared where the supplied shorthand can be interpreted; APS ranges use the lower bound transcribed in the source workbook. Treat flagged rows as provisional.',
   rhodes: 'The supplied entry-requirements page states that its minimum entry table is for 2024; a current 2027 source is needed before matching.',
-  up: '2027 entry requirements are included from the supplied University of Pretoria faculty brochures. Rows flagged for checking are excluded from automatic matches.',
-  stellies: '2027 entry requirements are included from the supplied Stellenbosch University prospectus. Rows flagged for checking are excluded from automatic matches.',
+  up: '2027 entry requirements are included from the supplied University of Pretoria faculty brochures. Flagged rows are provisional but still used for estimate matching.',
+  stellies: '2027 programme-specific subject-mark requirements are included from the supplied Stellenbosch University prospectus. Some programmes require NBT results, which this calculator does not assess. Flagged rows are provisional but still used for estimate matching.',
+  forthare: '52 programmes are included from the supplied 2027 flyer. Confirm current requirements and Life Orientation scoring against the official prospectus.',
+  waltuni: '65 programmes from the supplied 2025 Information Brochure are used for estimate matching. The source has not been checked against current requirements, so matches are provisional.',
+  unizulu: '42 programmes are included from the supplied UniZulu sheet. Its notes identify the prospectus as the 2021-intake edition, so these matches are provisional and may not reflect current requirements.',
+  'sefako-makgatho': '19 programmes are included from the supplied 2027 SMU prospectus sheet. Ambiguous or conflicting rows are marked provisional; matches are estimates and do not include programme selection.',
   unisa: 'No qualification-level source was supplied for UNISA.',
   univen: 'No qualification-level source was supplied for the University of Venda.',
 };
