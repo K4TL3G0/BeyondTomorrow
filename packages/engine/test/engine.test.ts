@@ -11,6 +11,7 @@ import {
   convertMark,
   INSTITUTIONS,
   isValidMark,
+  TVET_COLLEGES,
 } from '../src';
 
 describe('configFromRows', () => {
@@ -55,11 +56,9 @@ describe('APS calculator', () => {
     expect(convertMark(90, 'ufs')).toBe(8);
   });
 
-  it('includes the 50 TVET colleges with provisional APS caveats', () => {
-    const tvetColleges = INSTITUTIONS.filter((institution) => institution.id.endsWith('-tvet'));
-
-    expect(tvetColleges).toHaveLength(50);
-    expect(tvetColleges.every((institution) => institution.caveat?.includes('not an institution-specific APS rule'))).toBe(true);
+  it('keeps TVET colleges out of the APS institution comparison list', () => {
+    expect(TVET_COLLEGES).toHaveLength(50);
+    expect(INSTITUTIONS.some(({ id }) => TVET_COLLEGES.some((college) => college.id === id))).toBe(false);
   });
 
   it('totals counted subjects while retaining excluded rows in the breakdown', () => {
