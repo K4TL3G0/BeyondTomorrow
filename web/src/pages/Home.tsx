@@ -6,9 +6,11 @@ import {
   ChartNoAxesColumnIncreasing,
   Check,
   Compass,
+  FileCheck2,
   GraduationCap,
   HandCoins,
   Landmark,
+  LockKeyhole,
   Sparkles,
   TrendingUp,
 } from 'lucide-react';
@@ -20,8 +22,19 @@ import './home.css';
 
 const FEATURES = [
   {
-    icon: ChartNoAxesColumnIncreasing,
+    icon: FileCheck2,
     number: '01',
+    eyebrow: 'Prepare with confidence',
+    title: 'Get your paperwork ready.',
+    description:
+      'Find a funding route, answer a few private questions and follow a sourced checklist before you submit.',
+    link: '/coach',
+    linkLabel: 'Start the readiness coach',
+    tone: 'orange',
+  },
+  {
+    icon: ChartNoAxesColumnIncreasing,
+    number: '02',
     eyebrow: 'Know where you stand',
     title: 'Make your marks make sense.',
     description:
@@ -32,7 +45,7 @@ const FEATURES = [
   },
   {
     icon: Compass,
-    number: '02',
+    number: '03',
     eyebrow: 'Explore what is possible',
     title: 'Find a path that fits.',
     description:
@@ -43,7 +56,7 @@ const FEATURES = [
   },
   {
     icon: Landmark,
-    number: '03',
+    number: '04',
     eyebrow: 'Choose where to apply',
     title: 'Get to know your options.',
     description:
@@ -54,7 +67,7 @@ const FEATURES = [
   },
   {
     icon: HandCoins,
-    number: '04',
+    number: '05',
     eyebrow: 'Plan how to pay',
     title: 'Look into funding early.',
     description:
@@ -65,18 +78,18 @@ const FEATURES = [
   },
   {
     icon: CalendarCheck,
-    number: '05',
+    number: '06',
     eyebrow: 'Stay ready',
-    title: 'Keep applications moving.',
+    title: 'Track your applications.',
     description:
-      'Use the checklist to organize key documents and track important application milestones.',
-    link: '/checklist',
-    linkLabel: 'Open your checklist',
-    tone: 'orange',
+      'Keep funding and admissions milestones organized as you move through your applications.',
+    link: '/applications',
+    linkLabel: 'Open your applications',
+    tone: 'cyan',
   },
   {
     icon: BookOpenCheck,
-    number: '06',
+    number: '07',
     eyebrow: 'Get reliable guidance',
     title: 'Learn from verified guides.',
     description:
@@ -89,25 +102,25 @@ const FEATURES = [
 
 const JOURNEY_STEPS = [
   {
-    label: 'Understand your marks',
-    description: 'Calculate your APS and see how your subject results open entry doors.',
-    icon: ChartNoAxesColumnIncreasing,
-    link: '/aps-calculator',
-    linkLabel: 'Start calculator',
+    label: 'Choose a funding route',
+    description: 'Use an income range to see which funding route to review.',
+    icon: HandCoins,
+    link: '/coach',
+    linkLabel: 'Find your route',
   },
   {
-    label: 'Explore study options',
-    description: 'Compare qualifications, TVET colleges and university pathways.',
-    icon: Compass,
-    link: '/pathways',
-    linkLabel: 'View pathways',
+    label: 'Answer a few questions',
+    description: 'Keep household answers private while the coach builds your next steps.',
+    icon: LockKeyhole,
+    link: '/coach',
+    linkLabel: 'Start the questions',
   },
   {
-    label: 'Prepare to apply',
-    description: 'Track document requirements, deadlines and funding applications.',
+    label: 'Check your paperwork',
+    description: 'Review sourced requirements, pre-submit checks and deadlines.',
     icon: GraduationCap,
-    link: '/applications',
-    linkLabel: 'Open applications',
+    link: '/coach',
+    linkLabel: 'Build your checklist',
   },
 ];
 
@@ -157,12 +170,12 @@ export default function Home() {
               starts <span>here.</span>
             </h1>
             <p className="home-hero-description">
-              Make sense of your marks, explore study options, find funding information and get
-              ready to apply. All in one place.
+              Get a clear funding route, prepare the right paperwork and keep your study plans
+              moving. Start with a private, guided checklist.
             </p>
             <div className="home-hero-actions">
-              <Link to="/aps-calculator" className="home-button home-button-primary">
-                Start with your APS
+              <Link to="/coach" className="home-button home-button-primary">
+                Start the readiness coach
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
               <a href="#journey" className="home-button home-button-secondary">
@@ -350,8 +363,8 @@ export default function Home() {
         <div className="home-final-cta-icon"><Sparkles size={21} aria-hidden="true" /></div>
         <p className="home-section-eyebrow">Your future is worth planning for</p>
         <h2>You don’t need every answer today.<br /><span>Just take the first step.</span></h2>
-        <Link to="/aps-calculator" className="home-button home-button-primary">
-          Calculate your APS <ArrowRight size={17} aria-hidden="true" />
+        <Link to="/coach" className="home-button home-button-primary">
+          Start the readiness coach <ArrowRight size={17} aria-hidden="true" />
         </Link>
       </section>
     </div>

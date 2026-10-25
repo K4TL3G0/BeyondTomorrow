@@ -295,7 +295,7 @@
 
 .funding-page .funding-source-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1rem;
 }
 
@@ -364,7 +364,7 @@
 
 .funding-page .funding-criteria {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 0.9rem 1.25rem;
   margin: 0;
 }
@@ -580,28 +580,33 @@
 
 @media (max-width: 640px) {
   .funding-page .hero {
-    padding: 3.5rem 1.25rem;
+    padding: 3rem 1.25rem;
   }
 
   .funding-page .hero-inner {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
   .funding-page .hero-feature {
-    max-width: 28rem;
+    max-width: 100%;
+    padding: 1.5rem;
   }
 
   .funding-page .database-funding {
-    padding: 3.5rem 1.25rem 0;
+    padding: 2.5rem 1.25rem 0;
   }
 
   .funding-page .student-loan-guide {
     grid-template-columns: 1fr;
-    padding: 3.5rem 1.25rem 0;
+    padding: 2.5rem 1.25rem 0;
+    gap: 1.5rem;
   }
 
   .funding-page .loan-guide-source {
     grid-column: auto;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .funding-page .database-funding-heading {
@@ -610,21 +615,68 @@
     gap: 1rem;
   }
 
-  .funding-page .funding-source-grid,
-  .funding-page .funding-criteria {
+  .funding-page .funding-source-grid {
     grid-template-columns: 1fr;
   }
 
+  .funding-page .funding-criteria {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
   .funding-page .content-section {
-    padding: 3.5rem 1.25rem;
+    padding: 2.5rem 1.25rem;
   }
 
   .funding-page .filters {
     justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+
+  .funding-page .filter-button {
+    flex: 0 0 auto;
   }
 
   .funding-page .expandable-boxes {
     grid-template-columns: 1fr;
+  }
+
+  .funding-page .funding-source-card {
+    padding: 1.15rem;
+  }
+
+  .funding-page .disclaimer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .funding-page .hero h1 {
+    font-size: clamp(2.1rem, 8vw, 3rem);
+  }
+
+  .funding-page .funding-source-title {
+    flex-direction: row;
+    gap: 0.65rem;
+  }
+
+  .funding-page .funding-source-title img {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 2.75rem;
+  }
+
+  .funding-page .funding-source-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .funding-page .loan-checklist {
+    padding: 1.15rem;
   }
 }
 

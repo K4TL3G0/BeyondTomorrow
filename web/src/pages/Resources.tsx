@@ -2,12 +2,16 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './Resources.css';
 
-type ResourceType = 'youtube' | 'notes' | 'pastPapers';
+type ResourceType = 'videos' | 'notes' | 'pastPapers';
+
+type SubjectResourceLink = {
+  url: string;
+  accountUsername: string;
+};
 
 type Subject = {
   name: string;
   category: string;
-  resourceLinks?: Partial<Record<ResourceType, string>>;
 };
 
 const subjectGroups: { category: string; subjects: string[] }[] = [
@@ -51,7 +55,7 @@ const subjectGroups: { category: string; subjects: string[] }[] = [
     subjects: ['Agricultural Management Practices', 'Agricultural Sciences', 'Agricultural Technology'],
   },
   {
-    category: 'Science and technology',
+    category: 'Science and Technology',
     subjects: [
       'Computer Applications Technology',
       'Civil Technology',
@@ -66,21 +70,21 @@ const subjectGroups: { category: string; subjects: string[] }[] = [
     ],
   },
   {
-    category: 'Humanities and social sciences',
+    category: 'Humanities and Social Sciences',
     subjects: ['Geography', 'History', 'Religion Studies', 'Tourism'],
   },
   {
-    category: 'Arts and culture',
+    category: 'Arts and Culture',
     subjects: ['Dance Studies', 'Design', 'Dramatic Arts', 'Music', 'Visual Arts'],
   },
   {
-    category: 'Consumer studies and hospitality',
+    category: 'Consumer studies and Hospitality',
     subjects: ['Consumer Studies', 'Hospitality Studies'],
   },
 ];
 
 const resourceTypes: { id: ResourceType; label: string }[] = [
-  { id: 'youtube', label: 'YouTube' },
+  { id: 'videos', label: 'Videos' },
   { id: 'notes', label: 'Notes' },
   { id: 'pastPapers', label: 'Past papers' },
 ];
@@ -88,6 +92,172 @@ const resourceTypes: { id: ResourceType; label: string }[] = [
 const subjects: Subject[] = subjectGroups.flatMap(({ category, subjects: names }) =>
   names.map((name) => ({ name, category })),
 );
+
+const subjectResourceLinks: Record<string, Partial<Record<ResourceType, SubjectResourceLink[]>>> = {
+  'tshivenda-home-language': {
+    // Add each video as { url: 'https://...', accountUsername: '@channel' }.
+    videos: [ { url: 'https://youtube.com/@luambolwatshivenda?si=z3mShLSJzGQBXg9z', accountUsername: '@Luambo lwa Tshivenda' },
+  { url: 'https://youtube.com/@learningtshivenda?si=MqDak7P2jqXsFc-9', accountUsername: '@Learning Tshivenda with Tondani' },
+],
+  },
+  'tshivenda-first-additional-language': {
+    videos: [],
+  },
+
+  'english-home-language': {
+    videos: [
+      { url: 'https://www.youtube.com/@englishislove', accountUsername: '@English is Love' },
+      { url: 'https://www.youtube.com/@EnglishwithMsTLLLechuti1', accountUsername: '@Ms. T.L.L Lechuti English (FAL&HL)lessons' },
+    ],
+  },
+  'afrikaans-home-language': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PLjmbDm1pLQuLBFX9iKaJPV8CMFrBWZ7_j&si=bx1t3pr7CIh0S3iu', accountUsername: '@amore van wyk' },
+    { url: 'https://youtube.com/playlist?list=PLJqnChTMSBNLS2qMOriqk7KEgn-rrxs1y&si=Fz-yNdE51AbZKnPy', accountUsername: '@Thuma Mina Teaching' },
+    ],
+  },
+  'mathematics': {
+    videos: [
+      { url: 'https://youtube.com/@kevinmathscience?si=LqnKFeKrUS9MXtL0', accountUsername: '@KevinMathScience' },
+      { url: 'https://youtube.com/@mlungisinkosi?si=5QFK5B958EqrZpIz', accountUsername: '@Mlungisi Nkosi Maths & Science' },
+    ],
+  },
+  'mathematical-literacy': {
+    videos: [
+      { url: 'https://youtube.com/@maths_monkey?si=kVazyZtLRHcnKKef', accountUsername: '@Maths Monkey' },
+      { url: 'https://youtube.com/@kevinmathscience?si=LqnKFeKrUS9MXtL0', accountUsername: '@KevinMathScience' },
+    ],
+  },
+  'life-orientation': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PLxbWn1AH92KgwUadGj3fAbYCKQCEx90MD&si=KxGq0QEGupI_f0oH', accountUsername: '@Coeval College' },
+      { url: 'https://youtube.com/playlist?list=PLQQGTVE5vO83yVyANGuUfJuiM-YaYMbLY&si=uCGpPjPwe7DcBtHj', accountUsername: '@Ace My Exams' },
+    ],
+  },
+  'business-studies': {
+    videos: [
+      { url: 'https://youtube.com/@nonjabulosa?si=hd1Y3gc5HF-Dnuwj', accountUsername: '@B.Studies with N. Tshabalala' },
+   { url: 'https://youtube.com/@teacherilonasmith?si=_8V44DxZSG9V0tIn', accountUsername: '@Teacher Illina Smith' },
+    ],
+  },
+  'accounting': {
+    videos: [
+      { url: 'https://youtube.com/@accountingsolutionsa?si=lnYU_vRSqu6sVfhH', accountUsername: '@Accounting Solution SA' },
+   { url: 'https://youtube.com/@yourbfftutor?si=euPTT1tAhze9eu0x', accountUsername: '@Luyanda Ralph Gumede' },
+    ],
+  },
+  'economics': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PLTf2BsyTHrntNETKv3DE0DWJ2LUwUTmP4&si=8xdiclp7enq7d_rg', accountUsername: '@HuluLearn' },
+    { url: 'https://youtube.com/@economicswithmashudu?si=6g0k1J7j8r3X9W2_', accountUsername: '@Economics with Mashudu' },
+    ],
+  },
+  'life-sciences': {
+    videos: [
+      { url: 'https://youtube.com/@missangler?si=-N35eswQJxcgAjja', accountUsername: '@Miss Angler' },
+      { url: 'https://youtube.com/@lifesciencegeographycaps?si=PBiZXqmqGxzkJ9Sg', accountUsername: '@Life Science and Geography(Caps)' },
+    ],
+  },
+  'physical-sciences': {
+    videos: [
+      { url: 'https://youtube.com/@kevinmathscience?si=LqnKFeKrUS9MXtL0', accountUsername: '@KevinMathScience' },
+      { url: 'https://youtube.com/@mlungisinkosi?si=5QFK5B958EqrZpIz', accountUsername: '@Mlungisi Nkosi Maths & Science' },
+    ],
+  },
+  'history': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PLjHpdK12vhKlBbX-KfkNGF4NtB7-o0Nq9&si=3l64_7BN9KT3Qkl_', accountUsername: '@Wlelile FAITH' },
+   { url: 'https://youtube.com/playlist?list=PL8j3onXW6Xzuowm7lSSzbUoMSJAoJcfM3&si=rOi3TICOtuYTXib1', accountUsername: '@PHAKAMA RESEARCH' },
+    ],
+  },
+  'geography': {
+    videos: [
+
+      { url: 'https://youtube.com/playlist?list=PL2WmZdFbKGJqS8tLo0fNCchNoGHrp-n01&si=2G-dNYIRVQUcZUNN', accountUsername: '@Edu-ca-te' },
+      { url: 'https://youtube.com/@closeup_education?si=gmzol9vCiKniChRT', accountUsername: '@CloseUp Education' },
+    ],
+  },
+  'computer-applications-technology': {
+    videos: [
+      { url: 'https://youtube.com/@educationwithmrh?si=ZFrQBM1_BS1NO1vM', accountUsername: '@Education with Mr Hambury' },
+    { url: 'https://youtube.com/@mrlongitandcat?si=NH2iVhc6Ymj_c2_N', accountUsername: '@Mr Long Education- IT & CAT' },
+    ],
+  },
+  'information-technology': {
+    videos: [
+      { url: 'https://youtube.com/@mrlongitandcat?si=NH2iVhc6Ymj_c2_N', accountUsername: '@Mr Long Education- IT & CAT' },
+      { url: 'https://youtube.com/@educationwithmrh?si=ZFrQBM1_BS1NO1vM', accountUsername: '@Education with Mr Hambury' },
+    ],
+  },
+  'engineering-graphics-and-design': {
+    videos: [
+      { url: 'https://youtube.com/@howtoegd?si=wpqmMMxt60hId-g1', accountUsername: '@HowToEGD' },
+      { url: 'https://youtube.com/@wimmas?si=lVq3gSq0mEKHZh7e', accountUsername: '@Wimmas EGD' },
+    ],
+  },
+  'mechanical-technology': {
+    videos: [
+      { url: 'https://youtube.com/@autoedza2998?si=gE8qZIHgRZHrvUhy', accountUsername: '@Auto ED ZA' },
+    ],
+  },
+  'civil-technology': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PLl8ahShBR4S03zriY5Vp9DEVvs3zXVtUS&si=pA3x_kGvZHbGim-A', accountUsername: '@edurise empowerment hub' },
+    ],
+  },
+  'electrical-technology': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PL0BB-n5BdGRjBayrTA2QBp00S2KZnWw2B&si=ljnIW77Zt9-QPU7T', accountUsername: '@Annonymous Stunner Gaming' },
+      { url: 'https://youtube.com/playlist?list=PLb9DRPdBiheFKCIutVH0I99kDzH6rJdHb&si=EIJPuJMUQfXiPF3D', accountUsername: '@Clinton de Kock' },
+    ],
+  },
+  'technical-mathematics': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PL8j3onXW6XzshtJJQ1Iy-gXleIDmhuRTG&si=akHD3uZudX71MnNv', accountUsername: '@PHAKAMA RESEARCH' },
+      { url: 'https://youtube.com/playlist?list=PL6jW9mH2Ee4isr_ba36kSold39Owhy2yC&si=j_HreCBRNW3PGTWv', accountUsername: '@Scott Davis Math' },
+    ],
+  },
+  'dance-studies': {
+    videos: [
+      { url: 'https://youtube.com/@dancestudiesonline?si=Iqi0avgBp9iEbUHG', accountUsername: '@Dance Studies Online' },
+    ],
+  },
+  'music': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PL5j5H06QkhxE0RK-Ormp3zgf5SGJ28zsj&si=J2X5djmv8g9NvKmW', accountUsername: '@Music Matters' },
+    ],
+  },
+  'visual-arts': {
+    videos: [
+      { url: 'https://youtube.com/@mrsmcgillsarthub3465?si=fFBHEKcMW3tJIUMF', accountUsername: '@Mrs McGills Art Hub' },
+    ],
+  },
+  'religion-studies': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PL-Yf6_ZdxMmRdDyjVvAVoigsvXogDCPoA&si=3qt1wUoiyZeLgbXX', accountUsername: '@Goon School' },
+    ],
+  },
+  'tourism': {
+    videos: [
+      { url: 'https://youtube.com/@tourismnmbd?si=bSKSRjEaleM3VOc1', accountUsername: '@Tourism NMBD' },
+    ],
+  },
+  'hospitality-studies': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PL1CHWHAvxwM1u91uN7M-It2ur8IlDpurV&si=W4W1ZzNhuflArbtp', accountUsername: '@Mphume Zulu' },
+    ],
+  },
+  'consumer-studies': {
+    videos: [
+      { url: 'https://youtube.com/playlist?list=PLQQGTVE5vO83fuSDC4rmzdyT7Y06O5dvP&si=Z5vAg2Z-mFmn8Alu', accountUsername: '@Ace My Exams' },
+    ],
+  },
+  'design': {
+    videos: [
+      { url: 'https://youtube.com/@howtodesign?si=0g1k3r6J7j8X9W2_', accountUsername: '@HowToDesign' },
+    ],
+  },
+};
 
 function getSubjectSlug(name: string) {
   return name.toLocaleLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -252,7 +422,7 @@ export function SubjectResources() {
 
         <div className="subject-detail-grid">
           {resourceTypes.map(({ id, label }) => {
-            const href = subject.resourceLinks?.[id];
+            const links = subjectResourceLinks[getSubjectSlug(subject.name)]?.[id] ?? [];
 
             return (
               <article className="subject-detail-card" key={id}>
@@ -260,10 +430,17 @@ export function SubjectResources() {
                   <SubjectIcon />
                 </span>
                 <h3>{label}</h3>
-                {href ? (
-                  <a href={href} target="_blank" rel="noopener noreferrer">
-                    Open {label.toLocaleLowerCase()} <span aria-hidden="true">↗</span>
-                  </a>
+                {links.length > 0 ? (
+                  <ul className="subject-resource-links">
+                    {links.map(({ url, accountUsername }) => (
+                      <li key={url}>
+                        <span>{accountUsername}</span>
+                        <a href={url} target="_blank" rel="noopener noreferrer">
+                          Open {label.toLocaleLowerCase()} <span aria-hidden="true">↗</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 ) : (
                   <p>Resources for this subject will be added here.</p>
                 )}

@@ -1,435 +1,399 @@
-import { useRef, useState } from 'react';
-import { ParticleWaveBackground } from '../../components/ParticleWaveBackground';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, LockKeyhole, Trash2 } from 'lucide-react';
+import { Hero } from '../../components/Hero';
+import { useAuth } from '../../lib/auth';
+import { supabase } from '../../lib/supabase';
+import { INCOME_BRACKETS, PROVINCES, type IncomeBracket, type Province } from '@beyond-tomorrow/engine';
 import './profile.css';
 
-const GRADES = ['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'];
+const INTERESTS = [
+  { value: 'engineering', label: 'Engineering' },
+  { value: 'technology', label: 'Technology and computing' },
+  { value: 'business', label: 'Business and commerce' },
+  { value: 'finance', label: 'Finance' },
+  { value: 'accounting', label: 'Accounting' },
+  { value: 'health', label: 'Health sciences' },
+  { value: 'law', label: 'Law' },
+  { value: 'humanities', label: 'Humanities' },
+  { value: 'education', label: 'Education' },
+  { value: 'science', label: 'Natural sciences' },
+  { value: 'agriculture', label: 'Agriculture and environment' },
+  { value: 'construction', label: 'Construction' },
+] as const;
 
-// All subjects offered by South African high schools (CAPS curriculum)
-const SUBJECTS: Record<string, string[]> = {
-  'Languages': [
-    'Afrikaans Home Language',
-    'Afrikaans First Additional Language',
-    'Afrikaans Second Additional Language',
-    'English Home Language',
-    'English First Additional Language',
-    'English Second Additional Language',
-    'IsiNdebele Home Language',
-    'IsiNdebele First Additional Language',
-    'IsiXhosa Home Language',
-    'IsiXhosa First Additional Language',
-    'IsiZulu Home Language',
-    'IsiZulu First Additional Language',
-    'Sepedi Home Language',
-    'Sepedi First Additional Language',
-    'Sesotho Home Language',
-    'Sesotho First Additional Language',
-    'Setswana Home Language',
-    'Setswana First Additional Language',
-    'Siswati Home Language',
-    'Siswati First Additional Language',
-    'Tshivenda Home Language',
-    'Tshivenda First Additional Language',
-    'Xitsonga Home Language',
-    'Xitsonga First Additional Language',
-    'Sign Language Home Language',
-    'Arabic First Additional Language',
-    'French First Additional Language',
-    'German First Additional Language',
-    'Hindi First Additional Language',
-    'Mandarin First Additional Language',
-    'Portuguese First Additional Language',
-    'Tamil First Additional Language',
-    'Telegu First Additional Language',
-    'Urdu First Additional Language',
-  ],
-  'Mathematics & Science': [
-    'Mathematics',
-    'Mathematical Literacy',
-    'Technical Mathematics',
-    'Physical Sciences',
-    'Technical Sciences',
-    'Life Sciences',
-  ],
-  'Commerce': [
-    'Accounting',
-    'Business Studies',
-    'Economics',
-  ],
-  'Humanities & Social Sciences': [
-    'History',
-    'Geography',
-    'Religion Studies',
-    'Philosophy',
-    'Life Orientation',
-  ],
-  'Technology & Design': [
-    'Information Technology',
-    'Computer Applications Technology',
-    'Engineering Graphics & Design',
-    'Electrical Technology',
-    'Mechanical Technology',
-    'Civil Technology',
-  ],
-  'Arts': [
-    'Visual Arts',
-    'Dramatic Arts',
-    'Music',
-    'Dance Studies',
-    'Design',
-  ],
-  'Technical & Vocational': [
-    'Agricultural Sciences',
-    'Agricultural Management Practices',
-    'Agricultural Technology',
-    'Consumer Studies',
-    'Hospitality Studies',
-    'Tourism',
-    'Sport & Exercise Science',
-    'Nautical Science',
-  ],
+type ProfileRecord = {
+  province: Province | null;
+  income_bracket: IncomeBracket | 'unsure' | null;
+  interests: string[];
 };
 
-const ALL_SUBJECTS = Object.values(SUBJECTS).flat();
+type StudentMarkRecord = {
+  mark: number | null;
+  subjects: { code: string; name: string } | null;
+};
 
-const PROVINCES = [
-  'Eastern Cape',
-  'Free State',
-  'Gauteng',
-  'KwaZulu-Natal',
-  'Limpopo',
-  'Mpumalanga',
-  'North West',
-  'Northern Cape',
-  'Western Cape',
-];
+type SavedSubject = {
+  code: string;
+  name: string;
+  mark: number | null;
+};
 
-const CAREER_INTERESTS = [
-  'Engineering & Technology',
-  'Medicine & Health Sciences',
-  'Business & Commerce',
-  'Law & Humanities',
-  'Education & Teaching',
-  'Arts & Design',
-  'Natural Sciences',
-  'Agriculture & Environment',
-  'Social Work & Community Development',
-  'Not sure yet',
-];
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
-function completeness(
-  displayName: string,
-  school: string,
-  grade: string,
-  province: string,
-  careerInterest: string,
-  selectedSubjects: string[],
-  avatarUrl: string | null,
-  bio: string,
-  apsGoal: string,
-): number {
-  const checks = [
-    !!displayName,
-    !!school,
-    !!grade,
-    !!province,
-    !!careerInterest,
-    selectedSubjects.length >= 5,
-    !!avatarUrl,
-    bio.length >= 20,
-    !!apsGoal,
-  ];
-  return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+const INCOME_LABELS: Record<IncomeBracket, string> = {
+  up_to_350k: 'Up to R350,000',
+  '350k_to_600k': 'R350,001 to R600,000',
+  above_600k: 'Above R600,000',
+  prefer_not_to_say: 'Prefer not to say',
+};
+
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message;
+  }
+  return 'An unexpected error occurred.';
 }
 
 export function ProfilePage() {
-  const [displayName, setDisplayName] = useState('');
-  const [school, setSchool] = useState('');
-  const [grade, setGrade] = useState('');
-  const [province, setProvince] = useState('');
-  const [careerInterest, setCareerInterest] = useState('');
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [bio, setBio] = useState('');
-  const [apsGoal, setApsGoal] = useState('');
-  const [saved, setSaved] = useState(false);
-  const [subjectSearch, setSubjectSearch] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { session } = useAuth();
+  const userId = session?.user.id;
+  const [province, setProvince] = useState<Province | ''>('');
+  const [incomeBracket, setIncomeBracket] = useState<IncomeBracket | ''>('');
+  const [interests, setInterests] = useState<string[]>([]);
+  const [subjects, setSubjects] = useState<SavedSubject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [clearing, setClearing] = useState(false);
+  const [clearError, setClearError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const requestId = useRef(0);
 
-  const pct = completeness(displayName, school, grade, province, careerInterest, selectedSubjects, avatarUrl, bio, apsGoal);
+  const loadProfile = useCallback(async () => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
 
-  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setAvatarUrl(url);
+    const currentRequest = ++requestId.current;
+    setLoading(true);
+    setLoadError(null);
+
+    try {
+      const [profileResult, marksResult] = await Promise.all([
+        supabase
+          .from('student_profiles')
+          .select('province, income_bracket, interests')
+          .eq('id', userId)
+          .maybeSingle<ProfileRecord>(),
+        supabase
+          .from('student_marks')
+          .select('mark, subjects(code, name)')
+          .eq('student_id', userId)
+          .returns<StudentMarkRecord[]>(),
+      ]);
+
+      if (currentRequest !== requestId.current) return;
+      if (profileResult.error || marksResult.error) {
+        setLoadError(
+          profileResult.error?.message ??
+            marksResult.error?.message ??
+            'Your study profile could not be loaded.',
+        );
+        setLoading(false);
+        return;
+      }
+
+      const profile = profileResult.data;
+      setProvince(profile?.province ?? '');
+      setIncomeBracket(
+        profile?.income_bracket === 'unsure' ? 'prefer_not_to_say' : profile?.income_bracket ?? '',
+      );
+      setInterests(profile?.interests ?? []);
+      setSubjects(
+        (marksResult.data ?? [])
+          .flatMap((row) =>
+            row.subjects
+              ? [{ code: row.subjects.code, name: row.subjects.name, mark: row.mark }]
+              : [],
+          )
+          .sort((a, b) => a.name.localeCompare(b.name)),
+      );
+      setSaveStatus('idle');
+      setSaveError(null);
+      setLoading(false);
+    } catch (error) {
+      if (currentRequest !== requestId.current) return;
+      setLoadError(
+        error instanceof Error
+          ? `Your study profile could not be loaded: ${error.message}`
+          : 'Your study profile could not be loaded.',
+      );
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    void loadProfile();
+    return () => {
+      requestId.current += 1;
+    };
+  }, [loadProfile, reloadKey]);
+
+  async function handleSave(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!userId) {
+      setSaveError('You need to sign in again before saving your profile.');
+      setSaveStatus('error');
+      return;
+    }
+
+    setSaveStatus('saving');
+    setSaveError(null);
+    try {
+      const { error } = await supabase.from('student_profiles').upsert(
+        {
+          id: userId,
+          province: province || null,
+          income_bracket: incomeBracket || null,
+          interests,
+        },
+        { onConflict: 'id' },
+      );
+      if (error) throw error;
+      setSaveStatus('saved');
+    } catch (error) {
+      setSaveStatus('error');
+      setSaveError(`Your profile was not saved: ${errorMessage(error)}`);
     }
   }
 
-  function toggleSubject(subject: string) {
-    setSelectedSubjects((prev) =>
-      prev.includes(subject) ? prev.filter((s) => s !== subject) : [...prev, subject],
+  function toggleInterest(value: string) {
+    setInterests((current) =>
+      current.includes(value)
+        ? current.filter((interest) => interest !== value)
+        : [...current, value],
     );
+    setSaveStatus('idle');
   }
 
-  function handleSave(e: React.FormEvent) {
-    e.preventDefault();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+  async function clearStudyProfile() {
+    if (!userId || !window.confirm('Remove your saved province, income bracket, interests, subjects and marks?')) {
+      return;
+    }
+
+    setClearing(true);
+    setClearError(null);
+    try {
+      const marksResult = await supabase.from('student_marks').delete().eq('student_id', userId);
+      if (marksResult.error) {
+        setClearError(`Saved subjects and marks could not be removed: ${marksResult.error.message}`);
+        return;
+      }
+
+      const profileResult = await supabase.from('student_profiles').upsert(
+        { id: userId, province: null, income_bracket: null, interests: [] },
+        { onConflict: 'id' },
+      );
+      if (profileResult.error) {
+        setClearError(
+          `Your subjects and marks were removed, but profile details could not be cleared: ${profileResult.error.message}`,
+        );
+        setReloadKey((key) => key + 1);
+        return;
+      }
+
+      setProvince('');
+      setIncomeBracket('');
+      setInterests([]);
+      setSubjects([]);
+      setSaveStatus('idle');
+      setSaveError(null);
+    } catch (error) {
+      setClearError(`Your study data could not be cleared: ${errorMessage(error)}`);
+    } finally {
+      setClearing(false);
+    }
   }
-
-  const initials = displayName
-    ? displayName.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2)
-    : '?';
-
-  const filteredSubjects = subjectSearch.trim()
-    ? ALL_SUBJECTS.filter((s) => s.toLowerCase().includes(subjectSearch.toLowerCase()))
-    : null;
-
-  const apsNum = parseInt(apsGoal, 10);
-  const apsValid = !Number.isNaN(apsNum) && apsNum >= 15 && apsNum <= 42;
 
   return (
-    <div className="bt-profile-page">
-      {/* ── Hero ── */}
-      <section className="bt-profile-hero">
-        <ParticleWaveBackground density={0.65} className="bt-profile-hero__particles" />
-        <div className="bt-profile-hero__content">
-          <span className="bt-profile-hero__label">YOUR JOURNEY STARTS HERE</span>
-          <h1 className="bt-profile-hero__title">
-            Your <span className="bt-profile-hero__accent">Profile.</span>
+    <div className="page-wrapper">
+      <Hero
+        eyebrow="Your study details"
+        title={
+          <h1>
+            My Study <span>Profile.</span>
           </h1>
-          <p className="bt-profile-hero__sub">
-            Tell us about yourself so Beyond Tomorrow can guide you to the right institutions,
-            funding and pathways.
-          </p>
-        </div>
-      </section>
+        }
+        description="Keep the details that help us find relevant study and funding options. Your subjects and marks are shared with the APS calculator."
+        feature={{
+          symbol: <LockKeyhole size={28} strokeWidth={1.8} />,
+          title: 'Your data, your choice.',
+          description: 'You can update or clear your saved study details at any time.',
+        }}
+      />
 
-      <main className="bt-profile-main">
-        <div className="bt-profile-layout">
-          <aside className="bt-profile-sidebar">
-            {/* ── Avatar ── */}
-            <section className="bt-profile-section">
-              <h2 className="bt-profile-section__title">Profile picture</h2>
-              <div className="bt-profile-avatar-row">
-                <button
-                  type="button"
-                  className="bt-profile-avatar"
-                  onClick={() => fileInputRef.current?.click()}
-                  aria-label="Upload profile picture"
-                >
-                  {avatarUrl ? (
-                    <img src={avatarUrl} alt="Profile" className="bt-profile-avatar__img" />
-                  ) : (
-                    <span className="bt-profile-avatar__initials">{initials}</span>
-                  )}
-                  <span className="bt-profile-avatar__overlay">Change</span>
-                </button>
-                <input ref={fileInputRef} type="file" accept="image/*" className="bt-profile-avatar__input" onChange={handleAvatarChange} />
-                <div className="bt-profile-avatar__hint">
-                  <p>Click to upload a photo. JPG or PNG, max 5 MB.</p>
-                  <p>Your initials will show until you upload a picture.</p>
-                </div>
-              </div>
-            </section>
-
-            {/* ── Profile completeness summary ── */}
-            <div className="bt-profile-completeness-box">
-              <h3 className="bt-profile-completeness-box__title">Profile Completeness</h3>
-              <div className="bt-profile-completeness-box__bar-wrap">
-                <div className="bt-profile-completeness-box__bar">
-                  <div className="bt-profile-completeness-box__fill" style={{ width: `${pct}%` }} />
-                </div>
-                <span className="bt-profile-completeness-box__pct">{pct}% complete</span>
-              </div>
-              <p className="bt-profile-completeness-box__hint">
-                Complete your profile to get the most out of BeyondTomorrow.
+      <div className="page-content">
+        <div className="study-profile">
+          <aside className="study-profile-privacy" aria-label="Privacy information">
+            <LockKeyhole size={22} aria-hidden="true" />
+            <div>
+              <h2>Your privacy matters</h2>
+              <p>
+                We use your province, income bracket, interests, subjects and marks to show relevant
+                options. We never ask for ID numbers, exact income, or document uploads.
               </p>
             </div>
           </aside>
 
-          <form className="bt-profile-form" onSubmit={handleSave}>
-
-            {/* ── About you ── */}
-            <section className="bt-profile-section">
-              <h2 className="bt-profile-section__title">About you</h2>
-              <div className="bt-profile-grid">
-                <label className="bt-profile-field">
-                  <span className="bt-profile-field__label">Display name</span>
-                  <input type="text" className="bt-profile-field__input" placeholder="e.g. Thabo M." value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-                </label>
-                <label className="bt-profile-field">
-                  <span className="bt-profile-field__label">School name</span>
-                  <input type="text" className="bt-profile-field__input" placeholder="e.g. Soweto High School" value={school} onChange={(e) => setSchool(e.target.value)} />
-                </label>
-                <label className="bt-profile-field">
-                  <span className="bt-profile-field__label">Province</span>
-                  <select className="bt-profile-field__input" value={province} onChange={(e) => setProvince(e.target.value)}>
-                    <option value="">Select province</option>
-                    {PROVINCES.map((p) => <option key={p}>{p}</option>)}
-                  </select>
-                </label>
-                <label className="bt-profile-field">
-                  <span className="bt-profile-field__label">Current grade</span>
-                  <select className="bt-profile-field__input" value={grade} onChange={(e) => setGrade(e.target.value)}>
-                    <option value="">Select grade</option>
-                    {GRADES.map((g) => <option key={g}>{g}</option>)}
-                  </select>
-                </label>
-                <label className="bt-profile-field bt-profile-field--full">
-                  <span className="bt-profile-field__label">Career interest</span>
-                  <select className="bt-profile-field__input" value={careerInterest} onChange={(e) => setCareerInterest(e.target.value)}>
-                    <option value="">Select an area</option>
-                    {CAREER_INTERESTS.map((c) => <option key={c}>{c}</option>)}
-                  </select>
-                </label>
-              </div>
-
-            {/* ── Subjects ── */}
-            <div className="bt-profile-subjects-block">
-              <h2 className="bt-profile-section__title">Your subjects</h2>
-              <p className="bt-profile-section__sub">
-                Select every subject you are currently studying. This helps us show accurate APS breakdowns for university programmes.
-              </p>
-
-              <div className="bt-profile-subject-search-wrap">
-                <input
-                  type="search"
-                  className="bt-profile-subject-search"
-                  placeholder="Search subjects…"
-                  value={subjectSearch}
-                  onChange={(e) => setSubjectSearch(e.target.value)}
-                />
-              </div>
-
-              {filteredSubjects ? (
-                <div className="bt-profile-subjects">
-                  {filteredSubjects.length === 0
-                    ? <p className="bt-profile-subjects__none">No subjects match your search.</p>
-                    : filteredSubjects.map((subject) => (
-                      <button key={subject} type="button"
-                        className={`bt-profile-subject-chip${selectedSubjects.includes(subject) ? ' bt-profile-subject-chip--selected' : ''}`}
-                        onClick={() => toggleSubject(subject)}
-                      >{subject}</button>
-                    ))
-                  }
-                </div>
-              ) : (
-                Object.entries(SUBJECTS).map(([category, subjects]) => (
-                  <div key={category} className="bt-profile-subject-group">
-                    <h3 className="bt-profile-subject-group__title">{category}</h3>
-                    <div className="bt-profile-subjects">
-                      {subjects.map((subject) => (
-                        <button key={subject} type="button"
-                          className={`bt-profile-subject-chip${selectedSubjects.includes(subject) ? ' bt-profile-subject-chip--selected' : ''}`}
-                          onClick={() => toggleSubject(subject)}
-                        >{subject}</button>
-                      ))}
-                    </div>
+          {loading ? (
+            <p className="study-profile-status" role="status">Loading your study profile…</p>
+          ) : loadError ? (
+            <div className="study-profile-status study-profile-error" role="alert">
+              <p>{loadError}</p>
+              <button type="button" onClick={() => setReloadKey((key) => key + 1)}>
+                Try again
+              </button>
+            </div>
+          ) : (
+            <>
+              <form className="study-profile-card" onSubmit={handleSave}>
+                <div className="study-profile-heading">
+                  <div>
+                    <p className="study-profile-kicker">Personalize your options</p>
+                    <h2>Study preferences</h2>
+                    <p>These details help narrow funding and course information.</p>
                   </div>
-                ))
-              )}
+                </div>
 
-              {selectedSubjects.length > 0 && (
-                <div className="bt-profile-subjects__summary">
-                  <p className="bt-profile-subjects__count">
-                    {selectedSubjects.length} subject{selectedSubjects.length !== 1 ? 's' : ''} selected
-                  </p>
-                  <div className="bt-profile-subjects__selected-list">
-                    {selectedSubjects.map((s) => (
-                      <span key={s} className="bt-profile-subjects__selected-chip">
-                        {s}
-                        <button type="button" onClick={() => toggleSubject(s)} aria-label={`Remove ${s}`}>×</button>
-                      </span>
+                <div className="study-profile-fields">
+                  <label className="study-profile-field">
+                    <span>Province</span>
+                    <select
+                      value={province}
+                      onChange={(event) => {
+                        setProvince(PROVINCES.find((item) => item === event.target.value) ?? '');
+                        setSaveStatus('idle');
+                      }}
+                      disabled={saveStatus === 'saving'}
+                    >
+                      <option value="">Choose a province</option>
+                      {PROVINCES.map((item) => <option key={item} value={item}>{item}</option>)}
+                    </select>
+                  </label>
+
+                  <label className="study-profile-field">
+                    <span>Household income range</span>
+                    <select
+                      value={incomeBracket}
+                      onChange={(event) => {
+                        setIncomeBracket(
+                          INCOME_BRACKETS.find((item) => item === event.target.value) ?? '',
+                        );
+                        setSaveStatus('idle');
+                      }}
+                      disabled={saveStatus === 'saving'}
+                    >
+                      <option value="">Choose a range (optional)</option>
+                      {INCOME_BRACKETS.map((item) => (
+                        <option key={item} value={item}>{INCOME_LABELS[item]}</option>
+                      ))}
+                    </select>
+                    <small>Choose a range only. We do not ask for an exact amount.</small>
+                  </label>
+                </div>
+
+                <fieldset className="study-profile-interests">
+                  <legend>Areas you are interested in</legend>
+                  <p>Select any that fit. You can change these later.</p>
+                  <div className="study-profile-interest-grid">
+                    {INTERESTS.map(({ value, label }) => (
+                      <label key={value} className="study-profile-interest">
+                        <input
+                          type="checkbox"
+                          checked={interests.includes(value)}
+                          onChange={() => toggleInterest(value)}
+                          disabled={saveStatus === 'saving'}
+                        />
+                        <span>{label}</span>
+                      </label>
                     ))}
                   </div>
+                </fieldset>
+
+                <div className="study-profile-actions">
+                  <button type="submit" disabled={saveStatus === 'saving'}>
+                    {saveStatus === 'saving' ? 'Saving…' : 'Save study preferences'}
+                  </button>
+                  <p className="study-profile-save-status" aria-live="polite">
+                    {saveStatus === 'saved' && 'Saved securely to your account.'}
+                    {saveStatus === 'error' && saveError}
+                  </p>
                 </div>
-              )}
-            </div>
-          </section>
+              </form>
 
-          {/* ── APS Goal ── */}
-          <section className="bt-profile-section bt-profile-aps-section">
-            <div className="bt-profile-aps-icon-wrap">
-              <span className="bt-profile-aps-icon">🎯</span>
-            </div>
-            <div className="bt-profile-aps-content">
-              <h2 className="bt-profile-section__title" style={{ marginBottom: 6 }}>APS Goal</h2>
-              <p className="bt-profile-section__sub" style={{ marginBottom: 16 }}>
-                Set a target APS score to work towards. Most university programmes require between 25 and 42.
-              </p>
-              <div className="bt-profile-aps-input-row">
-                <div className="bt-profile-aps-input-wrap">
-                  <input
-                    type="number"
-                    min={15}
-                    max={42}
-                    className={`bt-profile-aps-input${apsGoal && !apsValid ? ' bt-profile-aps-input--error' : ''}${apsValid ? ' bt-profile-aps-input--valid' : ''}`}
-                    placeholder="e.g. 35"
-                    value={apsGoal}
-                    onChange={(e) => setApsGoal(e.target.value)}
-                  />
-                  <span className="bt-profile-aps-unit">/ 42</span>
+              <section className="study-profile-card" aria-labelledby="saved-subjects-title">
+                <div className="study-profile-heading">
+                  <div>
+                    <p className="study-profile-kicker">From your APS calculator</p>
+                    <h2 id="saved-subjects-title">Your subjects and marks</h2>
+                    <p>
+                      {subjects.length
+                        ? `${subjects.length} subject${subjects.length === 1 ? '' : 's'} saved. Update these as your marks change.`
+                        : 'Your saved subjects and marks will appear here.'}
+                    </p>
+                  </div>
+                  <Link className="study-profile-edit-link" to="/aps-calculator">
+                    Edit in calculator <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
                 </div>
-                {apsValid && (
-                  <div className="bt-profile-aps-badge">
-                    {apsNum >= 38 ? '🏆 Excellent target' : apsNum >= 30 ? '⭐ Great target' : '💪 Good starting point'}
-                  </div>
+
+                {subjects.length > 0 ? (
+                  <ul className="study-profile-subject-list">
+                    {subjects.map(({ code, name, mark }) => (
+                      <li key={code}>
+                        <span>{name}</span>
+                        <strong>{mark === null ? 'Mark not added' : `${mark}%`}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Link className="study-profile-primary-link" to="/aps-calculator">
+                    Add subjects and marks <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
                 )}
-                {apsGoal && !apsValid && (
-                  <p className="bt-profile-aps-error">APS must be between 15 and 42</p>
-                )}
-              </div>
-              {apsValid && (
-                <div className="bt-profile-aps-bar-wrap">
-                  <div className="bt-profile-aps-bar">
-                    <div className="bt-profile-aps-bar__fill" style={{ width: `${((apsNum - 15) / 27) * 100}%` }} />
-                  </div>
-                  <div className="bt-profile-aps-scale">
-                    <span>15</span><span>25</span><span>35</span><span>42</span>
-                  </div>
+              </section>
+
+              <section className="study-profile-clear" aria-labelledby="clear-profile-title">
+                <div>
+                  <h2 id="clear-profile-title">Clear your saved study data</h2>
+                  <p>
+                    This removes your province, income range, interests, selected subjects and marks
+                    from your account. It does not delete your account.
+                  </p>
                 </div>
-              )}
-            </div>
-          </section>
-
-          {/* ── Bio ── */}
-          <section className="bt-profile-section">
-            <h2 className="bt-profile-section__title">Your story</h2>
-            <p className="bt-profile-section__sub">
-              Write a short bio about yourself — your background, what drives you, and where you want to go. This is your space.
-            </p>
-            <div className="bt-profile-bio-wrapper">
-              <textarea
-                className="bt-profile-bio"
-                placeholder="e.g. I'm a Grade 12 learner from Limpopo with a passion for engineering. I want to study at Wits and eventually build infrastructure for rural communities..."
-                maxLength={500}
-                rows={5}
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-              />
-              <div className="bt-profile-bio__footer">
-                <span className={`bt-profile-bio__count${bio.length >= 480 ? ' bt-profile-bio__count--warn' : ''}`}>
-                  {bio.length}/500
-                </span>
-                {bio.length >= 20 && (
-                  <span className="bt-profile-bio__check">✓ Great bio!</span>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {/* ── Save ── */}
-          <div className="bt-profile-save-row">
-            <button type="submit" className="bt-profile-save-btn">
-              {saved ? '✓ Saved!' : 'Save profile'}
-            </button>
-            {saved && <p className="bt-profile-save-confirm">Your profile has been updated successfully.</p>}
-          </div>
-
-          </form>
+                <button
+                  type="button"
+                  onClick={clearStudyProfile}
+                  disabled={clearing || saveStatus === 'saving'}
+                >
+                  <Trash2 size={16} aria-hidden="true" />
+                  {clearing ? 'Clearing…' : 'Remove my study data'}
+                </button>
+                {clearError && <p className="study-profile-error" role="alert">{clearError}</p>}
+              </section>
+            </>
+          )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

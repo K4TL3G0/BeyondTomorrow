@@ -265,6 +265,31 @@
   }
 }
 
+@media (max-width: 600px) {
+  .inst-hero {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .inst-hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .inst-hero-buttons .inst-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .inst-cta {
+    padding: 2rem 1.25rem;
+  }
+
+  .inst-cta .inst-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 /* -------------------------------------------------------------------------- */
 /* Lightweight, Hardware-Accelerated Directional Fade System (Zero Lag)     */
 /* -------------------------------------------------------------------------- */

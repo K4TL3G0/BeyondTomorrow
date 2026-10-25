@@ -838,15 +838,26 @@
 
   .home-hero-inner {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    gap: 2rem;
+  }
+
+  .home-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .home-button {
+    width: 100%;
   }
 
   .home-hero-visual {
-    max-width: 34rem;
+    max-width: 100%;
+    padding: 1.25rem;
   }
 
   .home-section-inner {
-    padding: 4.25rem 1.25rem;
+    padding: 3rem 1.25rem;
   }
 
   .home-steps {
@@ -856,6 +867,7 @@
 
   .home-step {
     min-height: 0;
+    padding: 1.25rem;
   }
 
   .home-feature-grid,
@@ -866,25 +878,38 @@
 
   .home-feature-card {
     min-height: 0;
+    padding: 1.25rem;
   }
 
   .home-profile-banner {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 1fr;
     gap: 1.2rem;
-    padding: 4rem 1.25rem;
+    padding: 3rem 1.25rem;
+    text-align: center;
   }
 
   .home-profile-icon {
-    width: 3rem;
-    height: 3rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: 0 auto;
+  }
+
+  .home-profile-banner .home-section-eyebrow {
+    justify-content: center;
   }
 
   .home-profile-banner .home-button {
-    grid-column: 1 / -1;
+    grid-column: auto;
+    width: 100%;
   }
 
   .home-final-cta {
-    margin: 0 1rem 3.5rem;
+    margin: 0 1rem 3rem;
+    padding: 2.5rem 1.25rem;
+  }
+
+  .home-final-cta .home-button {
+    width: 100%;
   }
 }
 
