@@ -1,16 +1,9 @@
-export const PROVINCES = [
-  'Eastern Cape',
-  'Free State',
-  'Gauteng',
-  'KwaZulu-Natal',
-  'Limpopo',
-  'Mpumalanga',
-  'North West',
-  'Northern Cape',
-  'Western Cape',
-] as const;
+import { TVET_PROVINCES } from '@beyond-tomorrow/engine';
+import type { TvetProvince } from '@beyond-tomorrow/engine';
 
-export type Province = (typeof PROVINCES)[number];
+export const PROVINCES = TVET_PROVINCES;
+
+export type Province = TvetProvince;
 
 export const INSTITUTION_TYPES = ['University', 'TVET College'] as const;
 

@@ -1,5 +1,14 @@
 import { PROVINCES } from '../types';
 import type { AdmissionsDetails, Institution } from '../types';
+import { TVET_COLLEGES } from '@beyond-tomorrow/engine';
+
+const existingTvetNames = new Set([
+  'Central Johannesburg TVET College',
+  'Ekurhuleni West TVET College',
+  'False Bay TVET College',
+  'Northlink TVET College',
+  'Tshwane North TVET College',
+]);
 
 const COMMON_DOCS: readonly string[] = [
   'Certified copy of ID or passport',
@@ -494,4 +503,24 @@ export const institutions: readonly Institution[] = [
       'Parent or guardian ID',
     ],
   },
+  ...TVET_COLLEGES.filter(({ name }) => !existingTvetNames.has(name)).map((college): Institution => ({
+    id: college.id,
+    name: college.name,
+    short: college.id
+      .replace(/-tvet$/, '')
+      .split('-')
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase(),
+    provinces: [college.province],
+    type: 'TVET College',
+    url: college.url,
+    openingDate: null,
+    closingDate: null,
+    intake: null,
+    dateSource: null,
+    dateVerifiedOn: null,
+    requirements: [],
+    requiredDocuments: null,
+  })),
 ];

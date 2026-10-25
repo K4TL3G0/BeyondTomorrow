@@ -134,9 +134,11 @@ export function InstitutionCard({ institution: item }: InstitutionCardProps) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
             <p className="bt-type">{item.type}</p>
-            <span className="bt-verified-badge" title="Admissions details sourced and verified">
-              <ShieldCheck size={13} /> Verified
-            </span>
+            {item.dateVerifiedOn && (
+              <span className="bt-verified-badge" title="Admissions details sourced and verified">
+                <ShieldCheck size={13} /> Verified
+              </span>
+            )}
           </div>
           <h3 id={titleId}>{item.name}</h3>
         </div>

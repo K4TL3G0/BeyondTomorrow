@@ -397,7 +397,7 @@ Also required in the same file:
 - **Extend `traction_stats()`** to return counts only: coach starts, completed wizards, fix clocks created (from the `events` table and `fix_clocks`).
 - Add `risk_*`, `fix_urgent_days`, `fix_window_days` keys to `scoring_weights`.
 
-`readiness_progress` stores **no household answers**. Answers live in React state; non-special answers may be kept in `sessionStorage` (cleared when the tab closes). Special-category answers live only in memory.
+`readiness_progress` stores **no household answers**. The coach keeps non-sensitive answers, the selected funding route, and wizard position in `sessionStorage` scoped to the signed-in user; the browser clears it when the tab session ends. These values are not sent to or stored in the database. Optional sensitive answers (`vulnerableChild`, `disabilityBasis`, and `receivesGrant`) remain in React memory only and are excluded from session storage, database writes, and logs.
 
 ## 8. Frontend spec
 

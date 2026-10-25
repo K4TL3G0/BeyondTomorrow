@@ -158,9 +158,36 @@ export function useApsCalculator() {
     (savedRows: Array<{ name: string; mark: number | null; counted: boolean }>): boolean => {
       if (hasEdited.current) return false;
 
+      // Deduplicate savedRows by normalized name to prevent duplicate records from creating duplicate rows
+      const seenNames = new Set<string>();
+      const uniqueSavedRows = savedRows.filter((savedRow) => {
+        const normalized = savedRow.name.trim().toLocaleLowerCase();
+        if (!normalized || seenNames.has(normalized)) return false;
+        seenNames.add(normalized);
+        return true;
+      });
+
       const restoredRows = initialRows();
       let nextSubjectSlot = 4;
-      for (const savedRow of savedRows) {
+      for (const savedRow of uniqueSavedRows) {
+        const normalizedName = savedRow.name.trim().toLocaleLowerCase();
+
+        // Check if this subject name is already present in restoredRows to prevent duplicate slots
+        const existingSlot = restoredRows.findIndex(
+          (row) => row.name.trim().toLocaleLowerCase() === normalizedName,
+        );
+        const savedState = {
+          name: savedRow.name,
+          mark: savedRow.mark === null ? '' : String(savedRow.mark),
+          counted: savedRow.counted,
+        };
+
+        if (existingSlot >= 0) {
+          const existingRow = restoredRows[existingSlot];
+          if (existingRow) restoredRows[existingSlot] = { ...existingRow, ...savedState };
+          continue;
+        }
+
         const type: SubjectRowType = savedRow.name === 'Life Orientation'
           ? 'life-orientation'
           : savedRow.name.endsWith(' Home Language')
@@ -176,11 +203,6 @@ export function useApsCalculator() {
               ? restoredRows.findIndex((row) => row.type === type)
               : -1;
 
-        const savedState = {
-          name: savedRow.name,
-          mark: savedRow.mark === null ? '' : String(savedRow.mark),
-          counted: savedRow.counted,
-        };
         if (slot >= 0) {
           const existingRow = restoredRows[slot];
           if (existingRow) restoredRows[slot] = { ...existingRow, ...savedState };
@@ -190,7 +212,7 @@ export function useApsCalculator() {
           );
           if (emptySlot >= 0) {
             const existingRow = restoredRows[emptySlot];
-            if (existingRow) restoredRows[emptySlot] = { ...existingRow, ...savedState };
+            if (existingRow) restoredRows[existingSlot] = { ...existingRow, ...savedState };
           } else {
             restoredRows.push({
               id: nextSubjectSlot + 3,

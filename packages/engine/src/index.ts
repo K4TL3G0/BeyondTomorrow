@@ -10,3 +10,5 @@ export * from './whatif';
 export * from './statement';
 export * from './deadlineRisk';
 export * from './readiness';
+export { TVET_COLLEGES, TVET_PROVINCES } from './tvetColleges';
+export type { TvetCollege, TvetProvince } from './tvetColleges';
